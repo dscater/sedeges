@@ -707,7 +707,7 @@ const logout = () => {
                 >
                     <Link :href="route('cargos.index')" class="menu-link">
                         <div class="menu-icon">
-                            <i class="fa fa-table"></i>
+                            <i class="fa fa-list"></i>
                         </div>
                         <div class="menu-text">Cargos</div>
                     </Link>
