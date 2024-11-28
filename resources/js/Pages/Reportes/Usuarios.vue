@@ -1,34 +1,10 @@
-<script>
-const breadbrums = [
-    {
-        title: "Inicio",
-        disabled: false,
-        url: route("inicio"),
-        name_url: "inicio",
-    },
-    {
-        title: "Reporte Usuarios",
-        disabled: false,
-        url: "",
-        name_url: "",
-    },
-];
-</script>
-
 <script setup>
 import { useApp } from "@/composables/useApp";
 import { computed, onMounted, ref } from "vue";
 import { Head, usePage } from "@inertiajs/vue3";
-const { setLoading } = useApp();
-
-onMounted(() => {
-    setTimeout(() => {
-        setLoading(false);
-    }, 300);
-});
-
 const form = ref({
-    tipo: "TODOS",
+    tipo: "todos",
+    role_id: "todos",
 });
 
 const generando = ref(false);
@@ -39,11 +15,11 @@ const txtBtn = computed(() => {
     return "Generar Reporte";
 });
 
+const listRoles = ref([]);
 const listTipos = ref([
-    { value: "TODOS", label: "TODOS" },
-    { value: "ADMINISTRADOR", label: "ADMINISTRADOR" },
-    { value: "SUPERVISOR", label: "SUPERVISOR" },
-    { value: "AGENTE INMOBILIARIO", label: "AGENTE INMOBILIARIO" },
+    { value: "todos", label: "TODOS" },
+    { value: "INTERNO", label: "INTERNO" },
+    { value: "EXTERNO", label: "EXTERNO" },
 ]);
 
 const generarReporte = () => {
@@ -54,6 +30,16 @@ const generarReporte = () => {
         generando.value = false;
     }, 500);
 };
+
+const cargarRoles = () => {
+    axios.get(route("roles.listado")).then((response) => {
+        listRoles.value = response.data.roles;
+    });
+};
+
+onMounted(() => {
+    cargarRoles();
+});
 </script>
 <template>
     <Head title="Reporte Usuarios"></Head>
@@ -73,6 +59,31 @@ const generarReporte = () => {
                     <form @submit.prevent="generarReporte">
                         <div class="row">
                             <div class="col-md-12">
+                                <label>Seleccionar role</label>
+                                <select
+                                    :hide-details="
+                                        form.errors?.role_id ? false : true
+                                    "
+                                    :error="form.errors?.role_id ? true : false"
+                                    :error-messages="
+                                        form.errors?.role_id
+                                            ? form.errors?.role_id
+                                            : ''
+                                    "
+                                    v-model="form.role_id"
+                                    class="form-control"
+                                >
+                                    <option value="todos">TODOS</option>
+                                    <option
+                                        v-for="item in listRoles"
+                                        :value="item.id"
+                                    >
+                                        {{ item.nombre }}
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-md-12 mt-2">
+                                <label>Seleccionar tipo</label>
                                 <select
                                     :hide-details="
                                         form.errors?.tipo ? false : true

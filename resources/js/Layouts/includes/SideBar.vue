@@ -405,7 +405,6 @@ const route_current = ref("");
 router.on("navigate", (event) => {
     route_current.value = route().current();
     appOption.appSidebarMobileToggled = false;
-    console.log(user_logeado);
     // if (mobile.value) {
     //     toggleDrawer(false);
     // }
@@ -615,12 +614,12 @@ const logout = () => {
                     class="menu-item"
                     :class="[route_current == 'egresos.index']"
                 >
-                    <a href="" class="menu-link">
+                    <Link :href="route('egresos.index')" class="menu-link">
                         <div class="menu-icon">
                             <i class="fa fa-arrow-right-from-bracket"></i>
                         </div>
                         <div class="menu-text">Egresos</div>
-                    </a>
+                    </Link>
                 </div>
                 <div
                     v-if="
@@ -628,14 +627,14 @@ const logout = () => {
                         user_logeado.permisos.includes('ingresos.index')
                     "
                     class="menu-item"
-                    :class="[route_current == 'ingresos.index']"
+                    :class="[route_current == 'ingresos.index' ? 'active' : '']"
                 >
-                    <a href="" class="menu-link">
+                    <Link :href="route('ingresos.index')" class="menu-link">
                         <div class="menu-icon">
                             <i class="fa fa-right-to-bracket"></i>
                         </div>
                         <div class="menu-text">Ingresos</div>
-                    </a>
+                    </Link>
                 </div>
                 <div
                     v-if="
@@ -643,14 +642,16 @@ const logout = () => {
                         user_logeado.permisos.includes('productos.index')
                     "
                     class="menu-item"
-                    :class="[route_current == 'productos.index']"
+                    :class="[
+                        route_current == 'productos.index' ? 'active' : '',
+                    ]"
                 >
-                    <a href="" class="menu-link">
+                    <Link :href="route('productos.index')" class="menu-link">
                         <div class="menu-icon">
                             <i class="fa fa-boxes"></i>
                         </div>
                         <div class="menu-text">Productos</div>
-                    </a>
+                    </Link>
                 </div>
                 <div
                     v-if="
@@ -658,14 +659,19 @@ const logout = () => {
                         user_logeado.permisos.includes('unidad_medidas.index')
                     "
                     class="menu-item"
-                    :class="[route_current == 'unidad_medidas.index']"
+                    :class="[
+                        route_current == 'unidad_medidas.index' ? 'active' : '',
+                    ]"
                 >
-                    <a href="" class="menu-link">
+                    <Link
+                        :href="route('unidad_medidas.index')"
+                        class="menu-link"
+                    >
                         <div class="menu-icon">
                             <i class="fa fa-list-alt"></i>
                         </div>
                         <div class="menu-text">Unidad de medida</div>
-                    </a>
+                    </Link>
                 </div>
                 <div
                     v-if="
@@ -673,14 +679,14 @@ const logout = () => {
                         user_logeado.permisos.includes('partidas.index')
                     "
                     class="menu-item"
-                    :class="[route_current == 'partidas.index']"
+                    :class="[route_current == 'partidas.index' ? 'active' : '']"
                 >
-                    <a href="" class="menu-link">
+                    <Link :href="route('partidas.index')" class="menu-link">
                         <div class="menu-icon">
                             <i class="fa fa-clipboard-list"></i>
                         </div>
                         <div class="menu-text">Partidas</div>
-                    </a>
+                    </Link>
                 </div>
                 <div
                     v-if="
@@ -718,14 +724,16 @@ const logout = () => {
                         user_logeado.permisos.includes('programas.index')
                     "
                     class="menu-item"
-                    :class="[route_current == 'programas.index']"
+                    :class="[
+                        route_current == 'programas.index' ? 'active' : '',
+                    ]"
                 >
-                    <a href="" class="menu-link">
+                    <Link :href="route('programas.index')" class="menu-link">
                         <div class="menu-icon">
                             <i class="fa fa-list"></i>
                         </div>
                         <div class="menu-text">Programas</div>
-                    </a>
+                    </Link>
                 </div>
                 <div
                     v-if="
@@ -794,7 +802,10 @@ const logout = () => {
                 </div>
                 <div
                     class="menu-item has-sub"
-                    v-if="user_logeado.permisos.includes('reportes.usuarios')"
+                    v-if="
+                        user_logeado.permisos.includes('*') ||
+                        user_logeado.permisos.includes('reportes.usuarios')
+                    "
                 >
                     <a href="javascript:;" class="menu-link">
                         <div class="menu-icon">
@@ -806,6 +817,7 @@ const logout = () => {
                     <div class="menu-submenu">
                         <div
                             v-if="
+                                user_logeado.permisos.includes('*') ||
                                 user_logeado.permisos.includes(
                                     'reportes.usuarios'
                                 )
@@ -821,6 +833,66 @@ const logout = () => {
                                 :href="route('reportes.usuarios')"
                                 class="menu-link"
                                 ><div class="menu-text">Usuarios</div></Link
+                            >
+                        </div>
+                        <div
+                            v-if="
+                                user_logeado.permisos.includes('*') ||
+                                user_logeado.permisos.includes(
+                                    'reportes.bimestral'
+                                )
+                            "
+                            class="menu-item"
+                            :class="[
+                                route_current == 'reportes.bimestral'
+                                    ? 'active'
+                                    : '',
+                            ]"
+                        >
+                            <Link
+                                :href="route('reportes.bimestral')"
+                                class="menu-link"
+                                ><div class="menu-text">Bimestral</div></Link
+                            >
+                        </div>
+                        <div
+                            v-if="
+                                user_logeado.permisos.includes('*') ||
+                                user_logeado.permisos.includes(
+                                    'reportes.cuatrimestral'
+                                )
+                            "
+                            class="menu-item"
+                            :class="[
+                                route_current == 'reportes.cuatrimestral'
+                                    ? 'active'
+                                    : '',
+                            ]"
+                        >
+                            <Link
+                                :href="route('reportes.cuatrimestral')"
+                                class="menu-link"
+                                ><div class="menu-text">Cuatrimestral</div></Link
+                            >
+                        </div>
+                        <div
+                            v-if="
+                                user_logeado.permisos.includes('*') ||
+                                user_logeado.permisos.includes(
+                                    'reportes.conciliacion'
+                                )
+                            "
+                            class="menu-item"
+                            :class="[
+                                route_current == 'reportes.conciliacion'
+                                    ? 'active'
+                                    : '',
+                            ]"
+                        >
+                            <Link
+                                :href="route('reportes.conciliacion')"
+                                class="menu-link"
+                                ><div class="menu-text">Conciliación</div></Link
                             >
                         </div>
                     </div>

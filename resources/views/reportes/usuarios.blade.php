@@ -134,7 +134,7 @@
         }
 
         .bg-principal {
-            background: #1867C0;
+            background: #191a1b;
             color: white;
         }
 
@@ -172,6 +172,9 @@
                 <th>CORREO</th>
                 <th>TELÉFONO/CELULAR</th>
                 <th>TIPO</th>
+                <th>CARGO</th>
+                <th>UNIDAD</th>
+                <th>ROLE</th>
                 <th>ACCESO</th>
                 <th width="9%">FECHA DE REGISTRO</th>
             </tr>
@@ -196,6 +199,9 @@
                     <td class="">{{ $user->email }}</td>
                     <td class="">{{ $user->fono }}</td>
                     <td class="">{{ $user->tipo }}</td>
+                    <td class="">{{ $user->cargo->nombre }}</td>
+                    <td class="">{{ $user->unidad->nombre }}</td>
+                    <td class="">{{ $user->role->nombre }}</td>
                     <td class="centreado">{{ $user->acceso == 1 ? 'HABILITADO' : 'DENEGADO' }}</td>
                     <td class="centreado">{{ $user->fecha_registro_t }}</td>
                 </tr>

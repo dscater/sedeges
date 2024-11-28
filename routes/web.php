@@ -1,13 +1,20 @@
 <?php
 
+use App\Http\Controllers\AlmacenController;
 use App\Http\Controllers\CargoController;
 use App\Http\Controllers\ConfiguracionController;
+use App\Http\Controllers\EgresoController;
+use App\Http\Controllers\IngresoController;
 use App\Http\Controllers\InicioController;
 use App\Http\Controllers\PacienteController;
+use App\Http\Controllers\PartidaController;
+use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ProgramaController;
 use App\Http\Controllers\ReporteController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UnidadController;
+use App\Http\Controllers\UnidadMedidaController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UsuarioController;
 use Illuminate\Support\Facades\Route;
@@ -77,6 +84,9 @@ Route::middleware(['auth', 'permisoUsuario'])->prefix("admin")->group(function (
         ["index", "store", "update", "show", "destroy"]
     );
 
+    // ALMACENS
+    Route::get("almacens/listado", [AlmacenController::class, 'listado'])->name("almacens.listado");
+
     // CARGOS
     Route::get("cargos/api", [CargoController::class, 'api'])->name("cargos.api");
     Route::get("cargos/paginado", [CargoController::class, 'paginado'])->name("cargos.paginado");
@@ -85,8 +95,66 @@ Route::middleware(['auth', 'permisoUsuario'])->prefix("admin")->group(function (
         ["index", "store", "update", "show", "destroy"]
     );
 
+    // PARTIDAS
+    Route::get("partidas/api", [PartidaController::class, 'api'])->name("partidas.api");
+    Route::get("partidas/paginado", [PartidaController::class, 'paginado'])->name("partidas.paginado");
+    Route::get("partidas/listado", [PartidaController::class, 'listado'])->name("partidas.listado");
+    Route::resource("partidas", PartidaController::class)->only(
+        ["index", "store", "update", "show", "destroy"]
+    );
+
+    // UNIDADES DE MEDIDA
+    Route::get("unidad_medidas/api", [UnidadMedidaController::class, 'api'])->name("unidad_medidas.api");
+    Route::get("unidad_medidas/paginado", [UnidadMedidaController::class, 'paginado'])->name("unidad_medidas.paginado");
+    Route::get("unidad_medidas/listado", [UnidadMedidaController::class, 'listado'])->name("unidad_medidas.listado");
+    Route::resource("unidad_medidas", UnidadMedidaController::class)->only(
+        ["index", "store", "update", "show", "destroy"]
+    );
+
+    // PRODUCTOS
+    Route::get("productos/api", [ProductoController::class, 'api'])->name("productos.api");
+    Route::get("productos/paginado", [ProductoController::class, 'paginado'])->name("productos.paginado");
+    Route::get("productos/listado", [ProductoController::class, 'listado'])->name("productos.listado");
+    Route::resource("productos", ProductoController::class)->only(
+        ["index", "store", "update", "show", "destroy"]
+    );
+
+    // INGRESOS
+    Route::get("ingresos/almacen_partida", [IngresoController::class, 'almacen_partida'])->name("ingresos.almacen_partida");
+    Route::get("ingresos/api", [IngresoController::class, 'api'])->name("ingresos.api");
+    Route::get("ingresos/paginado", [IngresoController::class, 'paginado'])->name("ingresos.paginado");
+    Route::get("ingresos/listado", [IngresoController::class, 'listado'])->name("ingresos.listado");
+    Route::resource("ingresos", IngresoController::class)->only(
+        ["index", "store", "update", "show", "destroy"]
+    );
+
+    // EGRESOS
+    Route::get("egresos/api", [EgresoController::class, 'api'])->name("egresos.api");
+    Route::get("egresos/paginado", [EgresoController::class, 'paginado'])->name("egresos.paginado");
+    Route::get("egresos/listado", [EgresoController::class, 'listado'])->name("egresos.listado");
+    Route::resource("egresos", EgresoController::class)->only(
+        ["index", "store", "update", "show", "destroy"]
+    );
+
+    // PROGRAMAS
+    Route::get("programas/api", [ProgramaController::class, 'api'])->name("programas.api");
+    Route::get("programas/paginado", [ProgramaController::class, 'paginado'])->name("programas.paginado");
+    Route::get("programas/listado", [ProgramaController::class, 'listado'])->name("programas.listado");
+    Route::resource("programas", ProgramaController::class)->only(
+        ["index", "store", "update", "show", "destroy"]
+    );
+
     // REPORTES
     Route::get('reportes/usuarios', [ReporteController::class, 'usuarios'])->name("reportes.usuarios");
     Route::get('reportes/r_usuarios', [ReporteController::class, 'r_usuarios'])->name("reportes.r_usuarios");
+    
+    Route::get('reportes/bimestral', [ReporteController::class, 'bimestral'])->name("reportes.bimestral");
+    Route::get('reportes/r_bimestral', [ReporteController::class, 'r_bimestral'])->name("reportes.r_bimestral");
+    
+    Route::get('reportes/cuatrimestral', [ReporteController::class, 'cuatrimestral'])->name("reportes.cuatrimestral");
+    Route::get('reportes/r_cuatrimestral', [ReporteController::class, 'r_cuatrimestral'])->name("reportes.r_cuatrimestral");
+    
+    Route::get('reportes/conciliacion', [ReporteController::class, 'conciliacion'])->name("reportes.conciliacion");
+    Route::get('reportes/r_conciliacion', [ReporteController::class, 'r_conciliacion'])->name("reportes.r_conciliacion");
 });
 require __DIR__ . '/auth.php';
