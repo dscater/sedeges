@@ -3,7 +3,7 @@ import { useApp } from "@/composables/useApp";
 import { Head, Link, usePage } from "@inertiajs/vue3";
 import { ref, onMounted, onBeforeUnmount } from "vue";
 import PanelToolbar from "@/Components/PanelToolbar.vue";
-const { user, url_assets } = usePage().props;
+const { user, url_assets, auth } = usePage().props;
 const form = ref({
     almacen_id: "",
     partida_id: "",
@@ -253,23 +253,37 @@ onBeforeUnmount(() => {});
                                                 {{ item.total }}
                                             </td>
                                             <td class="bg2 text-center">
-                                                <input
-                                                    type="number"
-                                                    class="form-control"
-                                                    v-model="
-                                                        item.egreso.cantidad
+                                                <template
+                                                    v-if="
+                                                        auth &&
+                                                        (auth.user.permisos.includes(
+                                                            '*'
+                                                        ) ||
+                                                            auth.user.permisos.includes(
+                                                                'egresos.create'
+                                                            ))
                                                     "
-                                                    @keyup="
-                                                        detectaKeyUpCantidad(
-                                                            $event,
-                                                            index
-                                                        )
-                                                    "
-                                                />
-                                                <i
-                                                    class="fa fa-spin fa-spinner oculto"
-                                                    :id="'spin' + index"
-                                                ></i>
+                                                >
+                                                    <input
+                                                        type="number"
+                                                        class="form-control"
+                                                        v-model="
+                                                            item.egreso.cantidad
+                                                        "
+                                                        @keyup="
+                                                            detectaKeyUpCantidad(
+                                                                $event,
+                                                                index
+                                                            )
+                                                        " />
+                                                    <i
+                                                        class="fa fa-spin fa-spinner oculto"
+                                                        :id="'spin' + index"
+                                                    ></i
+                                                ></template>
+                                                <span v-else>{{
+                                                    item.egreso?.cantidad
+                                                }}</span>
                                             </td>
                                             <td class="bg2">
                                                 {{ item.egreso.costo }}

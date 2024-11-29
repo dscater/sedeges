@@ -194,7 +194,7 @@
             <h2 class="titulo">
                 {{ $configuracion->first()->razon_social }}
             </h2>
-            <h4 class="texto">SALDOS FÍSICOS VALORADOS DE EXISTENCIAS DE ALMACENES</h4>
+            <h4 class="texto">INVENTARIO FÍNOCO VALORADO DE BIENES Y CONSUMO</h4>
             <h4 class="texto">{{ $almacen->nombre }}</h4>
             <h4 class="fecha">{{ $texto_fecha }}
             </h4>
@@ -258,7 +258,7 @@
                     @endphp
                     @php
                         // INGRESOS RANGO FECHAS
-                        $ingresos = App\Models\Ingreso::where('donacion', 'SI');
+                        $ingresos = App\Models\Ingreso::where('donacion', 'NO');
                         $ingresos->where('almacen_id', $almacen->id);
                         if ($fecha_ini && $fecha_fin) {
                             $ingresos->whereBetween('fecha_registro', [$fecha_ini, $fecha_fin]);
@@ -275,14 +275,14 @@
                             // SALDOS
                             $saldo = 0;
                             if ($fecha_ini && $fecha_fin) {
-                                $reg_ingresos = App\Models\Ingreso::where('donacion', 'SI');
+                                $reg_ingresos = App\Models\Ingreso::where('donacion', 'NO');
                                 $reg_ingresos->where('almacen_id', $almacen->id);
                                 $reg_ingresos->where('fecha_registro', '<', $fecha_ini);
                                 $reg_ingresos->where('partida_id', $partida->id);
                                 $reg_ingresos->where('producto_id', $ingreso->producto_id);
                                 $reg_ingresos = $reg_ingresos->sum('total');
 
-                                $reg_egresos = App\Models\Ingreso::where('donacion', 'SI')->join(
+                                $reg_egresos = App\Models\Ingreso::where('donacion', 'NO')->join(
                                     'egresos',
                                     'egresos.ingreso_id',
                                     '=',
@@ -336,7 +336,7 @@
                             $saldo = 0;
                             $reg_ingresos = [];
                             if ($fecha_ini && $fecha_fin) {
-                                $reg_ingresos = App\Models\Ingreso::where('donacion', 'SI');
+                                $reg_ingresos = App\Models\Ingreso::where('donacion', 'NO');
                                 $reg_ingresos->where('almacen_id', $almacen->id);
                                 $reg_ingresos->where('fecha_registro', '<', $fecha_ini);
                                 $reg_ingresos->where('partida_id', $partida->id);
@@ -378,7 +378,7 @@
                                 // general
                                 $total1 += (float) $saldo;
                                 $total4 += (float) $saldo;
-                                @endphp
+                            @endphp
                         @empty
                             <tr>
                                 <td colspan="17">NO SE ENCONTRARÓN REGISTROS</td>

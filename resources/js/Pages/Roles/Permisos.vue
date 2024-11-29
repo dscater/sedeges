@@ -1,9 +1,10 @@
 <script setup>
 import { useApp } from "@/composables/useApp";
-import { Head, Link } from "@inertiajs/vue3";
+import { Head, Link, usePage } from "@inertiajs/vue3";
 import { initDataTable } from "@/composables/datatable.js";
 import { ref, onMounted, onBeforeUnmount } from "vue";
 import PanelToolbar from "@/Components/PanelToolbar.vue";
+const { url_assets } = usePage().props;
 
 const props = defineProps({
     role: {
@@ -60,8 +61,8 @@ const actualizaPermiso = (e, modulo, accion) => {
                 title: "Registro correcto",
                 text: "",
                 image: url_assets + "imgs/check.png",
-                sticky: true,
-                time: "",
+                sticky: false,
+                time: 1500,
                 class_name: "my-sticky-class",
             });
             listPermisos.value[modulo] = response.data.array_permisos;
@@ -72,8 +73,8 @@ const actualizaPermiso = (e, modulo, accion) => {
                 title: "Error",
                 text: "No se pudo actualizar la información debido a un error, intenté mas tarde",
                 image: url_assets + "imgs/error.png",
-                sticky: true,
-                time: "",
+                sticky: false,
+                time: 1500,
                 class_name: "my-sticky-class",
             });
             e.target.checked = !e.target.checked;

@@ -236,21 +236,21 @@ class ModuloTableSeeder extends Seeder
         Modulo::create([
             "modulo" => "Almacén",
             "nombre" => "almacen1.index",
-            "accion" => "VER",
+            "accion" => "ALMACÉN CENTROS",
             "descripcion" => "VER LA LISTA DE PRODUCTOS DEL ALMACÉN CENTROS"
         ]);
 
         Modulo::create([
             "modulo" => "Almacén",
             "nombre" => "almacen2.index",
-            "accion" => "VER",
+            "accion" => "ALMACÉN PROGRAMAS",
             "descripcion" => "VER LA LISTA DE PRODUCTOS DEL ALMACÉN PROGRAMAS"
         ]);
 
         Modulo::create([
             "modulo" => "Almacén",
             "nombre" => "almacen3.index",
-            "accion" => "VER",
+            "accion" => "ALMACÉN FARMACIAS",
             "descripcion" => "VER LA LISTA DE PRODUCTOS DEL ALMACÉN FARMACIAS"
         ]);
 

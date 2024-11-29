@@ -1,19 +1,3 @@
-<script>
-const breadbrums = [
-    {
-        title: "Inicio",
-        disabled: false,
-        url: route("inicio"),
-        name_url: "inicio",
-    },
-    {
-        title: "Roles",
-        disabled: false,
-        url: "",
-        name_url: "",
-    },
-];
-</script>
 <script setup>
 import { useApp } from "@/composables/useApp";
 import { Head, Link, router, usePage } from "@inertiajs/vue3";
@@ -21,9 +5,7 @@ import { useRoles } from "@/composables/roles/useRoles";
 import { initDataTable } from "@/composables/datatable.js";
 import { ref, onMounted, onBeforeUnmount } from "vue";
 import PanelToolbar from "@/Components/PanelToolbar.vue";
-// import { useMenu } from "@/composables/useMenu";
 import Formulario from "./Formulario.vue";
-// const { mobile, identificaDispositivo } = useMenu();
 const { props: props_page } = usePage();
 const { setLoading } = useApp();
 onMounted(() => {

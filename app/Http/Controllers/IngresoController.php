@@ -55,6 +55,10 @@ class IngresoController extends Controller
 
     public function almacen_partida(Request $request)
     {
+
+        $permisos = Auth::user()->permisos;
+
+
         $almacen_id = $request->almacen_id;
         $partida_id = $request->partida_id;
 
@@ -65,15 +69,25 @@ class IngresoController extends Controller
         $ingresos = $ingresos->orderBy("id", "desc")->get();
 
         foreach ($ingresos as $i) {
-            $i->egreso()->create([
-                "almacen_id" => $i->almacen_id,
-                "partida_id" => $i->partida_id,
-                "producto_id" => $i->producto_id,
-                "cantidad" => $i->cantidad,
-                "costo" => $i->costo,
-                "total" => $i->total,
-                "fecha_registro" => date("Y-m-d"),
-            ]);
+            $registra = false;
+            if (!is_array($permisos) && $permisos == '*') {
+                $registra = true;
+            }
+            if (is_array($permisos) && in_array("egresos.create", $permisos)) {
+                $registra = true;
+            }
+
+            if ($registra) {
+                $i->egreso()->create([
+                    "almacen_id" => $i->almacen_id,
+                    "partida_id" => $i->partida_id,
+                    "producto_id" => $i->producto_id,
+                    "cantidad" => $i->cantidad,
+                    "costo" => $i->costo,
+                    "total" => $i->total,
+                    "fecha_registro" => date("Y-m-d"),
+                ]);
+            }
         }
 
         // recargar registros

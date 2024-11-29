@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost:3306
--- Tiempo de generación: 28-11-2024 a las 22:35:04
+-- Tiempo de generación: 29-11-2024 a las 16:56:29
 -- Versión del servidor: 8.0.30
 -- Versión de PHP: 8.2.22
 
@@ -114,9 +114,9 @@ CREATE TABLE `egresos` (
 
 INSERT INTO `egresos` (`id`, `ingreso_id`, `almacen_id`, `partida_id`, `producto_id`, `cantidad`, `costo`, `total`, `fecha_registro`, `created_at`, `updated_at`) VALUES
 (1, 2, 1, 1, 2, 300, 20.00, 6000.00, '2024-11-28', '2024-11-29 00:04:13', '2024-11-29 00:40:51'),
-(2, 1, 1, 1, 1, 100, 40.00, 4000.00, '2024-11-28', '2024-11-29 00:04:13', '2024-11-29 00:41:32'),
+(2, 1, 1, 1, 1, 50, 40.00, 2000.00, '2024-11-28', '2024-11-29 00:04:13', '2024-11-29 19:36:44'),
 (3, 3, 2, 2, 1, 200, 45.00, 9000.00, '2024-11-28', '2024-11-29 00:42:03', '2024-11-29 00:42:03'),
-(4, 4, 1, 1, 3, 500, 20.00, 10000.00, '2024-11-28', '2024-11-29 00:42:52', '2024-11-29 00:42:52');
+(4, 4, 1, 1, 3, 500, 20.00, 10000.00, '2024-11-28', '2024-11-29 00:42:52', '2024-11-29 19:36:42');
 
 -- --------------------------------------------------------
 
@@ -170,7 +170,8 @@ INSERT INTO `historial_accions` (`id`, `user_id`, `accion`, `descripcion`, `dato
 (25, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN INGRESO', 'id: 4<br/>almacen_id: 1<br/>partida_id: 1<br/>unidad_id: 1<br/>programa_id: <br/>codigo: PAU-3<br/>nro: 3<br/>donacion: NO<br/>producto_id: 3<br/>unidad_medida_id: 1<br/>cantidad: 500<br/>costo: 20<br/>total: 10000.00<br/>fecha_ingreso: 2024-11-28<br/>fecha_registro: 2024-11-28<br/>user_id: 1<br/>created_at: 2024-11-28 20:42:45<br/>updated_at: 2024-11-28 20:42:45<br/>', NULL, 'INGRESOS', '2024-11-28', '20:42:45', '2024-11-29 00:42:45', '2024-11-29 00:42:45'),
 (26, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN ROLE', 'id: 3<br/>nombre: ALMACÉN<br/>permisos: 0<br/>usuarios: <br/>created_at: 2024-11-28 20:56:05<br/>updated_at: 2024-11-28 20:56:05<br/>', NULL, 'ROLES', '2024-11-28', '20:56:05', '2024-11-29 00:56:05', '2024-11-29 00:56:05'),
 (27, 1, 'MODIFICACIÓN', 'EL USUARIO admin MODIFICÓ UN INGRESO', 'id: 1<br/>almacen_id: 1<br/>partida_id: 1<br/>unidad_id: 1<br/>programa_id: <br/>codigo: PAU-1<br/>nro: 1<br/>donacion: NO<br/>producto_id: 1<br/>unidad_medida_id: 1<br/>cantidad: 100<br/>costo: 40.00<br/>total: 4000.00<br/>fecha_ingreso: 2024-11-28<br/>fecha_registro: 2024-11-28<br/>user_id: 1<br/>created_at: 2024-11-28 19:02:26<br/>updated_at: 2024-11-28 19:07:25<br/>', 'id: 1<br/>almacen_id: 1<br/>partida_id: 1<br/>unidad_id: 1<br/>programa_id: <br/>codigo: PAU-1<br/>nro: 1<br/>donacion: SI<br/>producto_id: 1<br/>unidad_medida_id: 1<br/>cantidad: 100<br/>costo: 40.00<br/>total: 4000.00<br/>fecha_ingreso: 2024-11-28<br/>fecha_registro: 2024-11-28<br/>user_id: 1<br/>created_at: 2024-11-28 19:02:26<br/>updated_at: 2024-11-28 21:39:50<br/>', 'INGRESOS', '2024-11-28', '21:39:50', '2024-11-29 01:39:50', '2024-11-29 01:39:50'),
-(28, 1, 'MODIFICACIÓN', 'EL USUARIO admin MODIFICÓ UN INGRESO', 'id: 2<br/>almacen_id: 1<br/>partida_id: 1<br/>unidad_id: 1<br/>programa_id: <br/>codigo: PAU-2<br/>nro: 2<br/>donacion: NO<br/>producto_id: 2<br/>unidad_medida_id: 1<br/>cantidad: 300<br/>costo: 20.00<br/>total: 6000.00<br/>fecha_ingreso: 2024-11-28<br/>fecha_registro: 2024-11-28<br/>user_id: 1<br/>created_at: 2024-11-28 19:05:24<br/>updated_at: 2024-11-28 19:05:24<br/>', 'id: 2<br/>almacen_id: 1<br/>partida_id: 1<br/>unidad_id: 1<br/>programa_id: <br/>codigo: PAU-2<br/>nro: 2<br/>donacion: SI<br/>producto_id: 2<br/>unidad_medida_id: 1<br/>cantidad: 300<br/>costo: 20.00<br/>total: 6000.00<br/>fecha_ingreso: 2024-11-28<br/>fecha_registro: 2024-11-28<br/>user_id: 1<br/>created_at: 2024-11-28 19:05:24<br/>updated_at: 2024-11-28 21:39:54<br/>', 'INGRESOS', '2024-11-28', '21:39:54', '2024-11-29 01:39:54', '2024-11-29 01:39:54');
+(28, 1, 'MODIFICACIÓN', 'EL USUARIO admin MODIFICÓ UN INGRESO', 'id: 2<br/>almacen_id: 1<br/>partida_id: 1<br/>unidad_id: 1<br/>programa_id: <br/>codigo: PAU-2<br/>nro: 2<br/>donacion: NO<br/>producto_id: 2<br/>unidad_medida_id: 1<br/>cantidad: 300<br/>costo: 20.00<br/>total: 6000.00<br/>fecha_ingreso: 2024-11-28<br/>fecha_registro: 2024-11-28<br/>user_id: 1<br/>created_at: 2024-11-28 19:05:24<br/>updated_at: 2024-11-28 19:05:24<br/>', 'id: 2<br/>almacen_id: 1<br/>partida_id: 1<br/>unidad_id: 1<br/>programa_id: <br/>codigo: PAU-2<br/>nro: 2<br/>donacion: SI<br/>producto_id: 2<br/>unidad_medida_id: 1<br/>cantidad: 300<br/>costo: 20.00<br/>total: 6000.00<br/>fecha_ingreso: 2024-11-28<br/>fecha_registro: 2024-11-28<br/>user_id: 1<br/>created_at: 2024-11-28 19:05:24<br/>updated_at: 2024-11-28 21:39:54<br/>', 'INGRESOS', '2024-11-28', '21:39:54', '2024-11-29 01:39:54', '2024-11-29 01:39:54'),
+(29, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN USUARIO', 'id: 3<br/>usuario: CMARTINES<br/>nombre: CARLOS<br/>paterno: MARTINES<br/>materno: PAREDES<br/>ci: 2222<br/>ci_exp: LP<br/>dir: ZONA LOS OLIVOS<br/>email: CARLOS@GMAIL.COM<br/>fono: 777777<br/>password: $2y$12$5Od4Mg4s7778FMtVsfTSYeD.blo/B//MxzlfMfyoUZVov.PAIcxra<br/>foto: <br/>tipo: DOCTOR<br/>cargo_id: 2<br/>unidad_id: 2<br/>role_id: 3<br/>fecha_registro: 2024-11-29<br/>acceso: 1<br/>status: <br/>created_at: 2024-11-29 16:38:12<br/>updated_at: 2024-11-29 16:38:12<br/>', NULL, 'USUARIOS', '2024-11-29', '16:38:12', '2024-11-29 20:38:12', '2024-11-29 20:38:12');
 
 -- --------------------------------------------------------
 
@@ -293,9 +294,9 @@ INSERT INTO `modulos` (`id`, `modulo`, `nombre`, `accion`, `descripcion`, `creat
 (28, 'Productos', 'productos.create', 'CREAR', 'CREAR PRODUCTOS', '2024-11-26 01:03:40', '2024-11-26 01:03:40'),
 (29, 'Productos', 'productos.edit', 'EDITAR', 'EDITAR PRODUCTOS', '2024-11-26 01:03:40', '2024-11-26 01:03:40'),
 (30, 'Productos', 'productos.destroy', 'ELIMINAR', 'ELIMINAR PRODUCTOS', '2024-11-26 01:03:40', '2024-11-26 01:03:40'),
-(31, 'Almacén', 'almacen1.index', 'VER', 'VER LA LISTA DE PRODUCTOS DEL ALMACÉN CENTROS', '2024-11-26 01:03:40', '2024-11-26 01:03:40'),
-(32, 'Almacén', 'almacen2.index', 'VER', 'VER LA LISTA DE PRODUCTOS DEL ALMACÉN PROGRAMAS', '2024-11-26 01:03:40', '2024-11-26 01:03:40'),
-(33, 'Almacén', 'almacen3.index', 'VER', 'VER LA LISTA DE PRODUCTOS DEL ALMACÉN FARMACIAS', '2024-11-26 01:03:40', '2024-11-26 01:03:40'),
+(31, 'Almacén', 'almacen1.index', 'ALMACÉN CENTROS', 'VER LA LISTA DE PRODUCTOS DEL ALMACÉN CENTROS', '2024-11-26 01:03:40', '2024-11-26 01:03:40'),
+(32, 'Almacén', 'almacen2.index', 'ALMACÉN PROGRAMAS', 'VER LA LISTA DE PRODUCTOS DEL ALMACÉN PROGRAMAS', '2024-11-26 01:03:40', '2024-11-26 01:03:40'),
+(33, 'Almacén', 'almacen3.index', 'ALMACÉN FARMACIAS', 'VER LA LISTA DE PRODUCTOS DEL ALMACÉN FARMACIAS', '2024-11-26 01:03:40', '2024-11-26 01:03:40'),
 (34, 'Ingresos', 'ingresos.index', 'VER', 'VER LA LISTA DE INGRESOS', '2024-11-26 01:03:40', '2024-11-26 01:03:40'),
 (35, 'Ingresos', 'ingresos.create', 'CREAR', 'CREAR INGRESOS', '2024-11-26 01:03:40', '2024-11-26 01:03:40'),
 (36, 'Ingresos', 'ingresos.edit', 'EDITAR', 'EDITAR INGRESOS', '2024-11-26 01:03:40', '2024-11-26 01:03:40'),
@@ -348,6 +349,23 @@ CREATE TABLE `permisos` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `permisos`
+--
+
+INSERT INTO `permisos` (`id`, `role_id`, `modulo_id`, `created_at`, `updated_at`) VALUES
+(1, 3, 19, '2024-11-29 20:38:53', '2024-11-29 20:38:53'),
+(2, 3, 23, '2024-11-29 20:38:54', '2024-11-29 20:38:54'),
+(3, 3, 27, '2024-11-29 20:38:56', '2024-11-29 20:38:56'),
+(4, 3, 31, '2024-11-29 20:38:58', '2024-11-29 20:38:58'),
+(5, 3, 34, '2024-11-29 20:40:09', '2024-11-29 20:40:09'),
+(6, 3, 35, '2024-11-29 20:40:10', '2024-11-29 20:40:10'),
+(7, 3, 38, '2024-11-29 20:40:12', '2024-11-29 20:40:12'),
+(9, 3, 40, '2024-11-29 20:40:14', '2024-11-29 20:40:14'),
+(11, 3, 46, '2024-11-29 20:40:16', '2024-11-29 20:40:16'),
+(12, 3, 47, '2024-11-29 20:40:17', '2024-11-29 20:40:17'),
+(13, 3, 45, '2024-11-29 20:41:05', '2024-11-29 20:41:05');
 
 -- --------------------------------------------------------
 
@@ -498,7 +516,8 @@ CREATE TABLE `users` (
 
 INSERT INTO `users` (`id`, `usuario`, `nombre`, `paterno`, `materno`, `ci`, `ci_exp`, `dir`, `email`, `fono`, `password`, `foto`, `tipo`, `cargo_id`, `unidad_id`, `role_id`, `fecha_registro`, `acceso`, `status`, `created_at`, `updated_at`) VALUES
 (1, 'admin', 'admin', 'admin', '', '0', '', '', '', '', '$2y$12$65d4fgZsvBV5Lc/AxNKh4eoUdbGyaczQ4sSco20feSQANshNLuxSC', NULL, '', 1, 1, 1, '2024-11-25', 1, 1, '2024-11-26 01:00:49', '2024-11-26 01:00:49'),
-(2, 'JPERES', 'JUAN', 'PERES', 'MAMANI', '1111', 'LP', 'LOS OLIVOS', 'JUAN@GMAIL.COM', '7777777', '$2y$12$RC6QphnlynnEK3o4El.p7ukQuDPBlPscBGHgLx4uWqnL3vFRRBE76', '1732574829_JPERES.jpg', 'INTERNO', 1, 1, 2, '2024-11-25', 1, 1, '2024-11-26 02:47:09', '2024-11-26 02:47:13');
+(2, 'JPERES', 'JUAN', 'PERES', 'MAMANI', '1111', 'LP', 'LOS OLIVOS', 'JUAN@GMAIL.COM', '7777777', '$2y$12$RC6QphnlynnEK3o4El.p7ukQuDPBlPscBGHgLx4uWqnL3vFRRBE76', '1732574829_JPERES.jpg', 'INTERNO', 1, 1, 2, '2024-11-25', 1, 1, '2024-11-26 02:47:09', '2024-11-26 02:47:13'),
+(3, 'CMARTINES', 'CARLOS', 'MARTINES', 'PAREDES', '2222', 'LP', 'ZONA LOS OLIVOS', 'CARLOS@GMAIL.COM', '777777', '$2y$12$5Od4Mg4s7778FMtVsfTSYeD.blo/B//MxzlfMfyoUZVov.PAIcxra', NULL, 'DOCTOR', 2, 2, 3, '2024-11-29', 1, 1, '2024-11-29 20:38:12', '2024-11-29 20:38:12');
 
 --
 -- Índices para tablas volcadas
@@ -651,7 +670,7 @@ ALTER TABLE `egresos`
 -- AUTO_INCREMENT de la tabla `historial_accions`
 --
 ALTER TABLE `historial_accions`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
 
 --
 -- AUTO_INCREMENT de la tabla `ingresos`
@@ -681,7 +700,7 @@ ALTER TABLE `partidas`
 -- AUTO_INCREMENT de la tabla `permisos`
 --
 ALTER TABLE `permisos`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT de la tabla `productos`
@@ -717,7 +736,7 @@ ALTER TABLE `unidad_medidas`
 -- AUTO_INCREMENT de la tabla `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- Restricciones para tablas volcadas
