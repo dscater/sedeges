@@ -34,6 +34,7 @@ class User extends Authenticatable
         "tipo",
         "cargo_id",
         "unidad_id",
+        "almacen_id",
         "role_id",
         "fecha_registro",
         "acceso",
@@ -113,6 +114,11 @@ class User extends Authenticatable
     public function unidad()
     {
         return $this->belongsTo(Unidad::class, 'unidad_id');
+    }
+
+    public function almacen()
+    {
+        return $this->belongsTo(Almacen::class, 'almacen_id');
     }
 
     public function role()

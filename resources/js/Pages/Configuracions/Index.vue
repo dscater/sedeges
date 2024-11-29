@@ -126,7 +126,16 @@ onMounted(() => {});
                     props.auth.user.permisos.includes('configuracions.edit')
                 "
             >
-                <button type="submit" class="btn btn-primary">
+                <button
+                    v-if="
+                        props_page.auth?.user.permisos == '*' ||
+                        props_page.auth?.user.permisos.includes(
+                            'configuracions.edit'
+                        )
+                    "
+                    type="submit"
+                    class="btn btn-primary"
+                >
                     Guardar cambios
                 </button>
             </div>

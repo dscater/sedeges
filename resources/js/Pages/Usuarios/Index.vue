@@ -16,15 +16,14 @@ const breadbrums = [
 </script>
 <script setup>
 import { useApp } from "@/composables/useApp";
-import { Head, Link } from "@inertiajs/vue3";
+import { Head, Link, usePage } from "@inertiajs/vue3";
 import { useUsuarios } from "@/composables/usuarios/useUsuarios";
 import { initDataTable } from "@/composables/datatable.js";
 import { ref, onMounted, onBeforeUnmount } from "vue";
 import PanelToolbar from "@/Components/PanelToolbar.vue";
-// import { useMenu } from "@/composables/useMenu";
 import Formulario from "./Formulario.vue";
 import FormPassword from "./FormPassword.vue";
-// const { mobile, identificaDispositivo } = useMenu();
+const { props: props_page } = usePage();
 const { setLoading } = useApp();
 onMounted(() => {
     setTimeout(() => {
@@ -102,21 +101,29 @@ const columns = [
         title: "ACCIONES",
         data: null,
         render: function (data, type, row) {
-            return `
-                <button class="mx-0 rounded-0 btn btn-info password" data-id="${
-                    row.id
-                }"><i class="fa fa-key"></i></button>
-                <button class="mx-0 rounded-0 btn btn-warning editar" data-id="${
-                    row.id
-                }"><i class="fa fa-edit"></i></button>
-                <button class="mx-0 rounded-0 btn btn-danger eliminar"
+            let buttons = ``;
+
+            if (
+                props_page.auth?.user.permisos == "*" ||
+                props_page.auth?.user.permisos.includes("usuarios.edit")
+            ) {
+                buttons += `
+                <button class="mx-0 rounded-0 btn btn-info password" data-id="${row.id}"><i class="fa fa-key"></i></button>
+                <button class="mx-0 rounded-0 btn btn-warning editar" data-id="${row.id}"><i class="fa fa-edit"></i></button>`;
+            }
+            if (
+                props_page.auth?.user.permisos == "*" ||
+                props_page.auth?.user.permisos.includes("usuarios.destroy")
+            ) {
+                buttons += `   <button class="mx-0 rounded-0 btn btn-danger eliminar"
                  data-id="${row.id}" 
                  data-nombre="${row.full_name}" 
                  data-url="${route(
                      "usuarios.destroy",
                      row.id
-                 )}"><i class="fa fa-trash"></i></button>
-            `;
+                 )}"><i class="fa fa-trash"></i></button>`;
+            }
+            return buttons;
         },
     },
 ];
@@ -219,6 +226,12 @@ onBeforeUnmount(() => {
                 <div class="panel-heading">
                     <h4 class="panel-title btn-nuevo">
                         <button
+                            v-if="
+                                props_page.auth?.user.permisos == '*' ||
+                                props_page.auth?.user.permisos.includes(
+                                    'usuarios.create'
+                                )
+                            "
                             type="button"
                             class="btn btn-primary"
                             @click="agregarRegistro"

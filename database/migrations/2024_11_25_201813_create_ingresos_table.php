@@ -17,8 +17,8 @@ return new class extends Migration
             $table->unsignedBigInteger("partida_id")->nullable();
             $table->unsignedBigInteger("unidad_id")->nullable();
             $table->unsignedBigInteger("programa_id")->nullable();
-            $table->string("codigo")->unique();
-            $table->integer("nro");
+            $table->string("codigo")->unique()->nullable();
+            $table->integer("nro")->nullable();
             $table->string("donacion");
             $table->unsignedBigInteger("producto_id");
             $table->unsignedBigInteger("unidad_medida_id");

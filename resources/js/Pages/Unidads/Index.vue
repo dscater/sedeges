@@ -149,6 +149,12 @@ onBeforeUnmount(() => {
                 <div class="panel-heading">
                     <h4 class="panel-title btn-nuevo">
                         <button
+                            v-if="
+                                props_page.auth?.user.permisos == '*' ||
+                                props_page.auth?.user.permisos.includes(
+                                    'unidads.create'
+                                )
+                            "
                             type="button"
                             class="btn btn-primary"
                             @click="agregarRegistro"

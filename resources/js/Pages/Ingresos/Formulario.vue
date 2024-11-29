@@ -33,6 +33,9 @@ const listProductos = ref([]);
 const listUnidadMedidas = ref([]);
 const listUnidads = ref([]);
 const listProgramas = ref([]);
+const oAlmacen = ref(null);
+const oUnidad = ref(null);
+
 watch(
     () => props.open_dialog,
     async (newValue) => {
@@ -48,6 +51,14 @@ watch(
             }
             if (form.id == 0) {
                 form.fecha_ingreso = obtenerFechaActual();
+            }
+            // verificar tipo
+            if (auth.user.tipo == "EXTERNO") {
+                form.almacen_id = auth.user.almacen_id;
+                form.unidad_id = auth.user.unidad_id;
+                console.log(form.almacen_id);
+                getInfoAlmacen(form.almacen_id);
+                getInfoUnidad(form.unidad_id);
             }
         }
     }
@@ -165,6 +176,26 @@ const calculaTotal = () => {
     }
 };
 
+const getInfoAlmacen = (id) => {
+    if (!id) {
+        oAlmacen.value = null;
+        return;
+    }
+    axios.get(route("almacens.show", id)).then((response) => {
+        oAlmacen.value = response.data;
+    });
+};
+
+const getInfoUnidad = (id) => {
+    if (!id) {
+        oUnidad.value = null;
+        return;
+    }
+    axios.get(route("unidads.show", id)).then((response) => {
+        oUnidad.value = response.data;
+    });
+};
+
 const cargarListas = () => {
     cargarAlmacens();
     cargarPartidas();
@@ -201,60 +232,108 @@ onMounted(() => {});
                 <div class="modal-body">
                     <form @submit.prevent="enviarFormulario()">
                         <div class="row">
-                            <div class="col-md-4">
-                                <label>Seleccionar almacén*</label>
-                                <select
-                                    class="form-control"
-                                    :class="{
-                                        'parsley-error':
-                                            form.errors?.almacen_id,
-                                    }"
-                                    v-model="form.almacen_id"
-                                >
-                                    <option value="">- Seleccione -</option>
-                                    <option
-                                        v-for="item in listAlmacens"
-                                        :value="item.id"
+                            <template
+                                v-if="
+                                    auth.user.tipo == 'INTERNO' ||
+                                    auth.user.id == 1
+                                "
+                            >
+                                <div class="col-md-4">
+                                    <label>Seleccionar almacén*</label>
+                                    <select
+                                        class="form-control"
+                                        :class="{
+                                            'parsley-error':
+                                                form.errors?.almacen_id,
+                                        }"
+                                        v-model="form.almacen_id"
                                     >
-                                        {{ item.nombre }}
-                                    </option>
-                                </select>
-                                <ul
-                                    v-if="form.errors?.almacen_id"
-                                    class="parsley-errors-list filled"
-                                >
-                                    <li class="parsley-required">
-                                        {{ form.errors?.almacen_id }}
-                                    </li>
-                                </ul>
-                            </div>
-                            <!-- unidad -->
-                            <div class="col-md-4" v-if="form.almacen_id == 1">
-                                <label>Seleccionar Unidad/Centro*</label>
-                                <select
-                                    class="form-control"
-                                    :class="{
-                                        'parsley-error': form.errors?.unidad_id,
-                                    }"
-                                    v-model="form.unidad_id"
-                                >
-                                    <option value="">- Seleccione -</option>
-                                    <option
-                                        v-for="item in listUnidads"
-                                        :value="item.id"
+                                        <option value="">- Seleccione -</option>
+                                        <option
+                                            v-for="item in listAlmacens"
+                                            :value="item.id"
+                                        >
+                                            {{ item.nombre }}
+                                        </option>
+                                    </select>
+                                    <ul
+                                        v-if="form.errors?.almacen_id"
+                                        class="parsley-errors-list filled"
                                     >
-                                        {{ item.nombre }}
-                                    </option>
-                                </select>
-                                <ul
-                                    v-if="form.errors?.unidad_id"
-                                    class="parsley-errors-list filled"
+                                        <li class="parsley-required">
+                                            {{ form.errors?.almacen_id }}
+                                        </li>
+                                    </ul>
+                                </div>
+                                <!-- unidad -->
+                                <div
+                                    class="col-md-4"
+                                    v-if="form.almacen_id == 1"
                                 >
-                                    <li class="parsley-required">
-                                        {{ form.errors?.unidad_id }}
-                                    </li>
-                                </ul>
-                            </div>
+                                    <label>Seleccionar Unidad/Centro*</label>
+                                    <select
+                                        class="form-control"
+                                        :class="{
+                                            'parsley-error':
+                                                form.errors?.unidad_id,
+                                        }"
+                                        v-model="form.unidad_id"
+                                    >
+                                        <option value="">- Seleccione -</option>
+                                        <option
+                                            v-for="item in listUnidads"
+                                            :value="item.id"
+                                        >
+                                            {{ item.nombre }}
+                                        </option>
+                                    </select>
+                                    <ul
+                                        v-if="form.errors?.unidad_id"
+                                        class="parsley-errors-list filled"
+                                    >
+                                        <li class="parsley-required">
+                                            {{ form.errors?.unidad_id }}
+                                        </li>
+                                    </ul>
+                                </div>
+                            </template>
+                            <template v-else>
+                                <div class="col-md-4">
+                                    <label>Almacén:</label>
+                                    <input
+                                        type="text"
+                                        class="form-control"
+                                        :value="oAlmacen?.nombre"
+                                        readonly
+                                    />
+                                    <ul
+                                        v-if="form.errors?.almacen_id"
+                                        class="parsley-errors-list filled"
+                                    >
+                                        <li class="parsley-required">
+                                            {{ form.errors?.almacen_id }}
+                                        </li>
+                                    </ul>
+                                </div>
+                                <!-- unidad -->
+                                <div class="col-md-4">
+                                    <label>Seleccionar Unidad/Centro*</label>
+                                    <input
+                                        type="text"
+                                        class="form-control"
+                                        :value="oUnidad?.nombre"
+                                        readonly
+                                    />
+                                    <ul
+                                        v-if="form.errors?.unidad_id"
+                                        class="parsley-errors-list filled"
+                                    >
+                                        <li class="parsley-required">
+                                            {{ form.errors?.unidad_id }}
+                                        </li>
+                                    </ul>
+                                </div>
+                            </template>
                             <!-- programas -->
                             <div class="col-md-4" v-if="form.almacen_id == 2">
                                 <label>Seleccionar programa*</label>

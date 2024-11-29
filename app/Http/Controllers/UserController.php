@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Egreso;
+use App\Models\Ingreso;
 use App\Models\Lote;
 use App\Models\User;
 use App\Models\VentaLote;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class UserController extends Controller
 {
@@ -80,36 +83,91 @@ class UserController extends Controller
                 ];
             }
 
-            
-            if ($permisos == '*' || (is_array($permisos) && in_array('almacens1.index', $permisos))) {
+            $user = Auth::user();
+            if ($permisos == '*' || (is_array($permisos) && in_array('almacen1.index', $permisos))) {
+                $ingresos = Ingreso::where("almacen_id", 1);
+                if ($user->tipo == 'EXTERNO') {
+                    $ingresos->where("unidad_id", $user->unidad_id);
+                    $ingresos->where("user_id", $user->id);
+                }
+                $ingresos = $ingresos->sum("total");
+
+                $egresos = Egreso::select("egresos.*")
+                    ->join("ingresos", "ingresos.id", "=", "egresos.ingreso_id")
+                    ->where("egresos.almacen_id", 1);
+                if ($user->tipo == 'EXTERNO') {
+                    $egresos->where("ingresos.unidad_id", $user->unidad_id);
+                    $egresos->where("ingresos.user_id", $user->id);
+                }
+                $egresos = $egresos->sum("egresos.total");
+                $total = $ingresos - $egresos;
                 $array_infos[] = [
                     'label' => 'ALMACÉN CENTROS',
-                    'cantidad' => 0,
+                    'cantidad' => $total,
                     'color' => 'bg-primary',
                     'icon' => "fa-list",
-                    "url" => ""
+                    "link" => true,
+                    "url" => route("almacens.index", 1)
                 ];
             }
 
-            
-            if ($permisos == '*' || (is_array($permisos) && in_array('almacens2.index', $permisos))) {
+
+            if ($permisos == '*' || (is_array($permisos) && in_array('almacen2.index', $permisos))) {
+
+                $ingresos = Ingreso::where("almacen_id", 2);
+                if ($user->tipo == 'EXTERNO') {
+                    $ingresos->where("unidad_id", $user->unidad_id);
+                    $ingresos->where("user_id", $user->id);
+                }
+                $ingresos = $ingresos->sum("total");
+
+                $egresos = Egreso::select("egresos.*")
+                    ->join("ingresos", "ingresos.id", "=", "egresos.ingreso_id")
+                    ->where("egresos.almacen_id", 2);
+                if ($user->tipo == 'EXTERNO') {
+                    $egresos->where("ingresos.unidad_id", $user->unidad_id);
+                    $egresos->where("ingresos.user_id", $user->id);
+                }
+                $egresos = $egresos->sum("egresos.total");
+                $total = $ingresos - $egresos;
+
                 $array_infos[] = [
                     'label' => 'ALMACÉN PROGRAMAS',
-                    'cantidad' => 0,
+                    'cantidad' => $total,
                     'color' => 'bg-warning',
                     'icon' => "fa-list",
-                    "url" => ""
+                    "link" => true,
+                    "url" => route("almacens.index", 2)
                 ];
             }
 
-            
-            if ($permisos == '*' || (is_array($permisos) && in_array('almacens3.index', $permisos))) {
+
+            if ($permisos == '*' || (is_array($permisos) && in_array('almacen3.index', $permisos))) {
+
+                $ingresos = Ingreso::where("almacen_id", 3);
+                if ($user->tipo == 'EXTERNO') {
+                    $ingresos->where("unidad_id", $user->unidad_id);
+                    $ingresos->where("user_id", $user->id);
+                }
+                $ingresos = $ingresos->sum("total");
+
+                $egresos = Egreso::select("egresos.*")
+                    ->join("ingresos", "ingresos.id", "=", "egresos.ingreso_id")
+                    ->where("egresos.almacen_id", 3);
+                if ($user->tipo == 'EXTERNO') {
+                    $egresos->where("ingresos.unidad_id", $user->unidad_id);
+                    $egresos->where("ingresos.user_id", $user->id);
+                }
+                $egresos = $egresos->sum("egresos.total");
+                $total = $ingresos - $egresos;
+
                 $array_infos[] = [
                     'label' => 'ALMACÉN FARMACIAS',
-                    'cantidad' => 0,
+                    'cantidad' => $total,
                     'color' => 'bg-danger',
                     'icon' => "fa-list",
-                    "url" => ""
+                    "link" => true,
+                    "url" => route("almacens.index", 3)
                 ];
             }
         }

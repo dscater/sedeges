@@ -20,6 +20,8 @@ const { oUsuario, limpiarUsuario } = useUsuarios();
 const { getCargos } = useCargos();
 const { getUnidads } = useUnidads();
 const { getRoles } = useRoles();
+
+const listAlmacens = ref([]);
 const accion = ref(props.accion_dialog);
 const dialog = ref(props.open_dialog);
 let form = useForm(oUsuario.value);
@@ -148,6 +150,7 @@ const cerrarDialog = () => {
 const cargarListas = () => {
     cargarCargos();
     cargarUnidads();
+    cargarAlmacens();
     cargarRoles();
 };
 
@@ -156,6 +159,11 @@ const cargarCargos = async () => {
 };
 const cargarUnidads = async () => {
     listUnidads.value = await getUnidads();
+};
+const cargarAlmacens = async () => {
+    axios.get(route("almacens.listado")).then((response) => {
+        listAlmacens.value = response.data.almacens;
+    });
 };
 const cargarRoles = async () => {
     listRoles.value = await getRoles();
@@ -405,6 +413,36 @@ onMounted(() => {
                                 >
                                     <li class="parsley-required">
                                         {{ form.errors?.unidad_id }}
+                                    </li>
+                                </ul>
+                            </div>
+                            <div
+                                class="col-md-4 mt-2"
+                                v-if="form.tipo == 'EXTERNO'"
+                            >
+                                <label>Asignar Almacén*</label>
+                                <select
+                                    class="form-select"
+                                    :class="{
+                                        'parsley-error':
+                                            form.errors?.almacen_id,
+                                    }"
+                                    v-model="form.almacen_id"
+                                >
+                                    <option value="">- Seleccione -</option>
+                                    <option
+                                        v-for="item in listAlmacens"
+                                        :value="item.id"
+                                    >
+                                        {{ item.nombre }}
+                                    </option>
+                                </select>
+                                <ul
+                                    v-if="form.errors?.almacen_id"
+                                    class="parsley-errors-list filled"
+                                >
+                                    <li class="parsley-required">
+                                        {{ form.errors?.almacen_id }}
                                     </li>
                                 </ul>
                             </div>

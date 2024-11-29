@@ -46,6 +46,7 @@ class UsuarioController extends Controller
         "tipo.required" => "Este campo es obligatorio",
         "cargo_id.required" => "Este campo es obligatorio",
         "unidad_id.required" => "Este campo es obligatorio",
+        "almacen_id.required" => "Este campo es obligatorio",
         "role_id.required" => "Este campo es obligatorio",
     ];
 
@@ -112,6 +113,10 @@ class UsuarioController extends Controller
         if ($request->hasFile('foto')) {
             $this->validacion['foto'] = 'image|mimes:jpeg,jpg,png|max:4096';
         }
+        if ($request->tipo == 'EXTERNO') {
+            $this->validacion['almacen_id'] = 'required';
+        }
+
         $request->validate($this->validacion, $this->mensajes);
 
         DB::beginTransaction();
@@ -126,12 +131,32 @@ class UsuarioController extends Controller
                 $cont++;
             } while (User::where('usuario', $nombre_usuario)->get()->first());
 
-            $request['password'] = 'NoNulo';
-            $request['tipo'] = 'DOCTOR';
+            $request['password'] = '';
+            $data_user = [
+                "usuario" => $request["usuario"],
+                "nombre" => mb_strtoupper($request["nombre"]),
+                "paterno" => mb_strtoupper($request["paterno"]),
+                "materno" => mb_strtoupper($request["materno"]),
+                "ci" => $request["ci"],
+                "ci_exp" => $request["ci_exp"],
+                "dir" => mb_strtoupper($request["dir"]),
+                "email" => $request["email"],
+                "fono" => $request["fono"],
+                "password" => "NoNulo",
+                "tipo" => $request["tipo"],
+                "cargo_id" => $request["cargo_id"],
+                "unidad_id" => $request["unidad_id"],
+                "almacen_id" => $request["tipo"] == 'EXTERNO' ? $request["almacen_id"] : NULL,
+                "role_id" => $request["role_id"],
+                "fecha_registro" => date("Y-m-d"),
+                "acceso" => $request["acceso"],
+            ];
+
+            $request['tipo'] = $request->tipo;
             $request['fecha_registro'] = date('Y-m-d');
 
             // crear el Usuario
-            $nuevo_usuario = User::create(array_map('mb_strtoupper', $request->except('foto')));
+            $nuevo_usuario = User::create($data_user);
             $nuevo_usuario->password = Hash::make($request->ci);
             $nuevo_usuario->save();
             if ($request->hasFile('foto')) {
@@ -184,11 +209,33 @@ class UsuarioController extends Controller
         if ($request->hasFile('foto')) {
             $this->validacion['foto'] = 'image|mimes:jpeg,jpg,png|max:4096';
         }
+        if ($request->tipo == 'EXTERNO') {
+            $this->validacion['almacen_id'] = 'required';
+        }
+
         $request->validate($this->validacion, $this->mensajes);
         DB::beginTransaction();
         try {
             $datos_original = HistorialAccion::getDetalleRegistro($user, "users");
-            $user->update(array_map('mb_strtoupper', $request->except('foto')));
+
+            $data_user = [
+                "nombre" => mb_strtoupper($request["nombre"]),
+                "paterno" => mb_strtoupper($request["paterno"]),
+                "materno" => mb_strtoupper($request["materno"]),
+                "ci" => $request["ci"],
+                "ci_exp" => $request["ci_exp"],
+                "dir" => mb_strtoupper($request["dir"]),
+                "email" => $request["email"],
+                "fono" => $request["fono"],
+                "tipo" => $request["tipo"],
+                "cargo_id" => $request["cargo_id"],
+                "unidad_id" => $request["unidad_id"],
+                "almacen_id" => $request["tipo"] == 'EXTERNO' ? $request["almacen_id"] : NULL,
+                "role_id" => $request["role_id"],
+                "acceso" => $request["acceso"],
+            ];
+
+            $user->update($data_user);
             if ($request->hasFile('foto')) {
                 $antiguo = $user->foto;
                 if ($antiguo != 'default.png') {

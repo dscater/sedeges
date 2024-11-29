@@ -255,6 +255,7 @@ onBeforeUnmount(() => {});
                                             <td class="bg2 text-center">
                                                 <template
                                                     v-if="
+                                                        item.egreso &&
                                                         auth &&
                                                         (auth.user.permisos.includes(
                                                             '*'
@@ -286,19 +287,19 @@ onBeforeUnmount(() => {});
                                                 }}</span>
                                             </td>
                                             <td class="bg2">
-                                                {{ item.egreso.costo }}
+                                                {{ item.egreso?.costo }}
                                             </td>
                                             <td class="bg2">
-                                                {{ item.egreso.total }}
+                                                {{ item.egreso?.total }}
                                             </td>
                                             <td class="bg3">
-                                                {{ item.egreso.s_cantidad }}
+                                                {{ item.egreso?.s_cantidad }}
                                             </td>
                                             <td class="bg3">
                                                 {{ item.costo }}
                                             </td>
                                             <td class="bg3">
-                                                {{ item.egreso.s_total }}
+                                                {{ item.egreso?.s_total }}
                                             </td>
                                         </tr>
                                     </template>

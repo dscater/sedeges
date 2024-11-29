@@ -9,6 +9,7 @@ use App\Models\Ingreso;
 use App\Models\Partida;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use PDF;
@@ -186,7 +187,6 @@ class ReporteController extends Controller
             return $pdf->stream('bimestral_detalle.pdf');
         } else {
             // EXCEL
-
             $spreadsheet = new Spreadsheet();
             $spreadsheet->getProperties()
                 ->setCreator("ADMIN")
@@ -292,11 +292,20 @@ class ReporteController extends Controller
                         $sheet->setCellValue('A' . $fila, $partida->nombre);
                         $sheet->mergeCells("A" . $fila . ":C" . $fila);  //COMBINAR CELDAS
                         $sheet->getStyle('A' . $fila . ':C' . $fila)->applyFromArray($this->bodyTabla);
+                        // INGRESOS RANGO FECHAS
                         $ingresos = Ingreso::where('donacion', 'SI');
                         $ingresos->where('almacen_id', $almacen->id);
                         if ($fecha_ini && $fecha_fin) {
                             $ingresos->whereBetween('fecha_registro', [$fecha_ini, $fecha_fin]);
                         }
+
+                        // EXTERNO
+                        $user = Auth::user();
+                        if ($user->tipo == 'EXTERNO') {
+                            $ingresos->where('unidad_id', $user->unidad_id);
+                            $ingresos->where('user_id', $user->id);
+                        }
+
                         $ingresos->where('partida_id', $partida->id);
                         $ingresos = $ingresos->get();
                         $fila++;
@@ -312,6 +321,13 @@ class ReporteController extends Controller
                                     $reg_ingresos->where('fecha_registro', '<', $fecha_ini);
                                     $reg_ingresos->where('partida_id', $partida->id);
                                     $reg_ingresos->where('producto_id', $ingreso->producto_id);
+                                    // EXTERNO
+                                    $user = Auth::user();
+                                    if ($user->tipo == 'EXTERNO') {
+                                        $reg_ingresos->where('unidad_id', $user->unidad_id);
+                                        $reg_ingresos->where('user_id', $user->id);
+                                    }
+
                                     $reg_ingresos = $reg_ingresos->sum('total');
 
                                     $reg_egresos = Ingreso::where('donacion', 'SI')->join(
@@ -324,6 +340,12 @@ class ReporteController extends Controller
                                     $reg_egresos->where('egresos.fecha_registro', '<', $fecha_ini);
                                     $reg_egresos->where('egresos.partida_id', $partida->id);
                                     $reg_egresos->where('egresos.producto_id', $ingreso->producto_id);
+                                    // EXTERNO
+                                    $user = Auth::user();
+                                    if ($user->tipo == 'EXTERNO') {
+                                        $reg_egresos->where('ingresos.unidad_id', $user->unidad_id);
+                                        $reg_egresos->where('ingresos.user_id', $user->id);
+                                    }
                                     $reg_egresos = $reg_egresos->sum('egresos.total');
                                     $saldo = $reg_ingresos - $reg_egresos;
                                 }
@@ -337,26 +359,27 @@ class ReporteController extends Controller
                                 $sheet->setCellValue('I' . $fila, $ingreso->cantidad);
                                 $sheet->setCellValue('J' . $fila, $ingreso->costo);
                                 $sheet->setCellValue('K' . $fila, $ingreso->total);
-                                $sheet->setCellValue('L' . $fila, $ingreso->egreso->cantidad);
-                                $sheet->setCellValue('M' . $fila, $ingreso->egreso->costo);
-                                $sheet->setCellValue('N' . $fila, $ingreso->egreso->total);
-                                $sheet->setCellValue('O' . $fila, $ingreso->egreso->s_cantidad);
+                                $sheet->setCellValue('L' . $fila, $ingreso->egreso ? $ingreso->egreso->cantidad : 0);
+                                $sheet->setCellValue('M' . $fila, $ingreso->egreso ? $ingreso->egreso->costo : 0);
+                                $sheet->setCellValue('N' . $fila, $ingreso->egreso ? $ingreso->egreso->total : 0);
+                                $sheet->setCellValue('O' . $fila, $ingreso->egreso ? $ingreso->egreso->s_cantidad : $ingreso->cantidad);
                                 $sheet->setCellValue('P' . $fila, $ingreso->costo);
-                                $sheet->setCellValue('Q' . $fila, $ingreso->egreso->s_total);
+                                $sheet->setCellValue('Q' . $fila,  $ingreso->egreso ? $ingreso->egreso->s_total : $ingreso->total);
                                 $sheet->getStyle('A' . $fila . ':Q' . $fila)->applyFromArray($this->bodyTabla);
                                 $sheet->getStyle('F' . $fila . ':Q' . $fila)->applyFromArray($this->celdaCenter);
 
                                 // total partridas
                                 $totalp1 += (float) $saldo;
                                 $totalp2 += (float) $ingreso->total;
-                                $totalp3 += (float) $ingreso->egreso->total;
-                                $totalp4 += (float) $ingreso->egreso->s_total;
+                                $totalp3 += $ingreso->egreso ? (float) $ingreso->egreso->total : 0;
+                                $totalp4 += $ingreso->egreso ? (float) $ingreso->egreso->s_total : $ingreso->cantidad;
+                                // Log::debug('DD');
 
                                 // totalgeneral
                                 $total1 += (float) $saldo;
                                 $total2 += (float) $ingreso->total;
-                                $total3 += (float) $ingreso->egreso->total;
-                                $total4 += (float) $ingreso->egreso->s_total;
+                                $total3 += $ingreso->egreso ? (float) $ingreso->egreso->total : 0;
+                                $total4 += $ingreso->egreso ? (float) $ingreso->egreso->s_total : $ingreso->cantidad;
 
                                 $fila++;
                             }
@@ -369,6 +392,14 @@ class ReporteController extends Controller
                                 $reg_ingresos->where('almacen_id', $almacen->id);
                                 $reg_ingresos->where('fecha_registro', '<', $fecha_ini);
                                 $reg_ingresos->where('partida_id', $partida->id);
+
+                                // EXTERNO
+                                $user = Auth::user();
+                                if ($user->tipo == 'EXTERNO') {
+                                    $reg_ingresos->where('unidad_id', $user->unidad_id);
+                                    $reg_ingresos->where('user_id', $user->id);
+                                }
+
                                 $reg_ingresos = $reg_ingresos->get();
                             }
 
@@ -480,6 +511,13 @@ class ReporteController extends Controller
                             $ingresos->whereBetween('fecha_registro', [$fecha_ini, $fecha_fin]);
                         }
                         $ingresos->where('ingresos.partida_id', $partida->id);
+                        // EXTERNO
+                        $user = Auth::user();
+                        if ($user->tipo == 'EXTERNO') {
+                            $ingresos->where('ingresos.unidad_id', $user->unidad_id);
+                            $ingresos->where('ingresos.user_id', $user->id);
+                        }
+
                         $ingresos = $ingresos->sum('total');
 
                         $egresos = Ingreso::where('donacion', 'SI')->join(
@@ -492,12 +530,15 @@ class ReporteController extends Controller
                         if ($fecha_ini && $fecha_fin) {
                             $egresos->whereBetween('egresos.fecha_registro', [$fecha_ini, $fecha_fin]);
                         }
+
+                        if ($user->tipo == 'EXTERNO') {
+                            $egresos->where('ingresos.unidad_id', $user->unidad_id);
+                            $egresos->where('ingresos.user_id', $user->id);
+                        }
                         $egresos->where('egresos.partida_id', $partida->id);
                         $egresos = $egresos->sum('egresos.total');
 
                         $saldo = $ingresos - $egresos;
-
-
 
                         $sheet->setCellValue('A' . $fila, $partida->nro_partida);
                         $sheet->setCellValue('B' . $fila, $partida->nombre);
@@ -636,7 +677,7 @@ class ReporteController extends Controller
                     $sheet->getStyle('A' . $fila . ':Q' . $fila)->getAlignment()->setHorizontal('center');
                     $sheet->getStyle('A' . $fila . ':Q' . $fila)->applyFromArray($this->titulo);
                     $fila++;
-                    $sheet->setCellValue('A' . $fila, "INVENTARIO FÍNOCO VALORADO DE BIENES Y CONSUMO");
+                    $sheet->setCellValue('A' . $fila, "INVENTARIO FÍSICO VALORADO DE BIENES Y CONSUMO");
                     $sheet->mergeCells("A" . $fila . ":Q" . $fila);  //COMBINAR CELDAS
                     $sheet->getStyle('A' . $fila . ':Q' . $fila)->getAlignment()->setHorizontal('center');
                     $sheet->getStyle('A' . $fila . ':Q' . $fila)->applyFromArray($this->titulo);
@@ -709,6 +750,14 @@ class ReporteController extends Controller
                         if ($fecha_ini && $fecha_fin) {
                             $ingresos->whereBetween('fecha_registro', [$fecha_ini, $fecha_fin]);
                         }
+
+                        // EXTERNO
+                        $user = Auth::user();
+                        if ($user->tipo == 'EXTERNO') {
+                            $ingresos->where('unidad_id', $user->unidad_id);
+                            $ingresos->where('user_id', $user->id);
+                        }
+
                         $ingresos->where('partida_id', $partida->id);
                         $ingresos = $ingresos->get();
                         $fila++;
@@ -724,6 +773,12 @@ class ReporteController extends Controller
                                     $reg_ingresos->where('fecha_registro', '<', $fecha_ini);
                                     $reg_ingresos->where('partida_id', $partida->id);
                                     $reg_ingresos->where('producto_id', $ingreso->producto_id);
+                                    // EXTERNO
+                                    $user = Auth::user();
+                                    if ($user->tipo == 'EXTERNO') {
+                                        $reg_ingresos->where('unidad_id', $user->unidad_id);
+                                        $reg_ingresos->where('user_id', $user->id);
+                                    }
                                     $reg_ingresos = $reg_ingresos->sum('total');
 
                                     $reg_egresos = Ingreso::where('donacion', 'NO')->join(
@@ -736,6 +791,12 @@ class ReporteController extends Controller
                                     $reg_egresos->where('egresos.fecha_registro', '<', $fecha_ini);
                                     $reg_egresos->where('egresos.partida_id', $partida->id);
                                     $reg_egresos->where('egresos.producto_id', $ingreso->producto_id);
+                                    // EXTERNO
+                                    $user = Auth::user();
+                                    if ($user->tipo == 'EXTERNO') {
+                                        $reg_egresos->where('ingresos.unidad_id', $user->unidad_id);
+                                        $reg_egresos->where('ingresos.user_id', $user->id);
+                                    }
                                     $reg_egresos = $reg_egresos->sum('egresos.total');
                                     $saldo = $reg_ingresos - $reg_egresos;
                                 }
@@ -752,23 +813,25 @@ class ReporteController extends Controller
                                 $sheet->setCellValue('L' . $fila, $ingreso->egreso->cantidad);
                                 $sheet->setCellValue('M' . $fila, $ingreso->egreso->costo);
                                 $sheet->setCellValue('N' . $fila, $ingreso->egreso->total);
-                                $sheet->setCellValue('O' . $fila, $ingreso->egreso->s_cantidad);
+                                $sheet->setCellValue('O' . $fila, $ingreso->egreso ? $ingreso->egreso->s_cantidad : $ingreso->cantidad);
                                 $sheet->setCellValue('P' . $fila, $ingreso->costo);
-                                $sheet->setCellValue('Q' . $fila, $ingreso->egreso->s_total);
+                                $sheet->setCellValue('Q' . $fila,  $ingreso->egreso ? $ingreso->egreso->s_total : $ingreso->total);
                                 $sheet->getStyle('A' . $fila . ':Q' . $fila)->applyFromArray($this->bodyTabla);
                                 $sheet->getStyle('F' . $fila . ':Q' . $fila)->applyFromArray($this->celdaCenter);
+
 
                                 // total partridas
                                 $totalp1 += (float) $saldo;
                                 $totalp2 += (float) $ingreso->total;
-                                $totalp3 += (float) $ingreso->egreso->total;
-                                $totalp4 += (float) $ingreso->egreso->s_total;
+                                $totalp3 += $ingreso->egreso ? (float) $ingreso->egreso->total : 0;
+                                $totalp4 += $ingreso->egreso ? (float) $ingreso->egreso->s_total : $ingreso->cantidad;
+                                // Log::debug('DD');
 
                                 // totalgeneral
                                 $total1 += (float) $saldo;
                                 $total2 += (float) $ingreso->total;
-                                $total3 += (float) $ingreso->egreso->total;
-                                $total4 += (float) $ingreso->egreso->s_total;
+                                $total3 += $ingreso->egreso ? (float) $ingreso->egreso->total : 0;
+                                $total4 += $ingreso->egreso ? (float) $ingreso->egreso->s_total : $ingreso->cantidad;
 
                                 $fila++;
                             }
@@ -892,6 +955,12 @@ class ReporteController extends Controller
                             $ingresos->whereBetween('fecha_registro', [$fecha_ini, $fecha_fin]);
                         }
                         $ingresos->where('ingresos.partida_id', $partida->id);
+                        // EXTERNO
+                        $user = Auth::user();
+                        if ($user->tipo == 'EXTERNO') {
+                            $ingresos->where('ingresos.unidad_id', $user->unidad_id);
+                            $ingresos->where('ingresos.user_id', $user->id);
+                        }
                         $ingresos = $ingresos->sum('total');
 
                         $egresos = Ingreso::where('donacion', 'NO')->join(
@@ -904,12 +973,17 @@ class ReporteController extends Controller
                         if ($fecha_ini && $fecha_fin) {
                             $egresos->whereBetween('egresos.fecha_registro', [$fecha_ini, $fecha_fin]);
                         }
+
+                        // EXTERNO
+                        if ($user->tipo == 'EXTERNO') {
+                            $egresos->where('ingresos.unidad_id', $user->unidad_id);
+                            $egresos->where('ingresos.user_id', $user->id);
+                        }
+
                         $egresos->where('egresos.partida_id', $partida->id);
                         $egresos = $egresos->sum('egresos.total');
 
                         $saldo = $ingresos - $egresos;
-
-
 
                         $sheet->setCellValue('A' . $fila, $partida->nro_partida);
                         $sheet->setCellValue('B' . $fila, $partida->nombre);
@@ -1082,19 +1156,37 @@ class ReporteController extends Controller
             $total6 = 0;
             $cont = 1;
             foreach ($partidas as $partida) {
-                // POR ALMACENES
+                // POR PARTIDAS
                 $ingresos = Ingreso::select("ingresos.*");
                 if ($fecha_ini && $fecha_fin) {
                     $ingresos->whereBetween('fecha_registro', [$fecha_ini, $fecha_fin]);
                 }
+                // EXTERNO
+                $user = Auth::user();
+                if ($user->tipo == 'EXTERNO') {
+                    $ingresos->where('ingresos.unidad_id', $user->unidad_id);
+                    $ingresos->where('ingresos.user_id', $user->id);
+                }
                 $ingresos->where('partida_id', $partida->id);
                 $ingresos = $ingresos->sum('total');
-                $egresos = Egreso::select("egresos.*");
+
+                $egresos = Egreso::select('egresos.*')->join(
+                    'ingresos',
+                    'ingresos.id',
+                    '=',
+                    'egresos.ingreso_id',
+                );
                 if ($fecha_ini && $fecha_fin) {
-                    $egresos->whereBetween('fecha_registro', [$fecha_ini, $fecha_fin]);
+                    $egresos->whereBetween('egresos.fecha_registro', [$fecha_ini, $fecha_fin]);
                 }
-                $egresos->where('partida_id', $partida->id);
-                $egresos = $egresos->sum('total');
+                // EXTERNO
+                if ($user->tipo == 'EXTERNO') {
+                    $egresos->where('ingresos.unidad_id', $user->unidad_id);
+                    $egresos->where('ingresos.user_id', $user->id);
+                }
+
+                $egresos->where('egresos.partida_id', $partida->id);
+                $egresos = $egresos->sum('egresos.total');
 
                 $c = $ingresos - $egresos;
                 $d = $ingresos - $egresos + $c;

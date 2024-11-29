@@ -16,7 +16,6 @@ class IngresoController extends Controller
 {
     public $validacion = [
         "almacen_id" => "required",
-        "partida_id" => "required",
         "donacion" => "required",
         "producto_id" => "required",
         "unidad_medida_id" => "required",
@@ -47,7 +46,15 @@ class IngresoController extends Controller
 
     public function listado()
     {
-        $ingresos = Ingreso::select("ingresos.*")->get();
+        $ingresos = Ingreso::select("ingresos.*");
+        $user = Auth::user();
+        if ($user->tipo == 'EXTERNO') {
+            $ingresos->where("almacen_id", $user->almacen_id);
+            $ingresos->where("unidad_id", $user->unidad_id);
+            $ingresos->where("user_id", $user->id);
+        }
+
+        $ingresos = $ingresos->get();
         return response()->JSON([
             "ingresos" => $ingresos
         ]);
@@ -57,8 +64,6 @@ class IngresoController extends Controller
     {
 
         $permisos = Auth::user()->permisos;
-
-
         $almacen_id = $request->almacen_id;
         $partida_id = $request->partida_id;
 
@@ -102,6 +107,13 @@ class IngresoController extends Controller
     public function api(Request $request)
     {
         $ingresos = Ingreso::with(["almacen", "partida", "producto", "unidad_medida", "unidad", "programa"])->select("ingresos.*");
+        $user = Auth::user();
+        if ($user->tipo == 'EXTERNO') {
+            $ingresos->where("almacen_id", $user->almacen_id);
+            $ingresos->where("unidad_id", $user->unidad_id);
+            $ingresos->where("user_id", $user->id);
+        }
+
         $ingresos = $ingresos->orderBy("id", "desc")->get();
         return response()->JSON(["data" => $ingresos]);
     }
@@ -129,20 +141,21 @@ class IngresoController extends Controller
         if ($request->almacen_id == 2) {
             $this->validacion["programa_id"] = "required";
         }
-
+        if (Auth::user()->tipo != 'EXTERNO') {
+            $this->validacion["partida_id"] = "required";
+        }
         $request->validate($this->validacion, $this->mensajes);
         DB::beginTransaction();
         try {
             // crear la ingreso
             $array_codigo = Ingreso::getCodigoIngresoPartida($request["partida_id"]);
-
             $data_ingreso = [
                 "almacen_id" => $request["almacen_id"],
                 "partida_id" => NULL,
                 "unidad_id" => NULL,
                 "programa_id" => NULL,
-                "codigo" => $array_codigo[0],
-                "nro" => $array_codigo[1],
+                "codigo" => Auth::user()->tipo != 'EXTERNO' ?  $array_codigo[0] : NULL,
+                "nro" => Auth::user()->tipo != 'EXTERNO' ? $array_codigo[1] : NULL,
                 "donacion" => $request["donacion"],
                 "producto_id" => $request["producto_id"],
                 "unidad_medida_id" => $request["unidad_medida_id"],
@@ -206,8 +219,10 @@ class IngresoController extends Controller
         $request->validate($this->validacion, $this->mensajes);
         DB::beginTransaction();
         try {
-
+            $array_codigo = Ingreso::getCodigoIngresoPartida($request["partida_id"]);
             $data_ingreso = [
+                "codigo" => Auth::user()->tipo != 'EXTERNO' && $ingreso->codigo == NULL ?  $array_codigo[0] : NULL,
+                "nro" => Auth::user()->tipo != 'EXTERNO' && $ingreso->codigo == NULL ? $array_codigo[1] : NULL,
                 "almacen_id" => $request["almacen_id"],
                 "partida_id" => NULL,
                 "unidad_id" => NULL,

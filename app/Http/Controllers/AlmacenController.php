@@ -3,9 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\Almacen;
+use App\Models\Egreso;
+use App\Models\Ingreso;
+use App\Models\Producto;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Inertia\Inertia;
 
 class AlmacenController extends Controller
 {
@@ -20,6 +24,70 @@ class AlmacenController extends Controller
             "almacens" => $almacens
         ]);
     }
+
+    public function index(Almacen $almacen)
+    {
+        return Inertia::render("Almacens/Index", compact("almacen"));
+    }
+    public function productos(Almacen $almacen)
+    {
+        $data = [];
+        $productos = Producto::all();
+
+        $user = Auth::user();
+
+        foreach ($productos as $key => $producto) {
+            $ingresos = Ingreso::where("almacen_id", $almacen->id)
+                ->where("producto_id", $producto->id);
+            if ($user->tipo == 'EXTERNO') {
+                $ingresos->where("unidad_id", $user->unidad_id);
+                $ingresos->where("user_id", $user->id);
+            }
+            $ingresos = $ingresos->sum("cantidad");
+
+            $egresos = Egreso::select("egresos.*")
+                ->join("ingresos", "ingresos.id", "=", "egresos.ingreso_id")
+                ->where("egresos.almacen_id", $almacen->id)
+                ->where("egresos.producto_id", $producto->id);
+            if ($user->tipo == 'EXTERNO') {
+                $egresos->where("ingresos.unidad_id", $user->unidad_id);
+                $egresos->where("ingresos.user_id", $user->id);
+            }
+            $egresos = $egresos->sum("egresos.cantidad");
+            $total_cantidad = $ingresos - $egresos;
+
+            $ingresos = Ingreso::where("almacen_id", $almacen->id)
+                ->where("producto_id", $producto->id);
+            if ($user->tipo == 'EXTERNO') {
+                $ingresos->where("unidad_id", $user->unidad_id);
+                $ingresos->where("user_id", $user->id);
+            }
+            $ingresos = $ingresos->sum("total");
+
+            $egresos = Egreso::select("egresos.*")
+                ->join("ingresos", "ingresos.id", "=", "egresos.ingreso_id")
+                ->where("egresos.almacen_id", $almacen->id)
+                ->where("egresos.producto_id", $producto->id);
+            if ($user->tipo == 'EXTERNO') {
+                $egresos->where("ingresos.unidad_id", $user->unidad_id);
+                $egresos->where("ingresos.user_id", $user->id);
+            }
+            $egresos = $egresos->sum("egresos.total");
+            $total_bs = $ingresos - $egresos;
+
+            $data[] = [
+                "nro" => ($key + 1),
+                "nombre" => $producto->nombre,
+                "ingresos" => $ingresos,
+                "egresos" => $egresos,
+                "stock" => $total_cantidad,
+                "total_bs" => $total_bs,
+            ];
+        }
+
+        return response()->JSON(["data" => $data]);
+    }
+
 
     public static function getIdAlmacensPermiso($user)
     {
@@ -38,6 +106,18 @@ class AlmacenController extends Controller
                 $id_almacens[] = 3;
             }
         }
+        $user = Auth::user();
+        if ($user->tipo == 'EXTERNO') {
+            if (!in_array($user->almacen_id, $id_almacens)) {
+                $id_almacens[] = $user->almacen_id;
+            }
+        }
+
         return $id_almacens;
+    }
+
+    public function show(Almacen $almacen)
+    {
+        return response()->JSON($almacen);
     }
 }

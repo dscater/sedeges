@@ -84,14 +84,17 @@ class Ingreso extends Model
     public static function getCodigoIngresoPartida($partida_id)
     {
         $partida = Partida::find($partida_id);
-        $ultimo = Ingreso::where("partida_id", $partida_id)->get()->last();
-        $nro = 1;
-        if ($ultimo) {
-            $nro = (int)$ultimo->nro + 1;
-        }
-        $codigo = $partida->abreviatura . '-' . $nro;
+        $codigo = NULL;
+        $nro = NULL;
+        if ($partida) {
+            $ultimo = Ingreso::where("partida_id", $partida_id)->get()->last();
+            $nro = 1;
+            if ($ultimo) {
+                $nro = (int)$ultimo->nro + 1;
+            }
+            $codigo = $partida->abreviatura . '-' . $nro;
 
+        }
         return [$codigo, $nro];
     }
-
 }

@@ -27,6 +27,7 @@ return new class extends Migration
             $table->string("tipo");
             $table->unsignedBigInteger("cargo_id")->nullable();
             $table->unsignedBigInteger("unidad_id")->nullable();
+            $table->unsignedBigInteger("almacen_id")->nullable();
             $table->unsignedBigInteger("role_id")->nullable();
             $table->date("fecha_registro");
             $table->integer("acceso");

@@ -209,7 +209,7 @@
                     <th rowspan="2">DONACIONES GESTIÓN <br />(d)</th>
                 @endif
                 <th rowspan="2">POR PAGAR (d)</th>
-                <th rowspan="2">DIFERENCIA<br/>a-b+c-d-e=( )</th>
+                <th rowspan="2">DIFERENCIA<br />a-b+c-d-e=( )</th>
             </tr>
             <tr>
                 <th>BIENES DE CONSUMO ADQUIRIDOS<br />(a)</th>
@@ -228,19 +228,38 @@
             @endphp
             @foreach ($partidas as $partida)
                 @php
-                    // POR ALMACENES
-                    $ingresos = App\Models\Ingreso::select("ingresos.*");
+                    // POR PARTIDAS
+                    $ingresos = App\Models\Ingreso::select('ingresos.*');
                     if ($fecha_ini && $fecha_fin) {
                         $ingresos->whereBetween('fecha_registro', [$fecha_ini, $fecha_fin]);
                     }
+                    // EXTERNO
+                    $user = Auth::user();
+                    if ($user->tipo == 'EXTERNO') {
+                        $ingresos->where('ingresos.unidad_id', $user->unidad_id);
+                        $ingresos->where('ingresos.user_id', $user->id);
+                    }
+
                     $ingresos->where('partida_id', $partida->id);
                     $ingresos = $ingresos->sum('total');
-                    $egresos = App\Models\Egreso::select("egresos.*");
+
+                    $egresos = App\Models\Egreso::select('egresos.*')->join(
+                        'ingresos',
+                        'ingresos.id',
+                        '=',
+                        'egresos.ingreso_id',
+                    );
                     if ($fecha_ini && $fecha_fin) {
-                        $egresos->whereBetween('fecha_registro', [$fecha_ini, $fecha_fin]);
+                        $egresos->whereBetween('egresos.fecha_registro', [$fecha_ini, $fecha_fin]);
                     }
-                    $egresos->where('partida_id', $partida->id);
-                    $egresos = $egresos->sum('total');
+                    // EXTERNO
+                    if ($user->tipo == 'EXTERNO') {
+                        $egresos->where('ingresos.unidad_id', $user->unidad_id);
+                        $egresos->where('ingresos.user_id', $user->id);
+                    }
+
+                    $egresos->where('egresos.partida_id', $partida->id);
+                    $egresos = $egresos->sum('egresos.total');
 
                     $c = $ingresos - $egresos;
                     $d = $ingresos - $egresos + $c;

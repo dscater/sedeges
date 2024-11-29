@@ -17,6 +17,7 @@ const oUsuario = ref({
     tipo: "",
     cargo_id: "",
     unidad_id: "",
+    almacen_id: "",
     role_id: "",
     acceso: 0 + "",
     _method: "POST",
@@ -162,6 +163,7 @@ export const useUsuarios = () => {
             oUsuario.value.tipo = item.tipo;
             oUsuario.value.cargo_id = item.cargo_id;
             oUsuario.value.unidad_id = item.unidad_id;
+            oUsuario.value.almacen_id = item.almacen_id;
             oUsuario.value.role_id = item.role_id;
             oUsuario.value.acceso = item.acceso + "";
             oUsuario.value._method = "PUT";
@@ -185,6 +187,7 @@ export const useUsuarios = () => {
         oUsuario.value.tipo = "";
         oUsuario.value.cargo_id = "";
         oUsuario.value.unidad_id = "";
+        oUsuario.value.almacen = "";
         oUsuario.value.role_id = "";
         oUsuario.value.acceso = 0 + "";
         oUsuario.value._method = "POST";

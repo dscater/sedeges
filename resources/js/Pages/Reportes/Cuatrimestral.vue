@@ -2,6 +2,7 @@
 import { useApp } from "@/composables/useApp";
 import { computed, onMounted, ref } from "vue";
 import { Head, usePage } from "@inertiajs/vue3";
+const { user } = usePage().props.auth;
 
 const obtenerFechaActual = () => {
     const fecha = new Date();
@@ -12,7 +13,7 @@ const obtenerFechaActual = () => {
 };
 
 const form = ref({
-    almacen_id: "todos",
+    almacen_id: user.tipo == "EXTERNO" ? user.almacen_id : "todos",
     fecha_ini: obtenerFechaActual(),
     fecha_fin: obtenerFechaActual(),
     formato: "detalle",
@@ -91,7 +92,12 @@ onMounted(() => {
                                     v-model="form.almacen_id"
                                     class="form-control"
                                 >
-                                    <option value="todos">TODOS</option>
+                                    <option
+                                        value="todos"
+                                        v-if="user.tipo != 'EXTERNO'"
+                                    >
+                                        TODOS
+                                    </option>
                                     <option
                                         v-for="item in listAlmacens"
                                         :value="item.id"

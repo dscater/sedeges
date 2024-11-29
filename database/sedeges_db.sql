@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost:3306
--- Tiempo de generación: 29-11-2024 a las 16:56:29
+-- Tiempo de generación: 29-11-2024 a las 23:45:00
 -- Versión del servidor: 8.0.30
 -- Versión de PHP: 8.2.22
 
@@ -116,7 +116,8 @@ INSERT INTO `egresos` (`id`, `ingreso_id`, `almacen_id`, `partida_id`, `producto
 (1, 2, 1, 1, 2, 300, 20.00, 6000.00, '2024-11-28', '2024-11-29 00:04:13', '2024-11-29 00:40:51'),
 (2, 1, 1, 1, 1, 50, 40.00, 2000.00, '2024-11-28', '2024-11-29 00:04:13', '2024-11-29 19:36:44'),
 (3, 3, 2, 2, 1, 200, 45.00, 9000.00, '2024-11-28', '2024-11-29 00:42:03', '2024-11-29 00:42:03'),
-(4, 4, 1, 1, 3, 500, 20.00, 10000.00, '2024-11-28', '2024-11-29 00:42:52', '2024-11-29 19:36:42');
+(4, 4, 1, 1, 3, 500, 20.00, 10000.00, '2024-11-28', '2024-11-29 00:42:52', '2024-11-29 19:36:42'),
+(5, 5, 1, 2, 1, 157, 50.00, 7850.00, '2024-11-29', '2024-11-30 03:44:51', '2024-11-30 03:44:51');
 
 -- --------------------------------------------------------
 
@@ -171,7 +172,17 @@ INSERT INTO `historial_accions` (`id`, `user_id`, `accion`, `descripcion`, `dato
 (26, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN ROLE', 'id: 3<br/>nombre: ALMACÉN<br/>permisos: 0<br/>usuarios: <br/>created_at: 2024-11-28 20:56:05<br/>updated_at: 2024-11-28 20:56:05<br/>', NULL, 'ROLES', '2024-11-28', '20:56:05', '2024-11-29 00:56:05', '2024-11-29 00:56:05'),
 (27, 1, 'MODIFICACIÓN', 'EL USUARIO admin MODIFICÓ UN INGRESO', 'id: 1<br/>almacen_id: 1<br/>partida_id: 1<br/>unidad_id: 1<br/>programa_id: <br/>codigo: PAU-1<br/>nro: 1<br/>donacion: NO<br/>producto_id: 1<br/>unidad_medida_id: 1<br/>cantidad: 100<br/>costo: 40.00<br/>total: 4000.00<br/>fecha_ingreso: 2024-11-28<br/>fecha_registro: 2024-11-28<br/>user_id: 1<br/>created_at: 2024-11-28 19:02:26<br/>updated_at: 2024-11-28 19:07:25<br/>', 'id: 1<br/>almacen_id: 1<br/>partida_id: 1<br/>unidad_id: 1<br/>programa_id: <br/>codigo: PAU-1<br/>nro: 1<br/>donacion: SI<br/>producto_id: 1<br/>unidad_medida_id: 1<br/>cantidad: 100<br/>costo: 40.00<br/>total: 4000.00<br/>fecha_ingreso: 2024-11-28<br/>fecha_registro: 2024-11-28<br/>user_id: 1<br/>created_at: 2024-11-28 19:02:26<br/>updated_at: 2024-11-28 21:39:50<br/>', 'INGRESOS', '2024-11-28', '21:39:50', '2024-11-29 01:39:50', '2024-11-29 01:39:50'),
 (28, 1, 'MODIFICACIÓN', 'EL USUARIO admin MODIFICÓ UN INGRESO', 'id: 2<br/>almacen_id: 1<br/>partida_id: 1<br/>unidad_id: 1<br/>programa_id: <br/>codigo: PAU-2<br/>nro: 2<br/>donacion: NO<br/>producto_id: 2<br/>unidad_medida_id: 1<br/>cantidad: 300<br/>costo: 20.00<br/>total: 6000.00<br/>fecha_ingreso: 2024-11-28<br/>fecha_registro: 2024-11-28<br/>user_id: 1<br/>created_at: 2024-11-28 19:05:24<br/>updated_at: 2024-11-28 19:05:24<br/>', 'id: 2<br/>almacen_id: 1<br/>partida_id: 1<br/>unidad_id: 1<br/>programa_id: <br/>codigo: PAU-2<br/>nro: 2<br/>donacion: SI<br/>producto_id: 2<br/>unidad_medida_id: 1<br/>cantidad: 300<br/>costo: 20.00<br/>total: 6000.00<br/>fecha_ingreso: 2024-11-28<br/>fecha_registro: 2024-11-28<br/>user_id: 1<br/>created_at: 2024-11-28 19:05:24<br/>updated_at: 2024-11-28 21:39:54<br/>', 'INGRESOS', '2024-11-28', '21:39:54', '2024-11-29 01:39:54', '2024-11-29 01:39:54'),
-(29, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN USUARIO', 'id: 3<br/>usuario: CMARTINES<br/>nombre: CARLOS<br/>paterno: MARTINES<br/>materno: PAREDES<br/>ci: 2222<br/>ci_exp: LP<br/>dir: ZONA LOS OLIVOS<br/>email: CARLOS@GMAIL.COM<br/>fono: 777777<br/>password: $2y$12$5Od4Mg4s7778FMtVsfTSYeD.blo/B//MxzlfMfyoUZVov.PAIcxra<br/>foto: <br/>tipo: DOCTOR<br/>cargo_id: 2<br/>unidad_id: 2<br/>role_id: 3<br/>fecha_registro: 2024-11-29<br/>acceso: 1<br/>status: <br/>created_at: 2024-11-29 16:38:12<br/>updated_at: 2024-11-29 16:38:12<br/>', NULL, 'USUARIOS', '2024-11-29', '16:38:12', '2024-11-29 20:38:12', '2024-11-29 20:38:12');
+(29, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN USUARIO', 'id: 3<br/>usuario: CMARTINES<br/>nombre: CARLOS<br/>paterno: MARTINES<br/>materno: PAREDES<br/>ci: 2222<br/>ci_exp: LP<br/>dir: ZONA LOS OLIVOS<br/>email: CARLOS@GMAIL.COM<br/>fono: 777777<br/>password: $2y$12$5Od4Mg4s7778FMtVsfTSYeD.blo/B//MxzlfMfyoUZVov.PAIcxra<br/>foto: <br/>tipo: DOCTOR<br/>cargo_id: 2<br/>unidad_id: 2<br/>role_id: 3<br/>fecha_registro: 2024-11-29<br/>acceso: 1<br/>status: <br/>created_at: 2024-11-29 16:38:12<br/>updated_at: 2024-11-29 16:38:12<br/>', NULL, 'USUARIOS', '2024-11-29', '16:38:12', '2024-11-29 20:38:12', '2024-11-29 20:38:12'),
+(30, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN USUARIO', 'id: 4<br/>usuario: MPOLO<br/>nombre: MARCO<br/>paterno: POLO<br/>materno: <br/>ci: 3333<br/>ci_exp: LP<br/>dir: LOS OLIVOS<br/>email: <br/>fono: 67676767<br/>password: $2y$12$tDcC3LnN6kaPBkhkDweEoeNRbC6edaXBOyfVjUpIenEvM0Xw2YFOW<br/>foto: 1732917793_MPOLO.jpg<br/>tipo: EXTERNO<br/>cargo_id: 1<br/>unidad_id: 1<br/>almacen_id: 3<br/>role_id: 3<br/>fecha_registro: 2024-11-29<br/>acceso: 1<br/>status: <br/>created_at: 2024-11-29 22:03:13<br/>updated_at: 2024-11-29 22:03:13<br/>', NULL, 'USUARIOS', '2024-11-29', '22:03:13', '2024-11-30 02:03:13', '2024-11-30 02:03:13'),
+(31, 1, 'MODIFICACIÓN', 'EL USUARIO admin MODIFICÓ UN USUARIO', 'id: 4<br/>usuario: MPOLO<br/>nombre: MARCO<br/>paterno: POLO<br/>materno: <br/>ci: 3333<br/>ci_exp: LP<br/>dir: LOS OLIVOS<br/>email: <br/>fono: 67676767<br/>password: $2y$12$tDcC3LnN6kaPBkhkDweEoeNRbC6edaXBOyfVjUpIenEvM0Xw2YFOW<br/>foto: 1732917793_MPOLO.jpg<br/>tipo: EXTERNO<br/>cargo_id: 1<br/>unidad_id: 1<br/>almacen_id: 3<br/>role_id: 3<br/>fecha_registro: 2024-11-29<br/>acceso: 1<br/>status: 1<br/>created_at: 2024-11-29 22:03:13<br/>updated_at: 2024-11-29 22:03:13<br/>', 'id: 4<br/>usuario: MPOLO<br/>nombre: MARCO<br/>paterno: POLO<br/>materno: <br/>ci: 3333<br/>ci_exp: LP<br/>dir: LOS OLIVOS<br/>email: marco@gmail.com<br/>fono: 67676767<br/>password: $2y$12$tDcC3LnN6kaPBkhkDweEoeNRbC6edaXBOyfVjUpIenEvM0Xw2YFOW<br/>foto: 1732917793_MPOLO.jpg<br/>tipo: EXTERNO<br/>cargo_id: 1<br/>unidad_id: 1<br/>almacen_id: 3<br/>role_id: 3<br/>fecha_registro: 2024-11-29<br/>acceso: 1<br/>status: 1<br/>created_at: 2024-11-29 22:03:13<br/>updated_at: 2024-11-29 22:04:05<br/>', 'USUARIOS', '2024-11-29', '22:04:05', '2024-11-30 02:04:05', '2024-11-30 02:04:05'),
+(32, 1, 'MODIFICACIÓN', 'EL USUARIO admin MODIFICÓ UN USUARIO', 'id: 4<br/>usuario: MPOLO<br/>nombre: MARCO<br/>paterno: POLO<br/>materno: <br/>ci: 3333<br/>ci_exp: LP<br/>dir: LOS OLIVOS<br/>email: marco@gmail.com<br/>fono: 67676767<br/>password: $2y$12$tDcC3LnN6kaPBkhkDweEoeNRbC6edaXBOyfVjUpIenEvM0Xw2YFOW<br/>foto: 1732917793_MPOLO.jpg<br/>tipo: EXTERNO<br/>cargo_id: 1<br/>unidad_id: 1<br/>almacen_id: 3<br/>role_id: 3<br/>fecha_registro: 2024-11-29<br/>acceso: 1<br/>status: 1<br/>created_at: 2024-11-29 22:03:13<br/>updated_at: 2024-11-29 22:04:05<br/>', 'id: 4<br/>usuario: MPOLO<br/>nombre: MARCO<br/>paterno: POLO<br/>materno: <br/>ci: 3333<br/>ci_exp: LP<br/>dir: LOS OLIVOS<br/>email: marco@gmail.com<br/>fono: 67676767<br/>password: $2y$12$tDcC3LnN6kaPBkhkDweEoeNRbC6edaXBOyfVjUpIenEvM0Xw2YFOW<br/>foto: 1732917793_MPOLO.jpg<br/>tipo: INTERNO<br/>cargo_id: 1<br/>unidad_id: 1<br/>almacen_id: <br/>role_id: 3<br/>fecha_registro: 2024-11-29<br/>acceso: 1<br/>status: 1<br/>created_at: 2024-11-29 22:03:13<br/>updated_at: 2024-11-29 22:04:39<br/>', 'USUARIOS', '2024-11-29', '22:04:39', '2024-11-30 02:04:39', '2024-11-30 02:04:39'),
+(33, 1, 'MODIFICACIÓN', 'EL USUARIO admin MODIFICÓ UN USUARIO', 'id: 4<br/>usuario: MPOLO<br/>nombre: MARCO<br/>paterno: POLO<br/>materno: <br/>ci: 3333<br/>ci_exp: LP<br/>dir: LOS OLIVOS<br/>email: marco@gmail.com<br/>fono: 67676767<br/>password: $2y$12$tDcC3LnN6kaPBkhkDweEoeNRbC6edaXBOyfVjUpIenEvM0Xw2YFOW<br/>foto: 1732917793_MPOLO.jpg<br/>tipo: INTERNO<br/>cargo_id: 1<br/>unidad_id: 1<br/>almacen_id: <br/>role_id: 3<br/>fecha_registro: 2024-11-29<br/>acceso: 1<br/>status: 1<br/>created_at: 2024-11-29 22:03:13<br/>updated_at: 2024-11-29 22:04:39<br/>', 'id: 4<br/>usuario: MPOLO<br/>nombre: MARCO<br/>paterno: POLO<br/>materno: <br/>ci: 3333<br/>ci_exp: LP<br/>dir: LOS OLIVOS<br/>email: marco@gmail.com<br/>fono: 67676767<br/>password: $2y$12$tDcC3LnN6kaPBkhkDweEoeNRbC6edaXBOyfVjUpIenEvM0Xw2YFOW<br/>foto: 1732917793_MPOLO.jpg<br/>tipo: EXTERNO<br/>cargo_id: 1<br/>unidad_id: 1<br/>almacen_id: 3<br/>role_id: 3<br/>fecha_registro: 2024-11-29<br/>acceso: 1<br/>status: 1<br/>created_at: 2024-11-29 22:03:13<br/>updated_at: 2024-11-29 22:04:55<br/>', 'USUARIOS', '2024-11-29', '22:04:55', '2024-11-30 02:04:55', '2024-11-30 02:04:55'),
+(34, 1, 'MODIFICACIÓN', 'EL USUARIO admin MODIFICÓ UN USUARIO', 'id: 4<br/>usuario: MPOLO<br/>nombre: MARCO<br/>paterno: POLO<br/>materno: <br/>ci: 3333<br/>ci_exp: LP<br/>dir: LOS OLIVOS<br/>email: marco@gmail.com<br/>fono: 67676767<br/>password: $2y$12$tDcC3LnN6kaPBkhkDweEoeNRbC6edaXBOyfVjUpIenEvM0Xw2YFOW<br/>foto: 1732917793_MPOLO.jpg<br/>tipo: EXTERNO<br/>cargo_id: 1<br/>unidad_id: 1<br/>almacen_id: 3<br/>role_id: 3<br/>fecha_registro: 2024-11-29<br/>acceso: 1<br/>status: 1<br/>created_at: 2024-11-29 22:03:13<br/>updated_at: 2024-11-29 22:04:55<br/>', 'id: 4<br/>usuario: MPOLO<br/>nombre: MARCO<br/>paterno: POLO<br/>materno: <br/>ci: 3333<br/>ci_exp: LP<br/>dir: LOS OLIVOS<br/>email: marco@gmail.com<br/>fono: 67676767<br/>password: $2y$12$tDcC3LnN6kaPBkhkDweEoeNRbC6edaXBOyfVjUpIenEvM0Xw2YFOW<br/>foto: 1732917793_MPOLO.jpg<br/>tipo: EXTERNO<br/>cargo_id: 1<br/>unidad_id: 1<br/>almacen_id: 3<br/>role_id: 3<br/>fecha_registro: 2024-11-29<br/>acceso: 1<br/>status: 1<br/>created_at: 2024-11-29 22:03:13<br/>updated_at: 2024-11-29 22:04:55<br/>', 'USUARIOS', '2024-11-29', '22:05:07', '2024-11-30 02:05:07', '2024-11-30 02:05:07'),
+(35, 1, 'MODIFICACIÓN', 'EL USUARIO admin MODIFICÓ UN USUARIO', 'id: 3<br/>usuario: CMARTINES<br/>nombre: CARLOS<br/>paterno: MARTINES<br/>materno: PAREDES<br/>ci: 2222<br/>ci_exp: LP<br/>dir: ZONA LOS OLIVOS<br/>email: CARLOS@GMAIL.COM<br/>fono: 777777<br/>password: $2y$12$5Od4Mg4s7778FMtVsfTSYeD.blo/B//MxzlfMfyoUZVov.PAIcxra<br/>foto: <br/>tipo: EXTERNO<br/>cargo_id: 2<br/>unidad_id: 2<br/>almacen_id: <br/>role_id: 3<br/>fecha_registro: 2024-11-29<br/>acceso: 1<br/>status: 1<br/>created_at: 2024-11-29 16:38:12<br/>updated_at: 2024-11-29 16:38:12<br/>', 'id: 3<br/>usuario: CMARTINES<br/>nombre: CARLOS<br/>paterno: MARTINES<br/>materno: PAREDES<br/>ci: 2222<br/>ci_exp: LP<br/>dir: ZONA LOS OLIVOS<br/>email: CARLOS@GMAIL.COM<br/>fono: 777777<br/>password: $2y$12$5Od4Mg4s7778FMtVsfTSYeD.blo/B//MxzlfMfyoUZVov.PAIcxra<br/>foto: <br/>tipo: EXTERNO<br/>cargo_id: 2<br/>unidad_id: 2<br/>almacen_id: 1<br/>role_id: 3<br/>fecha_registro: 2024-11-29<br/>acceso: 1<br/>status: 1<br/>created_at: 2024-11-29 16:38:12<br/>updated_at: 2024-11-29 22:10:21<br/>', 'USUARIOS', '2024-11-29', '22:10:21', '2024-11-30 02:10:21', '2024-11-30 02:10:21'),
+(36, 1, 'MODIFICACIÓN', 'EL USUARIO admin MODIFICÓ UN USUARIO', 'id: 3<br/>usuario: CMARTINES<br/>nombre: CARLOS<br/>paterno: MARTINES<br/>materno: PAREDES<br/>ci: 2222<br/>ci_exp: LP<br/>dir: ZONA LOS OLIVOS<br/>email: CARLOS@GMAIL.COM<br/>fono: 777777<br/>password: $2y$12$5Od4Mg4s7778FMtVsfTSYeD.blo/B//MxzlfMfyoUZVov.PAIcxra<br/>foto: <br/>tipo: EXTERNO<br/>cargo_id: 2<br/>unidad_id: 2<br/>almacen_id: 1<br/>role_id: 3<br/>fecha_registro: 2024-11-29<br/>acceso: 1<br/>status: 1<br/>created_at: 2024-11-29 16:38:12<br/>updated_at: 2024-11-29 22:10:21<br/>', 'id: 3<br/>usuario: CMARTINES<br/>nombre: CARLOS<br/>paterno: MARTINES<br/>materno: PAREDES<br/>ci: 2222<br/>ci_exp: LP<br/>dir: ZONA LOS OLIVOS<br/>email: CARLOS@GMAIL.COM<br/>fono: 777777<br/>password: $2y$12$5Od4Mg4s7778FMtVsfTSYeD.blo/B//MxzlfMfyoUZVov.PAIcxra<br/>foto: <br/>tipo: EXTERNO<br/>cargo_id: 2<br/>unidad_id: 2<br/>almacen_id: 2<br/>role_id: 3<br/>fecha_registro: 2024-11-29<br/>acceso: 1<br/>status: 1<br/>created_at: 2024-11-29 16:38:12<br/>updated_at: 2024-11-29 22:15:27<br/>', 'USUARIOS', '2024-11-29', '22:15:27', '2024-11-30 02:15:27', '2024-11-30 02:15:27'),
+(37, 1, 'MODIFICACIÓN', 'EL USUARIO admin MODIFICÓ UN USUARIO', 'id: 3<br/>usuario: CMARTINES<br/>nombre: CARLOS<br/>paterno: MARTINES<br/>materno: PAREDES<br/>ci: 2222<br/>ci_exp: LP<br/>dir: ZONA LOS OLIVOS<br/>email: CARLOS@GMAIL.COM<br/>fono: 777777<br/>password: $2y$12$5Od4Mg4s7778FMtVsfTSYeD.blo/B//MxzlfMfyoUZVov.PAIcxra<br/>foto: <br/>tipo: EXTERNO<br/>cargo_id: 2<br/>unidad_id: 2<br/>almacen_id: 2<br/>role_id: 3<br/>fecha_registro: 2024-11-29<br/>acceso: 1<br/>status: 1<br/>created_at: 2024-11-29 16:38:12<br/>updated_at: 2024-11-29 22:15:27<br/>', 'id: 3<br/>usuario: CMARTINES<br/>nombre: CARLOS<br/>paterno: MARTINES<br/>materno: PAREDES<br/>ci: 2222<br/>ci_exp: LP<br/>dir: ZONA LOS OLIVOS<br/>email: CARLOS@GMAIL.COM<br/>fono: 777777<br/>password: $2y$12$5Od4Mg4s7778FMtVsfTSYeD.blo/B//MxzlfMfyoUZVov.PAIcxra<br/>foto: <br/>tipo: EXTERNO<br/>cargo_id: 2<br/>unidad_id: 2<br/>almacen_id: 1<br/>role_id: 3<br/>fecha_registro: 2024-11-29<br/>acceso: 1<br/>status: 1<br/>created_at: 2024-11-29 16:38:12<br/>updated_at: 2024-11-29 22:17:03<br/>', 'USUARIOS', '2024-11-29', '22:17:03', '2024-11-30 02:17:03', '2024-11-30 02:17:03'),
+(38, 3, 'CREACIÓN', 'EL USUARIO CMARTINES REGISTRO UN INGRESO', 'id: 5<br/>almacen_id: 1<br/>partida_id: <br/>unidad_id: 2<br/>programa_id: <br/>codigo: <br/>nro: <br/>donacion: SI<br/>producto_id: 1<br/>unidad_medida_id: 1<br/>cantidad: 157<br/>costo: 50<br/>total: 7850.00<br/>fecha_ingreso: 2024-11-29<br/>fecha_registro: 2024-11-29<br/>user_id: 3<br/>created_at: 2024-11-29 22:21:53<br/>updated_at: 2024-11-29 22:21:53<br/>', NULL, 'INGRESOS', '2024-11-29', '22:21:53', '2024-11-30 02:21:53', '2024-11-30 02:21:53'),
+(39, 1, 'MODIFICACIÓN', 'EL USUARIO admin MODIFICÓ UN INGRESO', 'id: 5<br/>almacen_id: 1<br/>partida_id: <br/>unidad_id: 2<br/>programa_id: <br/>codigo: <br/>nro: <br/>donacion: SI<br/>producto_id: 1<br/>unidad_medida_id: 1<br/>cantidad: 157<br/>costo: 50.00<br/>total: 7850.00<br/>fecha_ingreso: 2024-11-29<br/>fecha_registro: 2024-11-29<br/>user_id: 3<br/>created_at: 2024-11-29 22:21:53<br/>updated_at: 2024-11-29 22:21:53<br/>', 'id: 5<br/>almacen_id: 1<br/>partida_id: 2<br/>unidad_id: 2<br/>programa_id: <br/>codigo: PAD-2<br/>nro: 2<br/>donacion: SI<br/>producto_id: 1<br/>unidad_medida_id: 1<br/>cantidad: 157<br/>costo: 50.00<br/>total: 7850.00<br/>fecha_ingreso: 2024-11-29<br/>fecha_registro: 2024-11-29<br/>user_id: 3<br/>created_at: 2024-11-29 22:21:53<br/>updated_at: 2024-11-29 22:24:31<br/>', 'INGRESOS', '2024-11-29', '22:24:31', '2024-11-30 02:24:31', '2024-11-30 02:24:31');
 
 -- --------------------------------------------------------
 
@@ -185,8 +196,8 @@ CREATE TABLE `ingresos` (
   `partida_id` bigint UNSIGNED DEFAULT NULL,
   `unidad_id` bigint UNSIGNED DEFAULT NULL,
   `programa_id` bigint UNSIGNED DEFAULT NULL,
-  `codigo` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `nro` int NOT NULL,
+  `codigo` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `nro` int DEFAULT NULL,
   `donacion` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `producto_id` bigint UNSIGNED NOT NULL,
   `unidad_medida_id` bigint UNSIGNED NOT NULL,
@@ -208,7 +219,8 @@ INSERT INTO `ingresos` (`id`, `almacen_id`, `partida_id`, `unidad_id`, `programa
 (1, 1, 1, 1, NULL, 'PAU-1', 1, 'SI', 1, 1, 100, 40.00, 4000.00, '2024-11-28', '2024-11-28', 1, '2024-11-28 23:02:26', '2024-11-29 01:39:50'),
 (2, 1, 1, 1, NULL, 'PAU-2', 2, 'SI', 2, 1, 300, 20.00, 6000.00, '2024-11-28', '2024-11-28', 1, '2024-11-28 23:05:24', '2024-11-29 01:39:54'),
 (3, 2, 2, NULL, 1, 'PAD-1', 1, 'NO', 1, 1, 200, 45.00, 9000.00, '2024-11-28', '2024-11-28', 1, '2024-11-28 23:11:17', '2024-11-28 23:11:17'),
-(4, 1, 1, 1, NULL, 'PAU-3', 3, 'NO', 3, 1, 500, 20.00, 10000.00, '2024-11-28', '2024-11-28', 1, '2024-11-29 00:42:45', '2024-11-29 00:42:45');
+(4, 1, 1, 1, NULL, 'PAU-3', 3, 'NO', 3, 1, 500, 20.00, 10000.00, '2024-11-28', '2024-11-28', 1, '2024-11-29 00:42:45', '2024-11-29 00:42:45'),
+(5, 1, 2, 2, NULL, 'PAD-2', 2, 'SI', 1, 1, 157, 50.00, 7850.00, '2024-11-29', '2024-11-29', 3, '2024-11-30 02:21:53', '2024-11-30 02:24:31');
 
 -- --------------------------------------------------------
 
@@ -502,6 +514,7 @@ CREATE TABLE `users` (
   `tipo` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `cargo_id` bigint UNSIGNED DEFAULT NULL,
   `unidad_id` bigint UNSIGNED DEFAULT NULL,
+  `almacen_id` bigint UNSIGNED DEFAULT NULL,
   `role_id` bigint UNSIGNED DEFAULT NULL,
   `fecha_registro` date NOT NULL,
   `acceso` int NOT NULL,
@@ -514,10 +527,11 @@ CREATE TABLE `users` (
 -- Volcado de datos para la tabla `users`
 --
 
-INSERT INTO `users` (`id`, `usuario`, `nombre`, `paterno`, `materno`, `ci`, `ci_exp`, `dir`, `email`, `fono`, `password`, `foto`, `tipo`, `cargo_id`, `unidad_id`, `role_id`, `fecha_registro`, `acceso`, `status`, `created_at`, `updated_at`) VALUES
-(1, 'admin', 'admin', 'admin', '', '0', '', '', '', '', '$2y$12$65d4fgZsvBV5Lc/AxNKh4eoUdbGyaczQ4sSco20feSQANshNLuxSC', NULL, '', 1, 1, 1, '2024-11-25', 1, 1, '2024-11-26 01:00:49', '2024-11-26 01:00:49'),
-(2, 'JPERES', 'JUAN', 'PERES', 'MAMANI', '1111', 'LP', 'LOS OLIVOS', 'JUAN@GMAIL.COM', '7777777', '$2y$12$RC6QphnlynnEK3o4El.p7ukQuDPBlPscBGHgLx4uWqnL3vFRRBE76', '1732574829_JPERES.jpg', 'INTERNO', 1, 1, 2, '2024-11-25', 1, 1, '2024-11-26 02:47:09', '2024-11-26 02:47:13'),
-(3, 'CMARTINES', 'CARLOS', 'MARTINES', 'PAREDES', '2222', 'LP', 'ZONA LOS OLIVOS', 'CARLOS@GMAIL.COM', '777777', '$2y$12$5Od4Mg4s7778FMtVsfTSYeD.blo/B//MxzlfMfyoUZVov.PAIcxra', NULL, 'DOCTOR', 2, 2, 3, '2024-11-29', 1, 1, '2024-11-29 20:38:12', '2024-11-29 20:38:12');
+INSERT INTO `users` (`id`, `usuario`, `nombre`, `paterno`, `materno`, `ci`, `ci_exp`, `dir`, `email`, `fono`, `password`, `foto`, `tipo`, `cargo_id`, `unidad_id`, `almacen_id`, `role_id`, `fecha_registro`, `acceso`, `status`, `created_at`, `updated_at`) VALUES
+(1, 'admin', 'admin', 'admin', '', '0', '', '', '', '', '$2y$12$65d4fgZsvBV5Lc/AxNKh4eoUdbGyaczQ4sSco20feSQANshNLuxSC', NULL, 'INTERNO', 1, 1, NULL, 1, '2024-11-25', 1, 1, '2024-11-26 01:00:49', '2024-11-26 01:00:49'),
+(2, 'JPERES', 'JUAN', 'PERES', 'MAMANI', '1111', 'LP', 'LOS OLIVOS', 'JUAN@GMAIL.COM', '7777777', '$2y$12$RC6QphnlynnEK3o4El.p7ukQuDPBlPscBGHgLx4uWqnL3vFRRBE76', '1732574829_JPERES.jpg', 'INTERNO', 1, 1, NULL, 2, '2024-11-25', 1, 1, '2024-11-26 02:47:09', '2024-11-26 02:47:13'),
+(3, 'CMARTINES', 'CARLOS', 'MARTINES', 'PAREDES', '2222', 'LP', 'ZONA LOS OLIVOS', 'CARLOS@GMAIL.COM', '777777', '$2y$12$5Od4Mg4s7778FMtVsfTSYeD.blo/B//MxzlfMfyoUZVov.PAIcxra', NULL, 'EXTERNO', 2, 2, 1, 3, '2024-11-29', 1, 1, '2024-11-29 20:38:12', '2024-11-30 02:17:03'),
+(4, 'MPOLO', 'MARCO', 'POLO', '', '3333', 'LP', 'LOS OLIVOS', 'marco@gmail.com', '67676767', '$2y$12$tDcC3LnN6kaPBkhkDweEoeNRbC6edaXBOyfVjUpIenEvM0Xw2YFOW', '1732917793_MPOLO.jpg', 'EXTERNO', 1, 1, 3, 3, '2024-11-29', 1, 1, '2024-11-30 02:03:13', '2024-11-30 02:04:55');
 
 --
 -- Índices para tablas volcadas
@@ -664,19 +678,19 @@ ALTER TABLE `configuracions`
 -- AUTO_INCREMENT de la tabla `egresos`
 --
 ALTER TABLE `egresos`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT de la tabla `historial_accions`
 --
 ALTER TABLE `historial_accions`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
 
 --
 -- AUTO_INCREMENT de la tabla `ingresos`
 --
 ALTER TABLE `ingresos`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT de la tabla `migrations`
@@ -736,7 +750,7 @@ ALTER TABLE `unidad_medidas`
 -- AUTO_INCREMENT de la tabla `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- Restricciones para tablas volcadas

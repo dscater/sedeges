@@ -194,7 +194,7 @@
             <h2 class="titulo">
                 {{ $configuracion->first()->razon_social }}
             </h2>
-            <h4 class="texto">INVENTARIO FÍNOCO VALORADO DE BIENES Y CONSUMO</h4>
+            <h4 class="texto">INVENTARIO FÍSICO VALORADO DE BIENES Y CONSUMO</h4>
             <h4 class="texto">{{ $almacen->nombre }}</h4>
             <h4 class="fecha">{{ $texto_fecha }}
             </h4>
@@ -263,6 +263,14 @@
                         if ($fecha_ini && $fecha_fin) {
                             $ingresos->whereBetween('fecha_registro', [$fecha_ini, $fecha_fin]);
                         }
+
+                        // EXTERNO
+                        $user = Auth::user();
+                        if ($user->tipo == 'EXTERNO') {
+                            $ingresos->where('unidad_id', $user->unidad_id);
+                            $ingresos->where('user_id', $user->id);
+                        }
+
                         $ingresos->where('partida_id', $partida->id);
                         $ingresos = $ingresos->get();
                     @endphp
@@ -280,6 +288,14 @@
                                 $reg_ingresos->where('fecha_registro', '<', $fecha_ini);
                                 $reg_ingresos->where('partida_id', $partida->id);
                                 $reg_ingresos->where('producto_id', $ingreso->producto_id);
+
+                                // EXTERNO
+                                $user = Auth::user();
+                                if ($user->tipo == 'EXTERNO') {
+                                    $ingresos->where('unidad_id', $user->unidad_id);
+                                    $ingresos->where('user_id', $user->id);
+                                }
+
                                 $reg_ingresos = $reg_ingresos->sum('total');
 
                                 $reg_egresos = App\Models\Ingreso::where('donacion', 'NO')->join(
@@ -292,6 +308,12 @@
                                 $reg_egresos->where('egresos.fecha_registro', '<', $fecha_ini);
                                 $reg_egresos->where('egresos.partida_id', $partida->id);
                                 $reg_egresos->where('egresos.producto_id', $ingreso->producto_id);
+                                // EXTERNO
+                                $user = Auth::user();
+                                if ($user->tipo == 'EXTERNO') {
+                                    $reg_egresos->where('ingresos.unidad_id', $user->unidad_id);
+                                    $reg_egresos->where('ingresos.user_id', $user->id);
+                                }
                                 $reg_egresos = $reg_egresos->sum('egresos.total');
                                 $saldo = $reg_ingresos - $reg_egresos;
                             }
@@ -312,23 +334,26 @@
                             <td class="centreado bg2">{{ $ingreso->egreso->cantidad }}</td>
                             <td class="centreado bg2">{{ $ingreso->egreso->costo }}</td>
                             <td class="centreado bg2">{{ $ingreso->egreso->total }}</td>
-                            <td class="centreado bg3">{{ $ingreso->egreso->s_cantidad }}</td>
+                            <td class="centreado bg3">
+                                {{ $ingreso->egreso ? $ingreso->egreso->s_cantidad : $ingreso->cantidad }}</td>
                             <td class="centreado bg3">{{ $ingreso->costo }}</td>
-                            <td class="centreado bg3">{{ $ingreso->egreso->s_total }}</td>
+                            <td class="centreado bg3">
+                                {{ $ingreso->egreso ? $ingreso->egreso->s_total : $ingreso->total }}</td>
                         </tr>
                         @php
 
-                            // partida
+                            // total partridas
                             $totalp1 += (float) $saldo;
                             $totalp2 += (float) $ingreso->total;
-                            $totalp3 += (float) $ingreso->egreso->total;
-                            $totalp4 += (float) $ingreso->egreso->s_total;
+                            $totalp3 += $ingreso->egreso ? (float) $ingreso->egreso->total : 0;
+                            $totalp4 += $ingreso->egreso ? (float) $ingreso->egreso->s_total : $ingreso->cantidad;
+                            // Illuminate\Support\Facades\Log::debug('DD');
 
-                            // general
+                            // totalgeneral
                             $total1 += (float) $saldo;
                             $total2 += (float) $ingreso->total;
-                            $total3 += (float) $ingreso->egreso->total;
-                            $total4 += (float) $ingreso->egreso->s_total;
+                            $total3 += $ingreso->egreso ? (float) $ingreso->egreso->total : 0;
+                            $total4 += $ingreso->egreso ? (float) $ingreso->egreso->s_total : $ingreso->cantidad;
                         @endphp
                     @empty
                         @php
@@ -340,6 +365,12 @@
                                 $reg_ingresos->where('almacen_id', $almacen->id);
                                 $reg_ingresos->where('fecha_registro', '<', $fecha_ini);
                                 $reg_ingresos->where('partida_id', $partida->id);
+                                // EXTERNO
+                                $user = Auth::user();
+                                if ($user->tipo == 'EXTERNO') {
+                                    $reg_ingresos->where('unidad_id', $user->unidad_id);
+                                    $reg_ingresos->where('user_id', $user->id);
+                                }
                                 $reg_ingresos = $reg_ingresos->get();
                             }
                         @endphp

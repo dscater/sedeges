@@ -14,8 +14,12 @@ onMounted(() => {
     }, 300);
 });
 
-const { getUnidadMedidas, setUnidadMedida, limpiarUnidadMedida, deleteUnidadMedida } =
-    useUnidadMedidas();
+const {
+    getUnidadMedidas,
+    setUnidadMedida,
+    limpiarUnidadMedida,
+    deleteUnidadMedida,
+} = useUnidadMedidas();
 
 const columns = [
     {
@@ -49,7 +53,9 @@ const columns = [
 
             if (
                 props_page.auth?.user.permisos == "*" ||
-                props_page.auth?.user.permisos.includes("unidad_medidas.destroy")
+                props_page.auth?.user.permisos.includes(
+                    "unidad_medidas.destroy"
+                )
             ) {
                 buttons += ` <button class="mx-0 rounded-0 btn btn-danger eliminar"
                  data-id="${row.id}"
@@ -116,7 +122,11 @@ const updateDatatable = () => {
 };
 
 onMounted(async () => {
-    datatable = initDataTable("#table-unidad_medida", columns, route("unidad_medidas.api"));
+    datatable = initDataTable(
+        "#table-unidad_medida",
+        columns,
+        route("unidad_medidas.api")
+    );
     datatableInitialized.value = true;
     accionesRow();
 });
@@ -150,6 +160,12 @@ onBeforeUnmount(() => {
                 <div class="panel-heading">
                     <h4 class="panel-title btn-nuevo">
                         <button
+                            v-if="
+                                props_page.auth?.user.permisos == '*' ||
+                                props_page.auth?.user.permisos.includes(
+                                    'unidad_medidas.create'
+                                )
+                            "
                             type="button"
                             class="btn btn-primary"
                             @click="agregarRegistro"

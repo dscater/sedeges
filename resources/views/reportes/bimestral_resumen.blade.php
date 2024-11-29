@@ -220,6 +220,13 @@
                             $ingresos->whereBetween('fecha_registro', [$fecha_ini, $fecha_fin]);
                         }
                         $ingresos->where('ingresos.partida_id', $partida->id);
+                        // EXTERNO
+                        $user = Auth::user();
+                        if ($user->tipo == 'EXTERNO') {
+                            $ingresos->where('ingresos.unidad_id', $user->unidad_id);
+                            $ingresos->where('ingresos.user_id', $user->id);
+                        }
+
                         $ingresos = $ingresos->sum('total');
 
                         $egresos = App\Models\Ingreso::where('donacion', 'SI')->join(
@@ -231,6 +238,11 @@
                         $egresos->where('egresos.almacen_id', $almacen->id);
                         if ($fecha_ini && $fecha_fin) {
                             $egresos->whereBetween('egresos.fecha_registro', [$fecha_ini, $fecha_fin]);
+                        }
+                        // EXTERNO
+                        if ($user->tipo == 'EXTERNO') {
+                            $egresos->where('ingresos.unidad_id', $user->unidad_id);
+                            $egresos->where('ingresos.user_id', $user->id);
                         }
                         $egresos->where('egresos.partida_id', $partida->id);
                         $egresos = $egresos->sum('egresos.total');

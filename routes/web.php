@@ -86,6 +86,10 @@ Route::middleware(['auth', 'permisoUsuario'])->prefix("admin")->group(function (
 
     // ALMACENS
     Route::get("almacens/listado", [AlmacenController::class, 'listado'])->name("almacens.listado");
+    Route::get("almacens/show/{almacen}", [AlmacenController::class, 'show'])->name("almacens.show");
+
+    Route::get("almacens/{almacen}", [AlmacenController::class, 'index'])->name("almacens.index");
+    Route::get("almacens/productos/{almacen}", [AlmacenController::class, 'productos'])->name("almacens.productos");
 
     // CARGOS
     Route::get("cargos/api", [CargoController::class, 'api'])->name("cargos.api");
@@ -147,13 +151,13 @@ Route::middleware(['auth', 'permisoUsuario'])->prefix("admin")->group(function (
     // REPORTES
     Route::get('reportes/usuarios', [ReporteController::class, 'usuarios'])->name("reportes.usuarios");
     Route::get('reportes/r_usuarios', [ReporteController::class, 'r_usuarios'])->name("reportes.r_usuarios");
-    
+
     Route::get('reportes/bimestral', [ReporteController::class, 'bimestral'])->name("reportes.bimestral");
     Route::get('reportes/r_bimestral', [ReporteController::class, 'r_bimestral'])->name("reportes.r_bimestral");
-    
+
     Route::get('reportes/cuatrimestral', [ReporteController::class, 'cuatrimestral'])->name("reportes.cuatrimestral");
     Route::get('reportes/r_cuatrimestral', [ReporteController::class, 'r_cuatrimestral'])->name("reportes.r_cuatrimestral");
-    
+
     Route::get('reportes/conciliacion', [ReporteController::class, 'conciliacion'])->name("reportes.conciliacion");
     Route::get('reportes/r_conciliacion', [ReporteController::class, 'r_conciliacion'])->name("reportes.r_conciliacion");
 });

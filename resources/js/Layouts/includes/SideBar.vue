@@ -401,9 +401,14 @@ const submenus = {
 };
 
 const route_current = ref("");
+const url_almacen_id = ref(null);
 
 router.on("navigate", (event) => {
     route_current.value = route().current();
+    url_almacen_id.value = null;
+    if (route().routeParams && route().routeParams.almacen) {
+        url_almacen_id.value = route().routeParams.almacen;
+    }
     appOption.appSidebarMobileToggled = false;
     // if (mobile.value) {
     //     toggleDrawer(false);
@@ -527,16 +532,14 @@ const logout = () => {
                     "
                     class="menu-item has-sub"
                     :class="[
-                        route_current == 'almacen1.index' ||
-                        route_current == 'almacen2.index' ||
-                        route_current == 'almacen3.index'
+                        route_current == 'almacens.index'
                             ? 'expand active'
                             : '',
                     ]"
                 >
                     <a href="javascript:;" class="menu-link">
                         <div class="menu-icon">
-                            <i class="fa fa-users"></i>
+                            <i class="fa fa-list"></i>
                         </div>
                         <div class="menu-text">Administrar almacén</div>
                         <div class="menu-caret"></div>
@@ -545,9 +548,7 @@ const logout = () => {
                         class="menu-submenu"
                         :style="{
                             display:
-                                route_current == 'almacen1.index' ||
-                                route_current == 'almacen2.index' ||
-                                route_current == 'almacen3.index'
+                                route_current == 'almacens.index'
                                     ? 'block'
                                     : 'none',
                         }"
@@ -559,14 +560,17 @@ const logout = () => {
                             "
                             class="menu-item"
                             :class="[
-                                route_current == 'almacen1.index'
+                                route_current == 'almacens.index' &&
+                                url_almacen_id == 1
                                     ? 'active'
                                     : 'none',
                             ]"
                         >
-                            <a href="" class="menu-link"
-                                ><div class="menu-text">Almacén Centros</div></a
-                            >
+                            <Link
+                                :href="route('almacens.index', 1)"
+                                class="menu-link"
+                                ><div class="menu-text">Almacén Centros</div>
+                            </Link>
                         </div>
                         <div
                             v-if="
@@ -575,16 +579,17 @@ const logout = () => {
                             "
                             class="menu-item"
                             :class="[
-                                route_current == 'almacen2.index'
+                                route_current == 'almacens.index' &&
+                                url_almacen_id == 2
                                     ? 'active'
                                     : 'none',
                             ]"
                         >
-                            <a href="" class="menu-link"
-                                ><div class="menu-text">
-                                    Almacén Programas
-                                </div></a
-                            >
+                            <Link
+                                :href="route('almacens.index', 2)"
+                                class="menu-link"
+                                ><div class="menu-text">Almacén Programas</div>
+                            </Link>
                         </div>
                         <div
                             v-if="
@@ -593,16 +598,17 @@ const logout = () => {
                             "
                             class="menu-item"
                             :class="[
-                                route_current == 'almacen3.index'
+                                route_current == 'almacens.index' &&
+                                url_almacen_id == 3
                                     ? 'active'
                                     : 'none',
                             ]"
                         >
-                            <a href="" class="menu-link"
-                                ><div class="menu-text">
-                                    Almacén Farmacias
-                                </div></a
-                            >
+                            <Link
+                                :href="route('almacens.index', 3)"
+                                class="menu-link"
+                                ><div class="menu-text">Almacén Farmacias</div>
+                            </Link>
                         </div>
                     </div>
                 </div>
@@ -612,7 +618,7 @@ const logout = () => {
                         user_logeado.permisos.includes('egresos.index')
                     "
                     class="menu-item"
-                    :class="[route_current == 'egresos.index']"
+                    :class="[route_current == 'egresos.index' ? 'active' : '']"
                 >
                     <Link :href="route('egresos.index')" class="menu-link">
                         <div class="menu-icon">
@@ -804,7 +810,12 @@ const logout = () => {
                     class="menu-item has-sub"
                     v-if="
                         user_logeado.permisos.includes('*') ||
-                        user_logeado.permisos.includes('reportes.usuarios')
+                        user_logeado.permisos.includes('reportes.usuarios') ||
+                        user_logeado.permisos.includes('reportes.bimestral') ||
+                        user_logeado.permisos.includes(
+                            'reportes.cuatrimestral'
+                        ) ||
+                        user_logeado.permisos.includes('reportes.conciliacion')
                     "
                 >
                     <a href="javascript:;" class="menu-link">
@@ -872,7 +883,9 @@ const logout = () => {
                             <Link
                                 :href="route('reportes.cuatrimestral')"
                                 class="menu-link"
-                                ><div class="menu-text">Cuatrimestral</div></Link
+                                ><div class="menu-text">
+                                    Cuatrimestral
+                                </div></Link
                             >
                         </div>
                         <div
