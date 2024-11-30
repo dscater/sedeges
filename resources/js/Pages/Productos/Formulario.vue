@@ -11,6 +11,14 @@ const props = defineProps({
         type: Number,
         default: 0,
     },
+    oculta_fondo: {
+        type: Boolean,
+        default: true,
+    },
+    url: {
+        type: String,
+        default: "",
+    },
 });
 
 const { oProducto, limpiarProducto } = useProductos();
@@ -51,38 +59,86 @@ const enviarFormulario = () => {
             ? route("productos.store")
             : route("productos.update", form.id);
 
-    form.post(url, {
-        preserveScroll: true,
-        forceFormData: true,
-        onSuccess: () => {
-            dialog.value = false;
-            Swal.fire({
-                icon: "success",
-                title: "Correcto",
-                text: `${flash.bien ? flash.bien : "Proceso realizado"}`,
-                confirmButtonColor: "#3085d6",
-                confirmButtonText: `Aceptar`,
+    if (props.url.trim() != "") {
+        url = props.url;
+        axios
+            .post(url, {
+                nombre: form.nombre,
+            })
+            .then((response) => {
+                dialog.value = false;
+                Swal.fire({
+                    icon: "success",
+                    title: "Correcto",
+                    text: `${flash.bien ? flash.bien : "Proceso realizado"}`,
+                    confirmButtonColor: "#3085d6",
+                    confirmButtonText: `Aceptar`,
+                });
+                limpiarProducto();
+                emits("envio-formulario");
+            })
+            .catch((err) => {
+                console.log("ERROR");
+                if (err.status == 422) {
+                    console.log(err.status);
+                    console.log(err.response.data);
+                    if (err.response.data.errors) {
+                        if (err.response.data.errors.nombre) {
+                            form.errors["nombre"] =
+                                err.response.data.errors.nombre[0];
+                        }
+                    }
+                    Swal.fire({
+                        icon: "info",
+                        title: "Error",
+                        text: `Hay errores en el formulario`,
+                        confirmButtonColor: "#3085d6",
+                        confirmButtonText: `Aceptar`,
+                    });
+                } else {
+                    Swal.fire({
+                        icon: "info",
+                        title: "Error",
+                        text: `Ocurrió un error inesperado intente nuevamente`,
+                        confirmButtonColor: "#3085d6",
+                        confirmButtonText: `Aceptar`,
+                    });
+                }
             });
-            limpiarProducto();
-            emits("envio-formulario");
-        },
-        onError: (err) => {
-            console.log("ERROR");
-            Swal.fire({
-                icon: "info",
-                title: "Error",
-                text: `${
-                    flash.error
-                        ? flash.error
-                        : err.error
-                        ? err.error
-                        : "Hay errores en el formulario"
-                }`,
-                confirmButtonColor: "#3085d6",
-                confirmButtonText: `Aceptar`,
-            });
-        },
-    });
+    } else {
+        form.post(url, {
+            preserveScroll: true,
+            forceFormData: true,
+            onSuccess: () => {
+                dialog.value = false;
+                Swal.fire({
+                    icon: "success",
+                    title: "Correcto",
+                    text: `${flash.bien ? flash.bien : "Proceso realizado"}`,
+                    confirmButtonColor: "#3085d6",
+                    confirmButtonText: `Aceptar`,
+                });
+                limpiarProducto();
+                emits("envio-formulario");
+            },
+            onError: (err) => {
+                console.log("ERROR");
+                Swal.fire({
+                    icon: "info",
+                    title: "Error",
+                    text: `${
+                        flash.error
+                            ? flash.error
+                            : err.error
+                            ? err.error
+                            : "Hay errores en el formulario"
+                    }`,
+                    confirmButtonColor: "#3085d6",
+                    confirmButtonText: `Aceptar`,
+                });
+            },
+        });
+    }
 };
 
 const emits = defineEmits(["cerrar-dialog", "envio-formulario"]);
@@ -95,7 +151,9 @@ watch(dialog, (newVal) => {
 
 const cerrarDialog = () => {
     dialog.value = false;
-    document.getElementsByTagName("body")[0].classList.remove("modal-open");
+    if (props.oculta_fondo) {
+        document.getElementsByTagName("body")[0].classList.remove("modal-open");
+    }
 };
 
 onMounted(() => {});

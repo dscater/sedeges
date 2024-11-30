@@ -64,9 +64,9 @@ class ProductoController extends Controller
         try {
             $request['fecha_registro'] = date('Y-m-d');
             // crear la producto
-            $nueva_producto = Producto::create(array_map('mb_strtoupper', $request->all()));
+            $nuevo_producto = Producto::create(array_map('mb_strtoupper', $request->all()));
 
-            $datos_original = HistorialAccion::getDetalleRegistro($nueva_producto, "productos");
+            $datos_original = HistorialAccion::getDetalleRegistro($nuevo_producto, "productos");
             HistorialAccion::create([
                 'user_id' => Auth::user()->id,
                 'accion' => 'CREACIÓN',
@@ -79,6 +79,40 @@ class ProductoController extends Controller
 
             DB::commit();
             return redirect()->route("productos.index")->with("bien", "Registro realizado");
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw ValidationException::withMessages([
+                'error' =>  $e->getMessage(),
+            ]);
+        }
+    }
+
+
+
+    public function storeJson(Request $request)
+    {
+        $request->validate($this->validacion, $this->mensajes);
+        DB::beginTransaction();
+        try {
+            $request['fecha_registro'] = date('Y-m-d');
+            // crear la producto
+            $nuevo_producto = Producto::create(array_map('mb_strtoupper', $request->all()));
+
+            $datos_original = HistorialAccion::getDetalleRegistro($nuevo_producto, "productos");
+            HistorialAccion::create([
+                'user_id' => Auth::user()->id,
+                'accion' => 'CREACIÓN',
+                'descripcion' => 'EL USUARIO ' . Auth::user()->usuario . ' REGISTRO UN PRODUCTO',
+                'datos_original' => $datos_original,
+                'modulo' => 'PRODUCTOS',
+                'fecha' => date('Y-m-d'),
+                'hora' => date('H:i:s')
+            ]);
+
+            DB::commit();
+            return response()->JSON([
+                "nuevo_producto" => $nuevo_producto
+            ]);
         } catch (\Exception $e) {
             DB::rollBack();
             throw ValidationException::withMessages([

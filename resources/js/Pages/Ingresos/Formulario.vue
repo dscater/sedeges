@@ -1,6 +1,8 @@
 <script setup>
 import { useForm, usePage } from "@inertiajs/vue3";
 import { useIngresos } from "@/composables/ingresos/useIngresos";
+import { useProductos } from "@/composables/productos/useProductos";
+import Formulario from "../Productos/Formulario.vue";
 import { watch, ref, computed, defineEmits, onMounted, nextTick } from "vue";
 const props = defineProps({
     open_dialog: {
@@ -12,6 +14,8 @@ const props = defineProps({
         default: 0,
     },
 });
+
+const { limpiarProducto } = useProductos();
 
 const obtenerFechaActual = () => {
     const fecha = new Date();
@@ -194,6 +198,15 @@ const getInfoUnidad = (id) => {
     axios.get(route("unidads.show", id)).then((response) => {
         oUnidad.value = response.data;
     });
+};
+
+const accion_dialog = ref(0);
+const open_dialog = ref(false);
+
+const agregarProducto = () => {
+    limpiarProducto();
+    accion_dialog.value = 0;
+    open_dialog.value = true;
 };
 
 const cargarListas = () => {
@@ -439,28 +452,45 @@ onMounted(() => {});
                                 </ul>
                             </div>
                             <div class="col-md-4">
-                                <label>Seleccionar producto*</label>
-                                <el-select
-                                    class="w-100"
-                                    placeholder="- Seleccione -"
-                                    :class="{
-                                        'border border-red rounded':
-                                            form.errors?.producto_id,
-                                    }"
-                                    v-model="form.producto_id"
-                                    filterable
-                                >
-                                    <el-option value=""
-                                        >- Seleccione -</el-option
+                                <label>Seleccionar producto * </label>
+                                <div class="input-group mb-3">
+                                    <div class="flex-1">
+                                        <el-select
+                                            class="w-100 rounded-0"
+                                            placeholder="- Seleccione -"
+                                            :class="{
+                                                'border border-red':
+                                                    form.errors?.producto_id,
+                                            }"
+                                            v-model="form.producto_id"
+                                            filterable
+                                        >
+                                            <el-option value=""
+                                                >- Seleccione -</el-option
+                                            >
+                                            <el-option
+                                                v-for="item in listProductos"
+                                                :value="item.id"
+                                                :label="item.nombre"
+                                            >
+                                                {{ item.nombre }}
+                                            </el-option>
+                                        </el-select>
+                                    </div>
+                                    <button
+                                        v-if="
+                                            auth?.user.permisos == '*' ||
+                                            auth?.user.permisos.includes(
+                                                'productos.create'
+                                            )
+                                        "
+                                        type="button"
+                                        class="btn btn-sm btn-outline-primary rounded-0"
+                                        @click="agregarProducto"
                                     >
-                                    <el-option
-                                        v-for="item in listProductos"
-                                        :value="item.id"
-                                        :label="item.nombre"
-                                    >
-                                        {{ item.nombre }}
-                                    </el-option>
-                                </el-select>
+                                        <i class="fa fa-plus"></i>
+                                    </button>
+                                </div>
                                 <ul
                                     v-if="form.errors?.producto_id"
                                     class="parsley-errors-list filled"
@@ -607,4 +637,13 @@ onMounted(() => {});
             </div>
         </div>
     </div>
+
+    <Formulario
+        :open_dialog="open_dialog"
+        :accion_dialog="accion_dialog"
+        @envio-formulario="cargarProductos"
+        :oculta_fondo="false"
+        :url="route('productos.storeJson')"
+        @cerrar-dialog="open_dialog = false"
+    ></Formulario>
 </template>

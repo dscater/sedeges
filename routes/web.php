@@ -119,6 +119,7 @@ Route::middleware(['auth', 'permisoUsuario'])->prefix("admin")->group(function (
     Route::get("productos/api", [ProductoController::class, 'api'])->name("productos.api");
     Route::get("productos/paginado", [ProductoController::class, 'paginado'])->name("productos.paginado");
     Route::get("productos/listado", [ProductoController::class, 'listado'])->name("productos.listado");
+    Route::post("productos/storeJson", [ProductoController::class, 'storeJson'])->name("productos.storeJson");
     Route::resource("productos", ProductoController::class)->only(
         ["index", "store", "update", "show", "destroy"]
     );
