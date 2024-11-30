@@ -23,6 +23,10 @@ import "./assets/css/datatables.css";
 import "./assets/css/form.css";
 // import "./assets/css/fullCalendarConfig.css";
 
+// ELEMENT UI
+import ElementPlus from "element-plus";
+import "element-plus/dist/index.css";
+
 // Default Layout
 import App from "@/Layouts/App.vue";
 
@@ -45,6 +49,7 @@ createInertiaApp({
             .use(plugin)
             .use(ZiggyVue, Ziggy)
             .use(pinia)
+            .use(ElementPlus)
             .mount(el);
     },
     progress: {

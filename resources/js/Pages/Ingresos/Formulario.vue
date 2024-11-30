@@ -240,22 +240,27 @@ onMounted(() => {});
                             >
                                 <div class="col-md-4">
                                     <label>Seleccionar almacén*</label>
-                                    <select
-                                        class="form-control"
+                                    <el-select
+                                        class="w-100"
+                                        placeholder="- Seleccione -"
                                         :class="{
-                                            'parsley-error':
+                                            'border border-red rounded':
                                                 form.errors?.almacen_id,
                                         }"
                                         v-model="form.almacen_id"
+                                        filterable
                                     >
-                                        <option value="">- Seleccione -</option>
-                                        <option
+                                        <el-option value=""
+                                            >- Seleccione -</el-option
+                                        >
+                                        <el-option
                                             v-for="item in listAlmacens"
                                             :value="item.id"
+                                            :label="item.nombre"
                                         >
                                             {{ item.nombre }}
-                                        </option>
-                                    </select>
+                                        </el-option>
+                                    </el-select>
                                     <ul
                                         v-if="form.errors?.almacen_id"
                                         class="parsley-errors-list filled"
@@ -271,22 +276,27 @@ onMounted(() => {});
                                     v-if="form.almacen_id == 1"
                                 >
                                     <label>Seleccionar Unidad/Centro*</label>
-                                    <select
-                                        class="form-control"
+                                    <el-select
+                                        class="w-100"
+                                        placeholder="- Seleccione -"
                                         :class="{
-                                            'parsley-error':
+                                            'border border-red rounded':
                                                 form.errors?.unidad_id,
                                         }"
                                         v-model="form.unidad_id"
+                                        filterable
                                     >
-                                        <option value="">- Seleccione -</option>
-                                        <option
+                                        <el-option value=""
+                                            >- Seleccione -</el-option
+                                        >
+                                        <el-option
                                             v-for="item in listUnidads"
                                             :value="item.id"
+                                            :label="item.nombre"
                                         >
                                             {{ item.nombre }}
-                                        </option>
-                                    </select>
+                                        </el-option>
+                                    </el-select>
                                     <ul
                                         v-if="form.errors?.unidad_id"
                                         class="parsley-errors-list filled"
@@ -337,22 +347,27 @@ onMounted(() => {});
                             <!-- programas -->
                             <div class="col-md-4" v-if="form.almacen_id == 2">
                                 <label>Seleccionar programa*</label>
-                                <select
-                                    class="form-control"
+                                <el-select
+                                    class="w-100"
+                                    placeholder="- Seleccione -"
                                     :class="{
-                                        'parsley-error':
+                                        'border border-red rounded':
                                             form.errors?.programa_id,
                                     }"
                                     v-model="form.programa_id"
+                                    filterable
                                 >
-                                    <option value="">- Seleccione -</option>
-                                    <option
+                                    <el-option value=""
+                                        >- Seleccione -</el-option
+                                    >
+                                    <el-option
                                         v-for="item in listProgramas"
                                         :value="item.id"
+                                        :label="item.nombre"
                                     >
                                         {{ item.nombre }}
-                                    </option>
-                                </select>
+                                    </el-option>
+                                </el-select>
                                 <ul
                                     v-if="form.errors?.programa_id"
                                     class="parsley-errors-list filled"
@@ -367,23 +382,27 @@ onMounted(() => {});
                                 v-if="auth.user.tipo != 'EXTERNO'"
                             >
                                 <label>Seleccionar partida*</label>
-                                <select
-                                    class="form-control"
+                                <el-select
+                                    class="w-100"
+                                    placeholder="- Seleccione -"
                                     :class="{
-                                        'parsley-error':
+                                        'border border-red rounded':
                                             form.errors?.partida_id,
                                     }"
                                     v-model="form.partida_id"
+                                    filterable
                                 >
-                                    <option value="">- Seleccione -</option>
-                                    <option
+                                    <el-option value=""
+                                        >- Seleccione -</el-option
+                                    >
+                                    <el-option
                                         v-for="item in listPartidas"
                                         :value="item.id"
+                                        :label="item.nombre"
                                     >
-                                        {{ item.nro_partida }} |
-                                        {{ item.abreviatura }}
-                                    </option>
-                                </select>
+                                        {{ item.nombre }}
+                                    </el-option>
+                                </el-select>
                                 <ul
                                     v-if="form.errors?.partida_id"
                                     class="parsley-errors-list filled"
@@ -421,22 +440,27 @@ onMounted(() => {});
                             </div>
                             <div class="col-md-4">
                                 <label>Seleccionar producto*</label>
-                                <select
-                                    class="form-control"
+                                <el-select
+                                    class="w-100"
+                                    placeholder="- Seleccione -"
                                     :class="{
-                                        'parsley-error':
+                                        'border border-red rounded':
                                             form.errors?.producto_id,
                                     }"
                                     v-model="form.producto_id"
+                                    filterable
                                 >
-                                    <option value="">- Seleccione -</option>
-                                    <option
+                                    <el-option value=""
+                                        >- Seleccione -</el-option
+                                    >
+                                    <el-option
                                         v-for="item in listProductos"
                                         :value="item.id"
+                                        :label="item.nombre"
                                     >
                                         {{ item.nombre }}
-                                    </option>
-                                </select>
+                                    </el-option>
+                                </el-select>
                                 <ul
                                     v-if="form.errors?.producto_id"
                                     class="parsley-errors-list filled"
@@ -448,22 +472,27 @@ onMounted(() => {});
                             </div>
                             <div class="col-md-4">
                                 <label>Seleccionar unidad de medida*</label>
-                                <select
-                                    class="form-control"
+                                <el-select
+                                    class="w-100"
+                                    placeholder="- Seleccione -"
                                     :class="{
-                                        'parsley-error':
+                                        'border border-red rounded':
                                             form.errors?.unidad_medida_id,
                                     }"
                                     v-model="form.unidad_medida_id"
+                                    filterable
                                 >
-                                    <option value="">- Seleccione -</option>
-                                    <option
+                                    <el-option value=""
+                                        >- Seleccione -</el-option
+                                    >
+                                    <el-option
                                         v-for="item in listUnidadMedidas"
                                         :value="item.id"
+                                        :label="item.nombre"
                                     >
                                         {{ item.nombre }}
-                                    </option>
-                                </select>
+                                    </el-option>
+                                </el-select>
                                 <ul
                                     v-if="form.errors?.unidad_medida_id"
                                     class="parsley-errors-list filled"

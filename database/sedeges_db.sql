@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost:3306
--- Tiempo de generación: 29-11-2024 a las 23:45:00
+-- Tiempo de generación: 30-11-2024 a las 12:03:12
 -- Versión del servidor: 8.0.30
 -- Versión de PHP: 8.2.22
 
@@ -114,10 +114,11 @@ CREATE TABLE `egresos` (
 
 INSERT INTO `egresos` (`id`, `ingreso_id`, `almacen_id`, `partida_id`, `producto_id`, `cantidad`, `costo`, `total`, `fecha_registro`, `created_at`, `updated_at`) VALUES
 (1, 2, 1, 1, 2, 300, 20.00, 6000.00, '2024-11-28', '2024-11-29 00:04:13', '2024-11-29 00:40:51'),
-(2, 1, 1, 1, 1, 50, 40.00, 2000.00, '2024-11-28', '2024-11-29 00:04:13', '2024-11-29 19:36:44'),
+(2, 1, 1, 1, 1, 70, 40.00, 2800.00, '2024-11-28', '2024-11-29 00:04:13', '2024-11-30 15:49:37'),
 (3, 3, 2, 2, 1, 200, 45.00, 9000.00, '2024-11-28', '2024-11-29 00:42:03', '2024-11-29 00:42:03'),
 (4, 4, 1, 1, 3, 500, 20.00, 10000.00, '2024-11-28', '2024-11-29 00:42:52', '2024-11-29 19:36:42'),
-(5, 5, 1, 2, 1, 157, 50.00, 7850.00, '2024-11-29', '2024-11-30 03:44:51', '2024-11-30 03:44:51');
+(5, 5, 1, 2, 1, 157, 50.00, 7850.00, '2024-11-29', '2024-11-30 03:44:51', '2024-11-30 03:44:51'),
+(6, 7, 3, 1, 1, 30, 40.00, 1200.00, '2024-11-30', '2024-11-30 16:02:35', '2024-11-30 16:02:35');
 
 -- --------------------------------------------------------
 
@@ -182,7 +183,11 @@ INSERT INTO `historial_accions` (`id`, `user_id`, `accion`, `descripcion`, `dato
 (36, 1, 'MODIFICACIÓN', 'EL USUARIO admin MODIFICÓ UN USUARIO', 'id: 3<br/>usuario: CMARTINES<br/>nombre: CARLOS<br/>paterno: MARTINES<br/>materno: PAREDES<br/>ci: 2222<br/>ci_exp: LP<br/>dir: ZONA LOS OLIVOS<br/>email: CARLOS@GMAIL.COM<br/>fono: 777777<br/>password: $2y$12$5Od4Mg4s7778FMtVsfTSYeD.blo/B//MxzlfMfyoUZVov.PAIcxra<br/>foto: <br/>tipo: EXTERNO<br/>cargo_id: 2<br/>unidad_id: 2<br/>almacen_id: 1<br/>role_id: 3<br/>fecha_registro: 2024-11-29<br/>acceso: 1<br/>status: 1<br/>created_at: 2024-11-29 16:38:12<br/>updated_at: 2024-11-29 22:10:21<br/>', 'id: 3<br/>usuario: CMARTINES<br/>nombre: CARLOS<br/>paterno: MARTINES<br/>materno: PAREDES<br/>ci: 2222<br/>ci_exp: LP<br/>dir: ZONA LOS OLIVOS<br/>email: CARLOS@GMAIL.COM<br/>fono: 777777<br/>password: $2y$12$5Od4Mg4s7778FMtVsfTSYeD.blo/B//MxzlfMfyoUZVov.PAIcxra<br/>foto: <br/>tipo: EXTERNO<br/>cargo_id: 2<br/>unidad_id: 2<br/>almacen_id: 2<br/>role_id: 3<br/>fecha_registro: 2024-11-29<br/>acceso: 1<br/>status: 1<br/>created_at: 2024-11-29 16:38:12<br/>updated_at: 2024-11-29 22:15:27<br/>', 'USUARIOS', '2024-11-29', '22:15:27', '2024-11-30 02:15:27', '2024-11-30 02:15:27'),
 (37, 1, 'MODIFICACIÓN', 'EL USUARIO admin MODIFICÓ UN USUARIO', 'id: 3<br/>usuario: CMARTINES<br/>nombre: CARLOS<br/>paterno: MARTINES<br/>materno: PAREDES<br/>ci: 2222<br/>ci_exp: LP<br/>dir: ZONA LOS OLIVOS<br/>email: CARLOS@GMAIL.COM<br/>fono: 777777<br/>password: $2y$12$5Od4Mg4s7778FMtVsfTSYeD.blo/B//MxzlfMfyoUZVov.PAIcxra<br/>foto: <br/>tipo: EXTERNO<br/>cargo_id: 2<br/>unidad_id: 2<br/>almacen_id: 2<br/>role_id: 3<br/>fecha_registro: 2024-11-29<br/>acceso: 1<br/>status: 1<br/>created_at: 2024-11-29 16:38:12<br/>updated_at: 2024-11-29 22:15:27<br/>', 'id: 3<br/>usuario: CMARTINES<br/>nombre: CARLOS<br/>paterno: MARTINES<br/>materno: PAREDES<br/>ci: 2222<br/>ci_exp: LP<br/>dir: ZONA LOS OLIVOS<br/>email: CARLOS@GMAIL.COM<br/>fono: 777777<br/>password: $2y$12$5Od4Mg4s7778FMtVsfTSYeD.blo/B//MxzlfMfyoUZVov.PAIcxra<br/>foto: <br/>tipo: EXTERNO<br/>cargo_id: 2<br/>unidad_id: 2<br/>almacen_id: 1<br/>role_id: 3<br/>fecha_registro: 2024-11-29<br/>acceso: 1<br/>status: 1<br/>created_at: 2024-11-29 16:38:12<br/>updated_at: 2024-11-29 22:17:03<br/>', 'USUARIOS', '2024-11-29', '22:17:03', '2024-11-30 02:17:03', '2024-11-30 02:17:03'),
 (38, 3, 'CREACIÓN', 'EL USUARIO CMARTINES REGISTRO UN INGRESO', 'id: 5<br/>almacen_id: 1<br/>partida_id: <br/>unidad_id: 2<br/>programa_id: <br/>codigo: <br/>nro: <br/>donacion: SI<br/>producto_id: 1<br/>unidad_medida_id: 1<br/>cantidad: 157<br/>costo: 50<br/>total: 7850.00<br/>fecha_ingreso: 2024-11-29<br/>fecha_registro: 2024-11-29<br/>user_id: 3<br/>created_at: 2024-11-29 22:21:53<br/>updated_at: 2024-11-29 22:21:53<br/>', NULL, 'INGRESOS', '2024-11-29', '22:21:53', '2024-11-30 02:21:53', '2024-11-30 02:21:53'),
-(39, 1, 'MODIFICACIÓN', 'EL USUARIO admin MODIFICÓ UN INGRESO', 'id: 5<br/>almacen_id: 1<br/>partida_id: <br/>unidad_id: 2<br/>programa_id: <br/>codigo: <br/>nro: <br/>donacion: SI<br/>producto_id: 1<br/>unidad_medida_id: 1<br/>cantidad: 157<br/>costo: 50.00<br/>total: 7850.00<br/>fecha_ingreso: 2024-11-29<br/>fecha_registro: 2024-11-29<br/>user_id: 3<br/>created_at: 2024-11-29 22:21:53<br/>updated_at: 2024-11-29 22:21:53<br/>', 'id: 5<br/>almacen_id: 1<br/>partida_id: 2<br/>unidad_id: 2<br/>programa_id: <br/>codigo: PAD-2<br/>nro: 2<br/>donacion: SI<br/>producto_id: 1<br/>unidad_medida_id: 1<br/>cantidad: 157<br/>costo: 50.00<br/>total: 7850.00<br/>fecha_ingreso: 2024-11-29<br/>fecha_registro: 2024-11-29<br/>user_id: 3<br/>created_at: 2024-11-29 22:21:53<br/>updated_at: 2024-11-29 22:24:31<br/>', 'INGRESOS', '2024-11-29', '22:24:31', '2024-11-30 02:24:31', '2024-11-30 02:24:31');
+(39, 1, 'MODIFICACIÓN', 'EL USUARIO admin MODIFICÓ UN INGRESO', 'id: 5<br/>almacen_id: 1<br/>partida_id: <br/>unidad_id: 2<br/>programa_id: <br/>codigo: <br/>nro: <br/>donacion: SI<br/>producto_id: 1<br/>unidad_medida_id: 1<br/>cantidad: 157<br/>costo: 50.00<br/>total: 7850.00<br/>fecha_ingreso: 2024-11-29<br/>fecha_registro: 2024-11-29<br/>user_id: 3<br/>created_at: 2024-11-29 22:21:53<br/>updated_at: 2024-11-29 22:21:53<br/>', 'id: 5<br/>almacen_id: 1<br/>partida_id: 2<br/>unidad_id: 2<br/>programa_id: <br/>codigo: PAD-2<br/>nro: 2<br/>donacion: SI<br/>producto_id: 1<br/>unidad_medida_id: 1<br/>cantidad: 157<br/>costo: 50.00<br/>total: 7850.00<br/>fecha_ingreso: 2024-11-29<br/>fecha_registro: 2024-11-29<br/>user_id: 3<br/>created_at: 2024-11-29 22:21:53<br/>updated_at: 2024-11-29 22:24:31<br/>', 'INGRESOS', '2024-11-29', '22:24:31', '2024-11-30 02:24:31', '2024-11-30 02:24:31'),
+(40, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN INGRESO', 'id: 6<br/>almacen_id: 1<br/>partida_id: 1<br/>unidad_id: 1<br/>programa_id: <br/>codigo: PAU-4<br/>nro: 4<br/>donacion: NO<br/>producto_id: 3<br/>unidad_medida_id: 1<br/>cantidad: 200<br/>costo: 30<br/>total: 6000.00<br/>fecha_ingreso: 2024-11-30<br/>fecha_registro: 2024-11-30<br/>user_id: 1<br/>created_at: 2024-11-30 11:51:35<br/>updated_at: 2024-11-30 11:51:35<br/>', NULL, 'INGRESOS', '2024-11-30', '11:51:36', '2024-11-30 15:51:36', '2024-11-30 15:51:36'),
+(41, 1, 'MODIFICACIÓN', 'EL USUARIO admin MODIFICÓ UN INGRESO', 'id: 6<br/>almacen_id: 1<br/>partida_id: 1<br/>unidad_id: 1<br/>programa_id: <br/>codigo: PAU-4<br/>nro: 4<br/>donacion: NO<br/>producto_id: 3<br/>unidad_medida_id: 1<br/>cantidad: 200<br/>costo: 30.00<br/>total: 6000.00<br/>fecha_ingreso: 2024-11-30<br/>fecha_registro: 2024-11-30<br/>user_id: 1<br/>created_at: 2024-11-30 11:51:35<br/>updated_at: 2024-11-30 11:51:35<br/>', 'id: 6<br/>almacen_id: 1<br/>partida_id: 1<br/>unidad_id: 1<br/>programa_id: <br/>codigo: <br/>nro: <br/>donacion: NO<br/>producto_id: 3<br/>unidad_medida_id: 1<br/>cantidad: 200<br/>costo: 30.00<br/>total: 6000.00<br/>fecha_ingreso: 2024-11-30<br/>fecha_registro: 2024-11-30<br/>user_id: 1<br/>created_at: 2024-11-30 11:51:35<br/>updated_at: 2024-11-30 11:54:07<br/>', 'INGRESOS', '2024-11-30', '11:54:07', '2024-11-30 15:54:07', '2024-11-30 15:54:07'),
+(42, 1, 'MODIFICACIÓN', 'EL USUARIO admin MODIFICÓ UN INGRESO', 'id: 6<br/>almacen_id: 1<br/>partida_id: 1<br/>unidad_id: 1<br/>programa_id: <br/>codigo: <br/>nro: <br/>donacion: NO<br/>producto_id: 3<br/>unidad_medida_id: 1<br/>cantidad: 200<br/>costo: 30.00<br/>total: 6000.00<br/>fecha_ingreso: 2024-11-30<br/>fecha_registro: 2024-11-30<br/>user_id: 1<br/>created_at: 2024-11-30 11:51:35<br/>updated_at: 2024-11-30 11:54:07<br/>', 'id: 6<br/>almacen_id: 1<br/>partida_id: 2<br/>unidad_id: 1<br/>programa_id: <br/>codigo: PAD-3<br/>nro: 3<br/>donacion: NO<br/>producto_id: 3<br/>unidad_medida_id: 1<br/>cantidad: 200<br/>costo: 30.00<br/>total: 6000.00<br/>fecha_ingreso: 2024-11-30<br/>fecha_registro: 2024-11-30<br/>user_id: 1<br/>created_at: 2024-11-30 11:51:35<br/>updated_at: 2024-11-30 11:57:03<br/>', 'INGRESOS', '2024-11-30', '11:57:03', '2024-11-30 15:57:03', '2024-11-30 15:57:03'),
+(43, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN INGRESO', 'id: 7<br/>almacen_id: 3<br/>partida_id: 1<br/>unidad_id: <br/>programa_id: <br/>codigo: PAU-4<br/>nro: 4<br/>donacion: SI<br/>producto_id: 1<br/>unidad_medida_id: 1<br/>cantidad: 30<br/>costo: 40<br/>total: 1200.00<br/>fecha_ingreso: 2024-11-30<br/>fecha_registro: 2024-11-30<br/>user_id: 1<br/>created_at: 2024-11-30 11:58:03<br/>updated_at: 2024-11-30 11:58:03<br/>', NULL, 'INGRESOS', '2024-11-30', '11:58:03', '2024-11-30 15:58:03', '2024-11-30 15:58:03');
 
 -- --------------------------------------------------------
 
@@ -220,7 +225,9 @@ INSERT INTO `ingresos` (`id`, `almacen_id`, `partida_id`, `unidad_id`, `programa
 (2, 1, 1, 1, NULL, 'PAU-2', 2, 'SI', 2, 1, 300, 20.00, 6000.00, '2024-11-28', '2024-11-28', 1, '2024-11-28 23:05:24', '2024-11-29 01:39:54'),
 (3, 2, 2, NULL, 1, 'PAD-1', 1, 'NO', 1, 1, 200, 45.00, 9000.00, '2024-11-28', '2024-11-28', 1, '2024-11-28 23:11:17', '2024-11-28 23:11:17'),
 (4, 1, 1, 1, NULL, 'PAU-3', 3, 'NO', 3, 1, 500, 20.00, 10000.00, '2024-11-28', '2024-11-28', 1, '2024-11-29 00:42:45', '2024-11-29 00:42:45'),
-(5, 1, 2, 2, NULL, 'PAD-2', 2, 'SI', 1, 1, 157, 50.00, 7850.00, '2024-11-29', '2024-11-29', 3, '2024-11-30 02:21:53', '2024-11-30 02:24:31');
+(5, 1, 2, 2, NULL, 'PAD-2', 2, 'SI', 1, 1, 157, 50.00, 7850.00, '2024-11-29', '2024-11-29', 3, '2024-11-30 02:21:53', '2024-11-30 02:24:31'),
+(6, 1, 2, 1, NULL, 'PAD-3', 3, 'NO', 3, 1, 200, 30.00, 6000.00, '2024-11-30', '2024-11-30', 1, '2024-11-30 15:51:35', '2024-11-30 15:57:03'),
+(7, 3, 1, NULL, NULL, 'PAU-4', 4, 'SI', 1, 1, 30, 40.00, 1200.00, '2024-11-30', '2024-11-30', 1, '2024-11-30 15:58:03', '2024-11-30 15:58:03');
 
 -- --------------------------------------------------------
 
@@ -678,19 +685,19 @@ ALTER TABLE `configuracions`
 -- AUTO_INCREMENT de la tabla `egresos`
 --
 ALTER TABLE `egresos`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT de la tabla `historial_accions`
 --
 ALTER TABLE `historial_accions`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=44;
 
 --
 -- AUTO_INCREMENT de la tabla `ingresos`
 --
 ALTER TABLE `ingresos`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT de la tabla `migrations`

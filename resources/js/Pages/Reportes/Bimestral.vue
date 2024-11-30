@@ -76,34 +76,30 @@ onMounted(() => {
                         <div class="row">
                             <div class="col-md-12">
                                 <label>Seleccionar almacén</label>
-                                <select
-                                    :hide-details="
-                                        form.errors?.almacen_id ? false : true
-                                    "
-                                    :error="
-                                        form.errors?.almacen_id ? true : false
-                                    "
-                                    :error-messages="
-                                        form.errors?.almacen_id
-                                            ? form.errors?.almacen_id
-                                            : ''
-                                    "
+                                <el-select
+                                    class="w-100"
+                                    placeholder="- Seleccione -"
+                                    :class="{
+                                        'border border-red rounded':
+                                            form.errors?.almacen_id,
+                                    }"
                                     v-model="form.almacen_id"
-                                    class="form-control"
+                                    filterable
                                 >
-                                    <option
-                                        value="todos"
+                                    <el-option
                                         v-if="user.tipo != 'EXTERNO'"
+                                        value="todos"
+                                        label="TODOS"
+                                        >TODOS</el-option
                                     >
-                                        TODOS
-                                    </option>
-                                    <option
+                                    <el-option
                                         v-for="item in listAlmacens"
                                         :value="item.id"
+                                        :label="item.nombre"
                                     >
                                         {{ item.nombre }}
-                                    </option>
-                                </select>
+                                    </el-option>
+                                </el-select>
                             </div>
                             <div class="col-12">
                                 <div class="row">

@@ -155,41 +155,47 @@ onBeforeUnmount(() => {});
                     <div class="row">
                         <div class="col-md-6">
                             <label>Seleccionar almacén</label>
-                            <select
-                                class="form-control"
+                            <el-select
+                                class="w-100"
+                                placeholder="- Seleccione -"
                                 :class="{
                                     'parsley-error': form.errors?.almacen_id,
                                 }"
                                 v-model="form.almacen_id"
                                 @change="cargarIngresoAlmacenPartida"
+                                filterable
                             >
-                                <option value="">- Seleccione -</option>
-                                <option
+                                <el-option value="">- Seleccione -</el-option>
+                                <el-option
                                     v-for="item in listAlmacens"
                                     :value="item.id"
+                                    :label="item.nombre"
                                 >
                                     {{ item.nombre }}
-                                </option>
-                            </select>
+                                </el-option>
+                            </el-select>
                         </div>
                         <div class="col-md-6">
                             <label>Seleccionar partida</label>
-                            <select
-                                class="form-control"
+                            <el-select
+                                class="w-100"
+                                placeholder="- Seleccione -"
                                 :class="{
                                     'parsley-error': form.errors?.partida_id,
                                 }"
                                 v-model="form.partida_id"
                                 @change="cargarIngresoAlmacenPartida"
+                                filterable
                             >
-                                <option value="">- Seleccione -</option>
-                                <option
+                                <el-option value="">- Seleccione -</el-option>
+                                <el-option
                                     v-for="item in listPartidas"
                                     :value="item.id"
+                                    :label="item.nombre"
                                 >
                                     {{ item.nombre }}
-                                </option>
-                            </select>
+                                </el-option>
+                            </el-select>
                         </div>
                     </div>
                     <div class="row">

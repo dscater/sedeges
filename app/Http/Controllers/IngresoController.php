@@ -154,8 +154,8 @@ class IngresoController extends Controller
                 "partida_id" => NULL,
                 "unidad_id" => NULL,
                 "programa_id" => NULL,
-                "codigo" => Auth::user()->tipo != 'EXTERNO' ?  $array_codigo[0] : NULL,
-                "nro" => Auth::user()->tipo != 'EXTERNO' ? $array_codigo[1] : NULL,
+                "codigo" =>  NULL,
+                "nro" => NULL,
                 "donacion" => $request["donacion"],
                 "producto_id" => $request["producto_id"],
                 "unidad_medida_id" => $request["unidad_medida_id"],
@@ -167,8 +167,10 @@ class IngresoController extends Controller
                 "user_id" => Auth::user()->id,
             ];
 
-            if (Auth::user()->tipo != 'EXTERNO') {
+            if (Auth::user()->tipo != 'EXTERNO' || Auth::user()->id == 1) {
                 $data_ingreso["partida_id"] = $request["partida_id"];
+                $data_ingreso["codigo"] = $array_codigo[0];
+                $data_ingreso["nro"] = $array_codigo[1];
             }
 
             if ($request->almacen_id == 1) {
@@ -237,7 +239,7 @@ class IngresoController extends Controller
                 "fecha_registro" => date('Y-m-d')
             ];
 
-            if (Auth::user()->tipo != 'EXTERNO') {
+            if (Auth::user()->tipo != 'EXTERNO' || Auth::user()->id == 1) {
                 $data_ingreso["partida_id"] = $request["partida_id"];
             }
 

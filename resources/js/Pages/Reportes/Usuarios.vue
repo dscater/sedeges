@@ -60,27 +60,25 @@ onMounted(() => {
                         <div class="row">
                             <div class="col-md-12">
                                 <label>Seleccionar role</label>
-                                <select
-                                    :hide-details="
-                                        form.errors?.role_id ? false : true
-                                    "
-                                    :error="form.errors?.role_id ? true : false"
-                                    :error-messages="
-                                        form.errors?.role_id
-                                            ? form.errors?.role_id
-                                            : ''
-                                    "
+                                <el-select
+                                    class="w-100"
+                                    placeholder="- Seleccione -"
+                                    :class="{
+                                        'border border-red rounded':
+                                            form.errors?.role_id,
+                                    }"
                                     v-model="form.role_id"
-                                    class="form-control"
+                                    filterable
                                 >
-                                    <option value="todos">TODOS</option>
-                                    <option
+                                    <el-option value="todos" label="TODOS">TODOS</el-option>
+                                    <el-option
                                         v-for="item in listRoles"
                                         :value="item.id"
+                                        :label="item.nombre"
                                     >
                                         {{ item.nombre }}
-                                    </option>
-                                </select>
+                                    </el-option>
+                                </el-select>
                             </div>
                             <div class="col-md-12 mt-2">
                                 <label>Seleccionar tipo</label>
