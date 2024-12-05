@@ -191,9 +191,11 @@ onBeforeUnmount(() => {});
                                 <el-option
                                     v-for="item in listPartidas"
                                     :value="item.id"
-                                    :label="item.nombre"
+                                    :label="
+                                        item.nro_partida + ' - ' + item.nombre
+                                    "
                                 >
-                                    {{ item.nombre }}
+                                    {{ item.nro_partida }} - {{ item.nombre }}
                                 </el-option>
                             </el-select>
                         </div>

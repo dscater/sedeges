@@ -53,6 +53,26 @@ const columns = [
         data: "total",
     },
     {
+        title: "SALDO CANTIDAD",
+        data: null,
+        render: function (data, type, row) {
+            if (!row.egreso) {
+                return row.cantidad;
+            }
+            return row.egreso.s_cantidad;
+        },
+    },
+    {
+        title: "SALDO TOTAL",
+        data: null,
+        render: function (data, type, row) {
+            if (!row.egreso) {
+                return row.total;
+            }
+            return row.egreso.s_total;
+        },
+    },
+    {
         title: "FECHA DE INGRESO",
         data: "fecha_ingreso_t",
     },

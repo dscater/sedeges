@@ -249,7 +249,7 @@ class IngresoController extends Controller
             if ($request->almacen_id == 2) {
                 $data_ingreso["programa_id"] = $request["programa_id"];
             }
-            if ($ingreso->partida_id != $request->partida_id) {
+            if ($ingreso->partida_id == null || $ingreso->partida_id != $request->partida_id) {
                 $array_codigo = Ingreso::getCodigoIngresoPartida($request["partida_id"]);
                 $data_ingreso["codigo"] = $array_codigo[0];
                 $data_ingreso["nro"] = $array_codigo[1];

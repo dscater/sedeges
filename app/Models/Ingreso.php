@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
 
 class Ingreso extends Model
 {
@@ -87,13 +88,13 @@ class Ingreso extends Model
         $codigo = NULL;
         $nro = NULL;
         if ($partida) {
-            $ultimo = Ingreso::where("partida_id", $partida_id)->get()->last();
+            $ultimo = Ingreso::where("partida_id", $partida_id)->orderBy("nro", "desc")->get()->first();
+            // Log::debug($ultimo);
             $nro = 1;
             if ($ultimo) {
                 $nro = (int)$ultimo->nro + 1;
             }
             $codigo = $partida->abreviatura . '-' . $nro;
-
         }
         return [$codigo, $nro];
     }
