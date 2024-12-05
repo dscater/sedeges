@@ -86,8 +86,8 @@ class AlmacenController extends Controller
         // }
 
         $ingresos = Ingreso::with(["almacen", "partida", "producto", "unidad_medida", "unidad", "programa"])->select("ingresos.*");
+        $ingresos->where("almacen_id", $almacen->id);
         if ($user->tipo == 'EXTERNO') {
-            $ingresos->where("almacen_id", $user->almacen_id);
             $ingresos->where("unidad_id", $user->unidad_id);
             $ingresos->where("user_id", $user->id);
         }
