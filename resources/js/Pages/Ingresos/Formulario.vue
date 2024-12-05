@@ -5,6 +5,10 @@ import { useProductos } from "@/composables/productos/useProductos";
 import Formulario from "../Productos/Formulario.vue";
 import { watch, ref, computed, defineEmits, onMounted, nextTick } from "vue";
 const props = defineProps({
+    p_almacen_id: {
+        type: Number,
+        default: 0,
+    },
     open_dialog: {
         type: Boolean,
         default: false,
@@ -60,9 +64,13 @@ watch(
             if (auth.user.tipo == "EXTERNO") {
                 form.almacen_id = auth.user.almacen_id;
                 form.unidad_id = auth.user.unidad_id;
-                console.log(form.almacen_id);
                 getInfoAlmacen(form.almacen_id);
                 getInfoUnidad(form.unidad_id);
+            }
+
+            if (props.p_almacen_id != 0) {
+                form.almacen_id = props.p_almacen_id;
+                getInfoAlmacen(form.almacen_id);
             }
         }
     }
@@ -71,6 +79,15 @@ watch(
     () => props.accion_dialog,
     (newValue) => {
         accion.value = newValue;
+    }
+);
+watch(
+    () => props.p_almacen_id,
+    (newValue) => {
+        if (newValue != 0) {
+            form.almacen_id == props.p_almacen_id;
+            getInfoAlmacen(form.almacen_id);
+        }
     }
 );
 
@@ -247,8 +264,9 @@ onMounted(() => {});
                         <div class="row">
                             <template
                                 v-if="
-                                    auth.user.tipo == 'INTERNO' ||
-                                    auth.user.id == 1
+                                    (auth.user.tipo == 'INTERNO' ||
+                                        auth.user.id == 1) &&
+                                    props.p_almacen_id == 0
                                 "
                             >
                                 <div class="col-md-4">
@@ -338,15 +356,38 @@ onMounted(() => {});
                                         </li>
                                     </ul>
                                 </div>
+
                                 <!-- unidad -->
-                                <div class="col-md-4">
+                                <div
+                                    class="col-md-4"
+                                    v-if="
+                                        form.almacen_id == 1 &&
+                                        (auth.user.tipo == 'INTERNO' ||
+                                            auth.user.id == 1)
+                                    "
+                                >
                                     <label>Seleccionar Unidad/Centro*</label>
-                                    <input
-                                        type="text"
-                                        class="form-control"
-                                        :value="oUnidad?.nombre"
-                                        readonly
-                                    />
+                                    <el-select
+                                        class="w-100"
+                                        placeholder="- Seleccione -"
+                                        :class="{
+                                            'border border-red rounded':
+                                                form.errors?.unidad_id,
+                                        }"
+                                        v-model="form.unidad_id"
+                                        filterable
+                                    >
+                                        <el-option value=""
+                                            >- Seleccione -</el-option
+                                        >
+                                        <el-option
+                                            v-for="item in listUnidads"
+                                            :value="item.id"
+                                            :label="item.nombre"
+                                        >
+                                            {{ item.nombre }}
+                                        </el-option>
+                                    </el-select>
                                     <ul
                                         v-if="form.errors?.unidad_id"
                                         class="parsley-errors-list filled"
@@ -356,6 +397,32 @@ onMounted(() => {});
                                         </li>
                                     </ul>
                                 </div>
+
+                                <template v-else>
+                                    <!-- unidad text -->
+                                    <div
+                                        class="col-md-4"
+                                        v-if="form.almacen_id == 1"
+                                    >
+                                        <label
+                                            >Seleccionar Unidad/Centro*</label
+                                        >
+                                        <input
+                                            type="text"
+                                            class="form-control"
+                                            :value="oUnidad?.nombre"
+                                            readonly
+                                        />
+                                        <ul
+                                            v-if="form.errors?.unidad_id"
+                                            class="parsley-errors-list filled"
+                                        >
+                                            <li class="parsley-required">
+                                                {{ form.errors?.unidad_id }}
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </template>
                             </template>
                             <!-- programas -->
                             <div class="col-md-4" v-if="form.almacen_id == 2">
@@ -391,7 +458,7 @@ onMounted(() => {});
                                 </ul>
                             </div>
                             <div
-                                class="col-md-4"
+                                class="col-md-8"
                                 v-if="auth.user.tipo != 'EXTERNO'"
                             >
                                 <label>Seleccionar partida*</label>
@@ -411,8 +478,13 @@ onMounted(() => {});
                                     <el-option
                                         v-for="item in listPartidas"
                                         :value="item.id"
-                                        :label="item.nombre"
+                                        :label="
+                                            item.nro_partida +
+                                            ' - ' +
+                                            item.nombre
+                                        "
                                     >
+                                        {{ item.nro_partida }} -
                                         {{ item.nombre }}
                                     </el-option>
                                 </el-select>

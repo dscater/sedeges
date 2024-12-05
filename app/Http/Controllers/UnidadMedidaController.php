@@ -14,14 +14,11 @@ use Inertia\Inertia;
 class UnidadMedidaController extends Controller
 {
     public $validacion = [
-        "nro_unidad_medida" => "required|min:1",
         "nombre" => "required|min:1",
         "abreviatura" => "required|min:1",
     ];
 
     public $mensajes = [
-        "nro_unidad_medida.required" => "Este campo es obligatorio",
-        "nro_unidad_medida.min" => "Debes ingresar al menos :min caracteres",
         "nombre.required" => "Este campo es obligatorio",
         "nombre.min" => "Debes ingresar al menos :min caracteres",
         "abreviatura.required" => "Este campo es obligatorio",

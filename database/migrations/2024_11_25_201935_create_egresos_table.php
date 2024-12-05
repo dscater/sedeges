@@ -21,6 +21,7 @@ return new class extends Migration
             $table->decimal("costo", 24, 2);
             $table->decimal("total", 24, 2);
             $table->date("fecha_registro")->nullable();
+            $table->integer("editable")->default(1);
             $table->timestamps();
 
             $table->foreign("ingreso_id")->on("ingresos")->references("id");

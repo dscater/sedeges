@@ -127,12 +127,6 @@ onMounted(() => {});
                 "
             >
                 <button
-                    v-if="
-                        props_page.auth?.user.permisos == '*' ||
-                        props_page.auth?.user.permisos.includes(
-                            'configuracions.edit'
-                        )
-                    "
                     type="submit"
                     class="btn btn-primary"
                 >

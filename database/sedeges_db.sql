@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost:3306
--- Tiempo de generación: 30-11-2024 a las 12:03:12
+-- Tiempo de generación: 05-12-2024 a las 16:02:19
 -- Versión del servidor: 8.0.30
 -- Versión de PHP: 8.2.22
 
@@ -104,6 +104,7 @@ CREATE TABLE `egresos` (
   `costo` decimal(24,2) NOT NULL,
   `total` decimal(24,2) NOT NULL,
   `fecha_registro` date DEFAULT NULL,
+  `editable` int NOT NULL DEFAULT '1',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -112,13 +113,14 @@ CREATE TABLE `egresos` (
 -- Volcado de datos para la tabla `egresos`
 --
 
-INSERT INTO `egresos` (`id`, `ingreso_id`, `almacen_id`, `partida_id`, `producto_id`, `cantidad`, `costo`, `total`, `fecha_registro`, `created_at`, `updated_at`) VALUES
-(1, 2, 1, 1, 2, 300, 20.00, 6000.00, '2024-11-28', '2024-11-29 00:04:13', '2024-11-29 00:40:51'),
-(2, 1, 1, 1, 1, 70, 40.00, 2800.00, '2024-11-28', '2024-11-29 00:04:13', '2024-11-30 15:49:37'),
-(3, 3, 2, 2, 1, 200, 45.00, 9000.00, '2024-11-28', '2024-11-29 00:42:03', '2024-11-29 00:42:03'),
-(4, 4, 1, 1, 3, 500, 20.00, 10000.00, '2024-11-28', '2024-11-29 00:42:52', '2024-11-29 19:36:42'),
-(5, 5, 1, 2, 1, 157, 50.00, 7850.00, '2024-11-29', '2024-11-30 03:44:51', '2024-11-30 03:44:51'),
-(6, 7, 3, 1, 1, 30, 40.00, 1200.00, '2024-11-30', '2024-11-30 16:02:35', '2024-11-30 16:02:35');
+INSERT INTO `egresos` (`id`, `ingreso_id`, `almacen_id`, `partida_id`, `producto_id`, `cantidad`, `costo`, `total`, `fecha_registro`, `editable`, `created_at`, `updated_at`) VALUES
+(1, 2, 1, 1, 2, 300, 20.00, 6000.00, '2024-11-28', 0, '2024-11-29 00:04:13', '2024-12-05 19:55:16'),
+(2, 1, 1, 1, 1, 70, 40.00, 2800.00, '2024-11-28', 1, '2024-11-29 00:04:13', '2024-12-05 19:55:26'),
+(3, 3, 2, 2, 1, 200, 45.00, 9000.00, '2024-11-28', 1, '2024-11-29 00:42:03', '2024-11-29 00:42:03'),
+(4, 4, 1, 1, 3, 500, 20.00, 10000.00, '2024-11-28', 0, '2024-11-29 00:42:52', '2024-12-05 19:55:06'),
+(5, 5, 1, 2, 1, 157, 50.00, 7850.00, '2024-11-29', 1, '2024-11-30 03:44:51', '2024-11-30 03:44:51'),
+(6, 7, 3, 1, 1, 30, 40.00, 1200.00, '2024-11-30', 1, '2024-11-30 16:02:35', '2024-11-30 16:02:35'),
+(7, 9, 1, 1, 5, 100, 30.00, 3000.00, '2024-12-05', 0, '2024-12-05 19:41:41', '2024-12-05 19:55:13');
 
 -- --------------------------------------------------------
 
@@ -187,7 +189,22 @@ INSERT INTO `historial_accions` (`id`, `user_id`, `accion`, `descripcion`, `dato
 (40, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN INGRESO', 'id: 6<br/>almacen_id: 1<br/>partida_id: 1<br/>unidad_id: 1<br/>programa_id: <br/>codigo: PAU-4<br/>nro: 4<br/>donacion: NO<br/>producto_id: 3<br/>unidad_medida_id: 1<br/>cantidad: 200<br/>costo: 30<br/>total: 6000.00<br/>fecha_ingreso: 2024-11-30<br/>fecha_registro: 2024-11-30<br/>user_id: 1<br/>created_at: 2024-11-30 11:51:35<br/>updated_at: 2024-11-30 11:51:35<br/>', NULL, 'INGRESOS', '2024-11-30', '11:51:36', '2024-11-30 15:51:36', '2024-11-30 15:51:36'),
 (41, 1, 'MODIFICACIÓN', 'EL USUARIO admin MODIFICÓ UN INGRESO', 'id: 6<br/>almacen_id: 1<br/>partida_id: 1<br/>unidad_id: 1<br/>programa_id: <br/>codigo: PAU-4<br/>nro: 4<br/>donacion: NO<br/>producto_id: 3<br/>unidad_medida_id: 1<br/>cantidad: 200<br/>costo: 30.00<br/>total: 6000.00<br/>fecha_ingreso: 2024-11-30<br/>fecha_registro: 2024-11-30<br/>user_id: 1<br/>created_at: 2024-11-30 11:51:35<br/>updated_at: 2024-11-30 11:51:35<br/>', 'id: 6<br/>almacen_id: 1<br/>partida_id: 1<br/>unidad_id: 1<br/>programa_id: <br/>codigo: <br/>nro: <br/>donacion: NO<br/>producto_id: 3<br/>unidad_medida_id: 1<br/>cantidad: 200<br/>costo: 30.00<br/>total: 6000.00<br/>fecha_ingreso: 2024-11-30<br/>fecha_registro: 2024-11-30<br/>user_id: 1<br/>created_at: 2024-11-30 11:51:35<br/>updated_at: 2024-11-30 11:54:07<br/>', 'INGRESOS', '2024-11-30', '11:54:07', '2024-11-30 15:54:07', '2024-11-30 15:54:07'),
 (42, 1, 'MODIFICACIÓN', 'EL USUARIO admin MODIFICÓ UN INGRESO', 'id: 6<br/>almacen_id: 1<br/>partida_id: 1<br/>unidad_id: 1<br/>programa_id: <br/>codigo: <br/>nro: <br/>donacion: NO<br/>producto_id: 3<br/>unidad_medida_id: 1<br/>cantidad: 200<br/>costo: 30.00<br/>total: 6000.00<br/>fecha_ingreso: 2024-11-30<br/>fecha_registro: 2024-11-30<br/>user_id: 1<br/>created_at: 2024-11-30 11:51:35<br/>updated_at: 2024-11-30 11:54:07<br/>', 'id: 6<br/>almacen_id: 1<br/>partida_id: 2<br/>unidad_id: 1<br/>programa_id: <br/>codigo: PAD-3<br/>nro: 3<br/>donacion: NO<br/>producto_id: 3<br/>unidad_medida_id: 1<br/>cantidad: 200<br/>costo: 30.00<br/>total: 6000.00<br/>fecha_ingreso: 2024-11-30<br/>fecha_registro: 2024-11-30<br/>user_id: 1<br/>created_at: 2024-11-30 11:51:35<br/>updated_at: 2024-11-30 11:57:03<br/>', 'INGRESOS', '2024-11-30', '11:57:03', '2024-11-30 15:57:03', '2024-11-30 15:57:03'),
-(43, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN INGRESO', 'id: 7<br/>almacen_id: 3<br/>partida_id: 1<br/>unidad_id: <br/>programa_id: <br/>codigo: PAU-4<br/>nro: 4<br/>donacion: SI<br/>producto_id: 1<br/>unidad_medida_id: 1<br/>cantidad: 30<br/>costo: 40<br/>total: 1200.00<br/>fecha_ingreso: 2024-11-30<br/>fecha_registro: 2024-11-30<br/>user_id: 1<br/>created_at: 2024-11-30 11:58:03<br/>updated_at: 2024-11-30 11:58:03<br/>', NULL, 'INGRESOS', '2024-11-30', '11:58:03', '2024-11-30 15:58:03', '2024-11-30 15:58:03');
+(43, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN INGRESO', 'id: 7<br/>almacen_id: 3<br/>partida_id: 1<br/>unidad_id: <br/>programa_id: <br/>codigo: PAU-4<br/>nro: 4<br/>donacion: SI<br/>producto_id: 1<br/>unidad_medida_id: 1<br/>cantidad: 30<br/>costo: 40<br/>total: 1200.00<br/>fecha_ingreso: 2024-11-30<br/>fecha_registro: 2024-11-30<br/>user_id: 1<br/>created_at: 2024-11-30 11:58:03<br/>updated_at: 2024-11-30 11:58:03<br/>', NULL, 'INGRESOS', '2024-11-30', '11:58:03', '2024-11-30 15:58:03', '2024-11-30 15:58:03'),
+(44, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN PRODUCTO', 'id: 4<br/>nombre: PRODUCTO 4<br/>fecha_registro: 2024-11-30<br/>created_at: 2024-11-30 12:19:10<br/>updated_at: 2024-11-30 12:19:10<br/>', NULL, 'PRODUCTOS', '2024-11-30', '12:19:10', '2024-11-30 16:19:10', '2024-11-30 16:19:10'),
+(45, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN PRODUCTO', 'id: 5<br/>nombre: PRODUCTO 4<br/>fecha_registro: 2024-11-30<br/>created_at: 2024-11-30 12:21:47<br/>updated_at: 2024-11-30 12:21:47<br/>', NULL, 'PRODUCTOS', '2024-11-30', '12:21:47', '2024-11-30 16:21:47', '2024-11-30 16:21:47'),
+(46, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN PRODUCTO', 'id: 6<br/>nombre: PRODUCTO 5<br/>fecha_registro: 2024-11-30<br/>created_at: 2024-11-30 12:25:19<br/>updated_at: 2024-11-30 12:25:19<br/>', NULL, 'PRODUCTOS', '2024-11-30', '12:25:19', '2024-11-30 16:25:19', '2024-11-30 16:25:19'),
+(47, 1, 'MODIFICACIÓN', 'EL USUARIO admin MODIFICÓ UN PRODUCTO', 'id: 5<br/>nombre: PRODUCTO 4<br/>fecha_registro: 2024-11-30<br/>created_at: 2024-11-30 12:21:47<br/>updated_at: 2024-11-30 12:21:47<br/>', 'id: 5<br/>nombre: PRODUCTO 5<br/>fecha_registro: 2024-11-30<br/>created_at: 2024-11-30 12:21:47<br/>updated_at: 2024-11-30 12:25:30<br/>', 'PRODUCTOS', '2024-11-30', '12:25:30', '2024-11-30 16:25:30', '2024-11-30 16:25:30'),
+(48, 1, 'MODIFICACIÓN', 'EL USUARIO admin MODIFICÓ UN PRODUCTO', 'id: 6<br/>nombre: PRODUCTO 5<br/>fecha_registro: 2024-11-30<br/>created_at: 2024-11-30 12:25:19<br/>updated_at: 2024-11-30 12:25:19<br/>', 'id: 6<br/>nombre: PRODUCTO 6<br/>fecha_registro: 2024-11-30<br/>created_at: 2024-11-30 12:25:19<br/>updated_at: 2024-11-30 12:25:33<br/>', 'PRODUCTOS', '2024-11-30', '12:25:33', '2024-11-30 16:25:33', '2024-11-30 16:25:33'),
+(49, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN PRODUCTO', 'id: 7<br/>nombre: PRODUCTO 7<br/>fecha_registro: 2024-11-30<br/>created_at: 2024-11-30 12:26:03<br/>updated_at: 2024-11-30 12:26:03<br/>', NULL, 'PRODUCTOS', '2024-11-30', '12:26:03', '2024-11-30 16:26:03', '2024-11-30 16:26:03'),
+(50, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN INGRESO', 'id: 8<br/>almacen_id: 3<br/>partida_id: 2<br/>unidad_id: <br/>programa_id: <br/>codigo: PAD-4<br/>nro: 4<br/>donacion: NO<br/>producto_id: 7<br/>unidad_medida_id: 1<br/>cantidad: 300<br/>costo: 10<br/>total: 3000.00<br/>fecha_ingreso: 2024-11-30<br/>fecha_registro: 2024-11-30<br/>user_id: 1<br/>created_at: 2024-11-30 12:26:07<br/>updated_at: 2024-11-30 12:26:07<br/>', NULL, 'INGRESOS', '2024-11-30', '12:26:07', '2024-11-30 16:26:07', '2024-11-30 16:26:07'),
+(51, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UNA UNIDAD DE MEDIDA', 'id: 2<br/>nombre: UNIDAD MEDIDA 2<br/>abreviatura: U2<br/>fecha_registro: 2024-12-05<br/>created_at: 2024-12-05 15:16:56<br/>updated_at: 2024-12-05 15:16:56<br/>', NULL, 'UNIDADES DE MEDIDA', '2024-12-05', '15:16:56', '2024-12-05 19:16:56', '2024-12-05 19:16:56'),
+(52, 1, 'MODIFICACIÓN', 'EL USUARIO admin MODIFICÓ UNA UNIDAD DE MEDIDA', 'id: 1<br/>nombre: UNIDAD MEDIDA 1<br/>abreviatura: U1<br/>fecha_registro: 2024-11-25<br/>created_at: 2024-11-25 20:58:53<br/>updated_at: 2024-11-25 20:58:53<br/>', 'id: 1<br/>nombre: UNIDAD MEDIDA 1<br/>abreviatura: U1<br/>fecha_registro: 2024-11-25<br/>created_at: 2024-11-25 20:58:53<br/>updated_at: 2024-11-25 20:58:53<br/>', 'UNIDADES DE MEDIDA', '2024-12-05', '15:16:59', '2024-12-05 19:16:59', '2024-12-05 19:16:59'),
+(53, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN INGRESO', 'id: 9<br/>almacen_id: 1<br/>partida_id: 1<br/>unidad_id: 1<br/>programa_id: <br/>codigo: PAU-5<br/>nro: 5<br/>donacion: NO<br/>producto_id: 5<br/>unidad_medida_id: 1<br/>cantidad: 100<br/>costo: 30<br/>total: 3000.00<br/>fecha_ingreso: 2024-12-05<br/>fecha_registro: 2024-12-05<br/>user_id: 1<br/>created_at: 2024-12-05 15:25:39<br/>updated_at: 2024-12-05 15:25:39<br/>', NULL, 'INGRESOS', '2024-12-05', '15:25:39', '2024-12-05 19:25:39', '2024-12-05 19:25:39'),
+(54, 3, 'CREACIÓN', 'EL USUARIO CMARTINES REGISTRO UN INGRESO', 'id: 10<br/>almacen_id: 1<br/>partida_id: <br/>unidad_id: 2<br/>programa_id: <br/>codigo: <br/>nro: <br/>donacion: SI<br/>producto_id: 4<br/>unidad_medida_id: 1<br/>cantidad: 155<br/>costo: 36<br/>total: 5580.00<br/>fecha_ingreso: 2024-12-05<br/>fecha_registro: 2024-12-05<br/>user_id: 3<br/>created_at: 2024-12-05 15:36:14<br/>updated_at: 2024-12-05 15:36:14<br/>', NULL, 'INGRESOS', '2024-12-05', '15:36:14', '2024-12-05 19:36:14', '2024-12-05 19:36:14'),
+(55, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN USUARIO', 'id: 5<br/>usuario: MGONZALES<br/>nombre: MARTHA<br/>paterno: GONZALES<br/>materno: <br/>ci: 4444<br/>ci_exp: LP<br/>dir: LOS OLIVOS<br/>email: <br/>fono: 66666<br/>password: $2y$12$sofR9iBzvE03Smup3Z5P9.xGpAmVNt4VPOyHjbobVjG0Aqturya/i<br/>foto: <br/>tipo: EXTERNO<br/>cargo_id: 2<br/>unidad_id: 2<br/>almacen_id: 2<br/>role_id: 3<br/>fecha_registro: 2024-12-05<br/>acceso: 1<br/>status: <br/>created_at: 2024-12-05 15:39:06<br/>updated_at: 2024-12-05 15:39:06<br/>', NULL, 'USUARIOS', '2024-12-05', '15:39:06', '2024-12-05 19:39:06', '2024-12-05 19:39:06'),
+(56, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN ROLE', 'id: 4<br/>nombre: USUARIO EXTERNO<br/>permisos: 0<br/>usuarios: <br/>created_at: 2024-12-05 15:57:48<br/>updated_at: 2024-12-05 15:57:48<br/>', NULL, 'ROLES', '2024-12-05', '15:57:48', '2024-12-05 19:57:48', '2024-12-05 19:57:48'),
+(57, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN USUARIO', 'id: 6<br/>usuario: RMONTES<br/>nombre: RAMIRO<br/>paterno: MONTES<br/>materno: CONDE<br/>ci: 5555<br/>ci_exp: LP<br/>dir: LOS PEDREGALES<br/>email: ramiro@gmail.com<br/>fono: 6666666<br/>password: $2y$12$20IN4DUuHkUj.tIL17ooye7B9HingV9Q9Q/GUX4Nz8k6Vh1nFKhmS<br/>foto: <br/>tipo: EXTERNO<br/>cargo_id: 1<br/>unidad_id: 2<br/>almacen_id: 1<br/>role_id: 4<br/>fecha_registro: 2024-12-05<br/>acceso: 1<br/>status: <br/>created_at: 2024-12-05 15:59:07<br/>updated_at: 2024-12-05 15:59:07<br/>', NULL, 'USUARIOS', '2024-12-05', '15:59:07', '2024-12-05 19:59:07', '2024-12-05 19:59:07'),
+(58, 6, 'CREACIÓN', 'EL USUARIO RMONTES REGISTRO UN INGRESO', 'id: 11<br/>almacen_id: 1<br/>partida_id: <br/>unidad_id: 2<br/>programa_id: <br/>codigo: <br/>nro: <br/>donacion: SI<br/>producto_id: 1<br/>unidad_medida_id: 1<br/>cantidad: 277<br/>costo: 37<br/>total: 10249.00<br/>fecha_ingreso: 2024-12-05<br/>fecha_registro: 2024-12-05<br/>user_id: 6<br/>created_at: 2024-12-05 15:59:39<br/>updated_at: 2024-12-05 15:59:39<br/>', NULL, 'INGRESOS', '2024-12-05', '15:59:39', '2024-12-05 19:59:39', '2024-12-05 19:59:39');
 
 -- --------------------------------------------------------
 
@@ -227,7 +244,11 @@ INSERT INTO `ingresos` (`id`, `almacen_id`, `partida_id`, `unidad_id`, `programa
 (4, 1, 1, 1, NULL, 'PAU-3', 3, 'NO', 3, 1, 500, 20.00, 10000.00, '2024-11-28', '2024-11-28', 1, '2024-11-29 00:42:45', '2024-11-29 00:42:45'),
 (5, 1, 2, 2, NULL, 'PAD-2', 2, 'SI', 1, 1, 157, 50.00, 7850.00, '2024-11-29', '2024-11-29', 3, '2024-11-30 02:21:53', '2024-11-30 02:24:31'),
 (6, 1, 2, 1, NULL, 'PAD-3', 3, 'NO', 3, 1, 200, 30.00, 6000.00, '2024-11-30', '2024-11-30', 1, '2024-11-30 15:51:35', '2024-11-30 15:57:03'),
-(7, 3, 1, NULL, NULL, 'PAU-4', 4, 'SI', 1, 1, 30, 40.00, 1200.00, '2024-11-30', '2024-11-30', 1, '2024-11-30 15:58:03', '2024-11-30 15:58:03');
+(7, 3, 1, NULL, NULL, 'PAU-4', 4, 'SI', 1, 1, 30, 40.00, 1200.00, '2024-11-30', '2024-11-30', 1, '2024-11-30 15:58:03', '2024-11-30 15:58:03'),
+(8, 3, 2, NULL, NULL, 'PAD-4', 4, 'NO', 7, 1, 300, 10.00, 3000.00, '2024-11-30', '2024-11-30', 1, '2024-11-30 16:26:07', '2024-11-30 16:26:07'),
+(9, 1, 1, 1, NULL, 'PAU-5', 5, 'NO', 5, 1, 100, 30.00, 3000.00, '2024-12-05', '2024-12-05', 1, '2024-12-05 19:25:39', '2024-12-05 19:25:39'),
+(10, 1, NULL, 2, NULL, NULL, NULL, 'SI', 4, 1, 155, 36.00, 5580.00, '2024-12-05', '2024-12-05', 3, '2024-12-05 19:36:14', '2024-12-05 19:36:14'),
+(11, 1, NULL, 2, NULL, NULL, NULL, 'SI', 1, 1, 277, 37.00, 10249.00, '2024-12-05', '2024-12-05', 6, '2024-12-05 19:59:39', '2024-12-05 19:59:39');
 
 -- --------------------------------------------------------
 
@@ -384,7 +405,11 @@ INSERT INTO `permisos` (`id`, `role_id`, `modulo_id`, `created_at`, `updated_at`
 (9, 3, 40, '2024-11-29 20:40:14', '2024-11-29 20:40:14'),
 (11, 3, 46, '2024-11-29 20:40:16', '2024-11-29 20:40:16'),
 (12, 3, 47, '2024-11-29 20:40:17', '2024-11-29 20:40:17'),
-(13, 3, 45, '2024-11-29 20:41:05', '2024-11-29 20:41:05');
+(13, 3, 45, '2024-11-29 20:41:05', '2024-11-29 20:41:05'),
+(14, 4, 34, '2024-12-05 19:57:59', '2024-12-05 19:57:59'),
+(15, 4, 35, '2024-12-05 19:58:00', '2024-12-05 19:58:00'),
+(16, 4, 27, '2024-12-05 19:58:10', '2024-12-05 19:58:10'),
+(17, 4, 31, '2024-12-05 19:58:29', '2024-12-05 19:58:29');
 
 -- --------------------------------------------------------
 
@@ -407,7 +432,11 @@ CREATE TABLE `productos` (
 INSERT INTO `productos` (`id`, `nombre`, `fecha_registro`, `created_at`, `updated_at`) VALUES
 (1, 'PRODUCTO1', '2024-11-28', '2024-11-28 19:36:49', '2024-11-28 19:36:57'),
 (2, 'PRODUCTO2', '2024-11-28', '2024-11-28 19:37:03', '2024-11-28 19:37:03'),
-(3, 'PRODUCTO3', '2024-11-28', '2024-11-29 00:42:29', '2024-11-29 00:42:29');
+(3, 'PRODUCTO3', '2024-11-28', '2024-11-29 00:42:29', '2024-11-29 00:42:29'),
+(4, 'PRODUCTO 4', '2024-11-30', '2024-11-30 16:19:10', '2024-11-30 16:19:10'),
+(5, 'PRODUCTO 5', '2024-11-30', '2024-11-30 16:21:47', '2024-11-30 16:25:30'),
+(6, 'PRODUCTO 6', '2024-11-30', '2024-11-30 16:25:19', '2024-11-30 16:25:33'),
+(7, 'PRODUCTO 7', '2024-11-30', '2024-11-30 16:26:03', '2024-11-30 16:26:03');
 
 -- --------------------------------------------------------
 
@@ -452,7 +481,8 @@ CREATE TABLE `roles` (
 INSERT INTO `roles` (`id`, `nombre`, `permisos`, `usuarios`, `created_at`, `updated_at`) VALUES
 (1, 'SUPER USUARIO', 1, 0, '2024-11-26 00:59:19', '2024-11-26 00:59:19'),
 (2, 'ADMINISTRADOR', 0, 1, '2024-11-26 00:59:19', '2024-11-26 00:59:19'),
-(3, 'ALMACÉN', 0, 1, '2024-11-29 00:56:05', '2024-11-29 00:56:05');
+(3, 'ALMACÉN', 0, 1, '2024-11-29 00:56:05', '2024-11-29 00:56:05'),
+(4, 'USUARIO EXTERNO', 0, 1, '2024-12-05 19:57:48', '2024-12-05 19:57:48');
 
 -- --------------------------------------------------------
 
@@ -497,7 +527,8 @@ CREATE TABLE `unidad_medidas` (
 --
 
 INSERT INTO `unidad_medidas` (`id`, `nombre`, `abreviatura`, `fecha_registro`, `created_at`, `updated_at`) VALUES
-(1, 'UNIDAD MEDIDA 1', 'U1', '2024-11-25', '2024-11-26 00:58:53', '2024-11-26 00:58:53');
+(1, 'UNIDAD MEDIDA 1', 'U1', '2024-11-25', '2024-11-26 00:58:53', '2024-11-26 00:58:53'),
+(2, 'UNIDAD MEDIDA 2', 'U2', '2024-12-05', '2024-12-05 19:16:56', '2024-12-05 19:16:56');
 
 -- --------------------------------------------------------
 
@@ -538,7 +569,9 @@ INSERT INTO `users` (`id`, `usuario`, `nombre`, `paterno`, `materno`, `ci`, `ci_
 (1, 'admin', 'admin', 'admin', '', '0', '', '', '', '', '$2y$12$65d4fgZsvBV5Lc/AxNKh4eoUdbGyaczQ4sSco20feSQANshNLuxSC', NULL, 'INTERNO', 1, 1, NULL, 1, '2024-11-25', 1, 1, '2024-11-26 01:00:49', '2024-11-26 01:00:49'),
 (2, 'JPERES', 'JUAN', 'PERES', 'MAMANI', '1111', 'LP', 'LOS OLIVOS', 'JUAN@GMAIL.COM', '7777777', '$2y$12$RC6QphnlynnEK3o4El.p7ukQuDPBlPscBGHgLx4uWqnL3vFRRBE76', '1732574829_JPERES.jpg', 'INTERNO', 1, 1, NULL, 2, '2024-11-25', 1, 1, '2024-11-26 02:47:09', '2024-11-26 02:47:13'),
 (3, 'CMARTINES', 'CARLOS', 'MARTINES', 'PAREDES', '2222', 'LP', 'ZONA LOS OLIVOS', 'CARLOS@GMAIL.COM', '777777', '$2y$12$5Od4Mg4s7778FMtVsfTSYeD.blo/B//MxzlfMfyoUZVov.PAIcxra', NULL, 'EXTERNO', 2, 2, 1, 3, '2024-11-29', 1, 1, '2024-11-29 20:38:12', '2024-11-30 02:17:03'),
-(4, 'MPOLO', 'MARCO', 'POLO', '', '3333', 'LP', 'LOS OLIVOS', 'marco@gmail.com', '67676767', '$2y$12$tDcC3LnN6kaPBkhkDweEoeNRbC6edaXBOyfVjUpIenEvM0Xw2YFOW', '1732917793_MPOLO.jpg', 'EXTERNO', 1, 1, 3, 3, '2024-11-29', 1, 1, '2024-11-30 02:03:13', '2024-11-30 02:04:55');
+(4, 'MPOLO', 'MARCO', 'POLO', '', '3333', 'LP', 'LOS OLIVOS', 'marco@gmail.com', '67676767', '$2y$12$tDcC3LnN6kaPBkhkDweEoeNRbC6edaXBOyfVjUpIenEvM0Xw2YFOW', '1732917793_MPOLO.jpg', 'EXTERNO', 1, 1, 3, 3, '2024-11-29', 1, 1, '2024-11-30 02:03:13', '2024-11-30 02:04:55'),
+(5, 'MGONZALES', 'MARTHA', 'GONZALES', '', '4444', 'LP', 'LOS OLIVOS', NULL, '66666', '$2y$12$sofR9iBzvE03Smup3Z5P9.xGpAmVNt4VPOyHjbobVjG0Aqturya/i', NULL, 'EXTERNO', 2, 2, 2, 3, '2024-12-05', 1, 1, '2024-12-05 19:39:06', '2024-12-05 19:39:06'),
+(6, 'RMONTES', 'RAMIRO', 'MONTES', 'CONDE', '5555', 'LP', 'LOS PEDREGALES', 'ramiro@gmail.com', '6666666', '$2y$12$20IN4DUuHkUj.tIL17ooye7B9HingV9Q9Q/GUX4Nz8k6Vh1nFKhmS', NULL, 'EXTERNO', 1, 2, 1, 4, '2024-12-05', 1, 1, '2024-12-05 19:59:07', '2024-12-05 19:59:07');
 
 --
 -- Índices para tablas volcadas
@@ -685,19 +718,19 @@ ALTER TABLE `configuracions`
 -- AUTO_INCREMENT de la tabla `egresos`
 --
 ALTER TABLE `egresos`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT de la tabla `historial_accions`
 --
 ALTER TABLE `historial_accions`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=44;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=59;
 
 --
 -- AUTO_INCREMENT de la tabla `ingresos`
 --
 ALTER TABLE `ingresos`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT de la tabla `migrations`
@@ -721,13 +754,13 @@ ALTER TABLE `partidas`
 -- AUTO_INCREMENT de la tabla `permisos`
 --
 ALTER TABLE `permisos`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT de la tabla `productos`
 --
 ALTER TABLE `productos`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT de la tabla `programas`
@@ -739,7 +772,7 @@ ALTER TABLE `programas`
 -- AUTO_INCREMENT de la tabla `roles`
 --
 ALTER TABLE `roles`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de la tabla `unidads`
@@ -751,13 +784,13 @@ ALTER TABLE `unidads`
 -- AUTO_INCREMENT de la tabla `unidad_medidas`
 --
 ALTER TABLE `unidad_medidas`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- Restricciones para tablas volcadas

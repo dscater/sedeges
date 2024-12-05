@@ -810,9 +810,9 @@ class ReporteController extends Controller
                                 $sheet->setCellValue('I' . $fila, $ingreso->cantidad);
                                 $sheet->setCellValue('J' . $fila, $ingreso->costo);
                                 $sheet->setCellValue('K' . $fila, $ingreso->total);
-                                $sheet->setCellValue('L' . $fila, $ingreso->egreso->cantidad);
-                                $sheet->setCellValue('M' . $fila, $ingreso->egreso->costo);
-                                $sheet->setCellValue('N' . $fila, $ingreso->egreso->total);
+                                $sheet->setCellValue('L' . $fila, $ingreso->egreso ? $ingreso->egreso->cantidad : 0);
+                                $sheet->setCellValue('M' . $fila, $ingreso->egreso ? $ingreso->egreso->costo : 0);
+                                $sheet->setCellValue('N' . $fila, $ingreso->egreso ? $ingreso->egreso->total : 0);
                                 $sheet->setCellValue('O' . $fila, $ingreso->egreso ? $ingreso->egreso->s_cantidad : $ingreso->cantidad);
                                 $sheet->setCellValue('P' . $fila, $ingreso->costo);
                                 $sheet->setCellValue('Q' . $fila,  $ingreso->egreso ? $ingreso->egreso->s_total : $ingreso->total);

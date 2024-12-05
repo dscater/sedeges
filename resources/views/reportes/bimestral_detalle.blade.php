@@ -195,9 +195,8 @@
                 {{ $configuracion->first()->razon_social }}
             </h2>
             <h4 class="texto">SALDOS FÍSICOS VALORADOS DE EXISTENCIAS DE ALMACENES</h4>
+            <h4 class="fecha">{{ $texto_fecha }}</h4>
             <h4 class="texto">{{ $almacen->nombre }}</h4>
-            <h4 class="fecha">{{ $texto_fecha }}
-            </h4>
 
         </div>
 

@@ -190,9 +190,8 @@
                 {{ $configuracion->first()->razon_social }}
             </h2>
             <h4 class="texto">INVENTARIO FÍNOCO VALORADO DE BIENES Y CONSUMO</h4>
+            <h4 class="fecha">{{ $texto_fecha }}</h4>
             <h4 class="texto">{{ $almacen->nombre }}</h4>
-            <h4 class="fecha">{{ $texto_fecha }}
-            </h4>
 
         </div>
 

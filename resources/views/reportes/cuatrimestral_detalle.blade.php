@@ -195,9 +195,8 @@
                 {{ $configuracion->first()->razon_social }}
             </h2>
             <h4 class="texto">INVENTARIO FÍSICO VALORADO DE BIENES Y CONSUMO</h4>
+            <h4 class="fecha">{{ $texto_fecha }}</h4>
             <h4 class="texto">{{ $almacen->nombre }}</h4>
-            <h4 class="fecha">{{ $texto_fecha }}
-            </h4>
 
         </div>
 
@@ -331,9 +330,9 @@
                             <td class="centreado bg1">{{ $ingreso->cantidad }}</td>
                             <td class="centreado bg1">{{ $ingreso->costo }}</td>
                             <td class="centreado bg1">{{ $ingreso->total }}</td>
-                            <td class="centreado bg2">{{ $ingreso->egreso->cantidad }}</td>
-                            <td class="centreado bg2">{{ $ingreso->egreso->costo }}</td>
-                            <td class="centreado bg2">{{ $ingreso->egreso->total }}</td>
+                            <td class="centreado bg2">{{ $ingreso->egreso ? $ingreso->egreso->cantidad : 0 }}</td>
+                            <td class="centreado bg2">{{ $ingreso->egreso ? $ingreso->egreso->costo : 0 }}</td>
+                            <td class="centreado bg2">{{ $ingreso->egreso ? $ingreso->egreso->total : 0 }}</td>
                             <td class="centreado bg3">
                                 {{ $ingreso->egreso ? $ingreso->egreso->s_cantidad : $ingreso->cantidad }}</td>
                             <td class="centreado bg3">{{ $ingreso->costo }}</td>

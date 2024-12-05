@@ -241,6 +241,11 @@ onBeforeUnmount(() => {});
                                             v-for="(
                                                 item, index
                                             ) in listIngresos"
+                                            :class="[
+                                                item.egreso.s_cantidad == 0
+                                                    ? 'bg-success'
+                                                    : '',
+                                            ]"
                                         >
                                             <td>{{ index + 1 }}</td>
                                             <td>{{ item.codigo }}</td>
@@ -261,6 +266,8 @@ onBeforeUnmount(() => {});
                                             <td class="bg2 text-center">
                                                 <template
                                                     v-if="
+                                                        item.egreso.editable ==
+                                                            1 &&
                                                         item.egreso &&
                                                         auth &&
                                                         (auth.user.permisos.includes(
@@ -347,5 +354,9 @@ onBeforeUnmount(() => {});
 }
 .oculto {
     display: none;
+}
+
+.bg-success td {
+    background-color: rgba(178, 252, 211, 0.897);
 }
 </style>

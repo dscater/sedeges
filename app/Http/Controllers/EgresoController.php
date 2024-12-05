@@ -20,7 +20,13 @@ class EgresoController extends Controller
 
         $egreso->total = (float)$egreso->costo * (float)$cantidad;
         $egreso->cantidad = $cantidad;
+
+        // editable?
+        if ($egreso->cantidad == $egreso->ingreso->cantidad) {
+            $egreso->editable = 0;
+        }
         $egreso->save();
+
 
         return response()->JSON($egreso);
     }

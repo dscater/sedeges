@@ -1,9 +1,11 @@
 <script setup>
 import { useApp } from "@/composables/useApp";
 import { Head, Link, usePage } from "@inertiajs/vue3";
+import { useIngresos } from "@/composables/ingresos/useIngresos";
 import { initDataTable } from "@/composables/datatable.js";
 import { ref, onMounted, onBeforeUnmount } from "vue";
 import PanelToolbar from "@/Components/PanelToolbar.vue";
+import Formulario from "@/Pages/Ingresos/Formulario.vue";
 const { props: props_page } = usePage();
 const propsParams = defineProps({
     almacen: {
@@ -12,35 +14,62 @@ const propsParams = defineProps({
     },
 });
 
+const { getIngresos, setIngreso, limpiarIngreso, deleteIngreso } =
+    useIngresos();
+
 const { setLoading } = useApp();
 
 const columns = [
     {
-        title: "",
-        data: "nro",
+        title: "CÓDIGO",
+        data: "codigo",
     },
     {
-        title: "NOMBRE PRODUCTO",
-        data: "nombre",
+        title: "PARTIDA",
+        data: "partida.nro_partida",
     },
     {
-        title: "CANT. INGRESOS",
-        data: "ingresos",
+        title: "DONACIÓN",
+        data: "donacion",
     },
     {
-        title: "CANT. EGRESOS",
-        data: "egresos",
+        title: "PRODUCTO",
+        data: "producto.nombre",
     },
     {
-        title: "STOCK ACTUAL",
-        data: "stock",
+        title: "UNIDAD DE MEDIDA",
+        data: "unidad_medida.nombre",
     },
     {
-        title: "TOTAL BS.",
-        data: "total_bs",
+        title: "CANTIDAD",
+        data: "cantidad",
+    },
+    {
+        title: "COSTO",
+        data: "costo",
+    },
+    {
+        title: "TOTAL",
+        data: "total",
+    },
+    {
+        title: "FECHA DE INGRESO",
+        data: "fecha_ingreso_t",
+    },
+    {
+        title: "FECHA DE REGISTRO",
+        data: "fecha_registro_t",
     },
 ];
 const loading = ref(false);
+const accion_dialog = ref(0);
+const open_dialog = ref(false);
+
+const agregarRegistro = () => {
+    limpiarIngreso();
+    accion_dialog.value = 0;
+    open_dialog.value = true;
+};
 
 const accionesRow = () => {
     // editar
@@ -85,7 +114,7 @@ onBeforeUnmount(() => {
     <!-- BEGIN breadcrumb -->
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="javascript:;">Inicio</a></li>
-        <li class="breadcrumb-item active"></li>
+        <li class="breadcrumb-item active">{{ propsParams.almacen.nombre }}</li>
     </ol>
     <!-- END breadcrumb -->
     <!-- BEGIN page-header -->
@@ -103,7 +132,7 @@ onBeforeUnmount(() => {
                             v-if="
                                 props_page.auth?.user.permisos == '*' ||
                                 props_page.auth?.user.permisos.includes(
-                                    'productos.create'
+                                    'ingresos.create'
                                 )
                             "
                             type="button"
@@ -133,6 +162,11 @@ onBeforeUnmount(() => {
                                 <th></th>
                                 <th></th>
                                 <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
                             </tr>
                         </thead>
                         <tbody></tbody>
@@ -143,4 +177,12 @@ onBeforeUnmount(() => {
             <!-- END panel -->
         </div>
     </div>
+
+    <Formulario
+        :p_almacen_id="propsParams.almacen.id"
+        :open_dialog="open_dialog"
+        :accion_dialog="accion_dialog"
+        @envio-formulario="updateDatatable"
+        @cerrar-dialog="open_dialog = false"
+    ></Formulario>
 </template>

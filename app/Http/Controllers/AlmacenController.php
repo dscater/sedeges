@@ -36,56 +36,65 @@ class AlmacenController extends Controller
 
         $user = Auth::user();
 
-        foreach ($productos as $key => $producto) {
-            $ingresos = Ingreso::where("almacen_id", $almacen->id)
-                ->where("producto_id", $producto->id);
-            if ($user->tipo == 'EXTERNO') {
-                $ingresos->where("unidad_id", $user->unidad_id);
-                $ingresos->where("user_id", $user->id);
-            }
-            $ingresos = $ingresos->sum("cantidad");
+        // foreach ($productos as $key => $producto) {
+        //     $ingresos = Ingreso::where("almacen_id", $almacen->id)
+        //         ->where("producto_id", $producto->id);
+        //     if ($user->tipo == 'EXTERNO') {
+        //         $ingresos->where("unidad_id", $user->unidad_id);
+        //         $ingresos->where("user_id", $user->id);
+        //     }
+        //     $ingresos = $ingresos->sum("cantidad");
 
-            $egresos = Egreso::select("egresos.*")
-                ->join("ingresos", "ingresos.id", "=", "egresos.ingreso_id")
-                ->where("egresos.almacen_id", $almacen->id)
-                ->where("egresos.producto_id", $producto->id);
-            if ($user->tipo == 'EXTERNO') {
-                $egresos->where("ingresos.unidad_id", $user->unidad_id);
-                $egresos->where("ingresos.user_id", $user->id);
-            }
-            $egresos = $egresos->sum("egresos.cantidad");
-            $total_cantidad = $ingresos - $egresos;
+        //     $egresos = Egreso::select("egresos.*")
+        //         ->join("ingresos", "ingresos.id", "=", "egresos.ingreso_id")
+        //         ->where("egresos.almacen_id", $almacen->id)
+        //         ->where("egresos.producto_id", $producto->id);
+        //     if ($user->tipo == 'EXTERNO') {
+        //         $egresos->where("ingresos.unidad_id", $user->unidad_id);
+        //         $egresos->where("ingresos.user_id", $user->id);
+        //     }
+        //     $egresos = $egresos->sum("egresos.cantidad");
+        //     $total_cantidad = $ingresos - $egresos;
 
-            $ingresos = Ingreso::where("almacen_id", $almacen->id)
-                ->where("producto_id", $producto->id);
-            if ($user->tipo == 'EXTERNO') {
-                $ingresos->where("unidad_id", $user->unidad_id);
-                $ingresos->where("user_id", $user->id);
-            }
-            $ingresos = $ingresos->sum("total");
+        //     $ingresos = Ingreso::where("almacen_id", $almacen->id)
+        //         ->where("producto_id", $producto->id);
+        //     if ($user->tipo == 'EXTERNO') {
+        //         $ingresos->where("unidad_id", $user->unidad_id);
+        //         $ingresos->where("user_id", $user->id);
+        //     }
+        //     $ingresos = $ingresos->sum("total");
 
-            $egresos = Egreso::select("egresos.*")
-                ->join("ingresos", "ingresos.id", "=", "egresos.ingreso_id")
-                ->where("egresos.almacen_id", $almacen->id)
-                ->where("egresos.producto_id", $producto->id);
-            if ($user->tipo == 'EXTERNO') {
-                $egresos->where("ingresos.unidad_id", $user->unidad_id);
-                $egresos->where("ingresos.user_id", $user->id);
-            }
-            $egresos = $egresos->sum("egresos.total");
-            $total_bs = $ingresos - $egresos;
+        //     $egresos = Egreso::select("egresos.*")
+        //         ->join("ingresos", "ingresos.id", "=", "egresos.ingreso_id")
+        //         ->where("egresos.almacen_id", $almacen->id)
+        //         ->where("egresos.producto_id", $producto->id);
+        //     if ($user->tipo == 'EXTERNO') {
+        //         $egresos->where("ingresos.unidad_id", $user->unidad_id);
+        //         $egresos->where("ingresos.user_id", $user->id);
+        //     }
+        //     $egresos = $egresos->sum("egresos.total");
+        //     $total_bs = $ingresos - $egresos;
 
-            $data[] = [
-                "nro" => ($key + 1),
-                "nombre" => $producto->nombre,
-                "ingresos" => $ingresos,
-                "egresos" => $egresos,
-                "stock" => $total_cantidad,
-                "total_bs" => $total_bs,
-            ];
+        //     $data[] = [
+        //         "nro" => ($key + 1),
+        //         "nombre" => $producto->nombre,
+        //         "ingresos" => $ingresos,
+        //         "egresos" => $egresos,
+        //         "stock" => $total_cantidad,
+        //         "total_bs" => $total_bs,
+        //     ];
+        // }
+
+        $ingresos = Ingreso::with(["almacen", "partida", "producto", "unidad_medida", "unidad", "programa"])->select("ingresos.*");
+        if ($user->tipo == 'EXTERNO') {
+            $ingresos->where("almacen_id", $user->almacen_id);
+            $ingresos->where("unidad_id", $user->unidad_id);
+            $ingresos->where("user_id", $user->id);
         }
 
-        return response()->JSON(["data" => $data]);
+        $ingresos = $ingresos->orderBy("id", "desc")->get();
+
+        return response()->JSON(["data" => $ingresos]);
     }
 
 
