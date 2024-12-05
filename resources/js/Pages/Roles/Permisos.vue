@@ -40,10 +40,10 @@ const verificaPermiso = (modulo, accion) => {
     );
 
     if (existe.length > 0) {
-        console.log(modulo, accion, "existe");
+        // console.log(modulo, accion, "existe");
         return true;
     }
-    console.log(modulo, accion, "no existe");
+    // console.log(modulo, accion, "no existe");
     return false;
 };
 
@@ -159,8 +159,7 @@ onBeforeUnmount(() => {});
                                                 )
                                             "
                                             :disabled="
-                                                props.role.id == 1 ||
-                                                props.role.id == 2
+                                                props.role.id == 1
                                                     ? true
                                                     : false
                                             "
