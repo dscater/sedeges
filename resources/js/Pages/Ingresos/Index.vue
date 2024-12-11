@@ -27,11 +27,8 @@ const columns = [
         data: "almacen.nombre",
         render: function (data, type, row) {
             let info = `${row.almacen.nombre}`;
-            if (row.almacen.id == 1) {
-                info += `<br/><strong>${row.unidad.nombre}</strong>`;
-            }
-            if (row.almacen.id == 2) {
-                info += `<br/><strong>${row.programa.nombre}</strong>`;
+            if (row.almacen.grupo == "CENTROS") {
+                info += `<br/><strong>${row.unidad?.nombre}</strong>`;
             }
             return info;
         },

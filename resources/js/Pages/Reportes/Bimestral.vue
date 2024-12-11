@@ -48,9 +48,15 @@ const generarReporte = () => {
 };
 
 const cargarAlmacens = () => {
-    axios.get(route("almacens.listado")).then((response) => {
-        listAlmacens.value = response.data.almacens;
-    });
+    axios
+        .get(route("almacens.listadoByUser"), {
+            params: {
+                grupo: "CENTROS",
+            },
+        })
+        .then((response) => {
+            listAlmacens.value = response.data.almacens;
+        });
 };
 
 onMounted(() => {

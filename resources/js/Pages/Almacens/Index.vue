@@ -37,13 +37,36 @@ onBeforeUnmount(() => {});
     <div class="row">
         <div class="col-md-4" v-for="item in propsParams.almacens">
             <!-- BEGIN panel -->
-            <a href="" class="panel panel-inverse">
+            <div class="panel panel-inverse">
                 <!-- BEGIN panel-body -->
-                <div class="panel-body">
+                <div class="panel-body bg-dark text-white">
                     <h4 class="w-100 text-center">{{ item.nombre }}</h4>
                 </div>
+                <div class="panel-footer text-right">
+                    <template v-if="item.grupo != 'CENTRAL'">
+                        <Link
+                            class="btn btn-primary rounded-0"
+                            :href="
+                                route('ie_internos.index', item.id) +
+                                '?g=' +
+                                item.grupo
+                            "
+                            >Administrar Ingresos desde Central</Link
+                        >
+                        &nbsp;
+                    </template>
+                    <Link
+                        class="btn btn-info rounded-0"
+                        :href="
+                            route('almacens.stockAlmacen', item.id) +
+                            '?g=' +
+                            item.grupo
+                        "
+                        >Ver Ingresos</Link
+                    >
+                </div>
                 <!-- END panel-body -->
-            </a>
+            </div>
             <!-- END panel -->
         </div>
     </div>

@@ -536,7 +536,9 @@ const logout = () => {
                     "
                     class="menu-item has-sub"
                     :class="[
-                        route_current == 'almacens.index'
+                        route_current == 'almacens.index' ||
+                        route_current == 'almacens.stockAlmacen' ||
+                        route_current == 'ie_internos.index'
                             ? 'expand active'
                             : '',
                     ]"
@@ -552,7 +554,9 @@ const logout = () => {
                         class="menu-submenu"
                         :style="{
                             display:
-                                route_current == 'almacens.index'
+                                route_current == 'almacens.index' ||
+                                route_current == 'almacens.stockAlmacen' ||
+                                route_current == 'ie_internos.index'
                                     ? 'block'
                                     : 'none',
                         }"
@@ -564,10 +568,7 @@ const logout = () => {
                             "
                             class="menu-item"
                             :class="[
-                                route_current == 'almacens.index' &&
-                                url_almacen_g == 'CENTROS'
-                                    ? 'active'
-                                    : 'none',
+                                url_almacen_g == 'CENTROS' ? 'active' : 'none',
                             ]"
                         >
                             <Link
@@ -583,7 +584,6 @@ const logout = () => {
                             "
                             class="menu-item"
                             :class="[
-                                route_current == 'almacens.index' &&
                                 url_almacen_g == 'PROGRAMAS'
                                     ? 'active'
                                     : 'none',
@@ -602,7 +602,6 @@ const logout = () => {
                             "
                             class="menu-item"
                             :class="[
-                                route_current == 'almacens.index' &&
                                 url_almacen_g == 'FARMACIAS'
                                     ? 'active'
                                     : 'none',
@@ -621,10 +620,7 @@ const logout = () => {
                             "
                             class="menu-item"
                             :class="[
-                                route_current == 'almacens.index' &&
-                                url_almacen_g == 'CENTRAL'
-                                    ? 'active'
-                                    : 'none',
+                                url_almacen_g == 'CENTRAL' ? 'active' : 'none',
                             ]"
                         >
                             <Link
@@ -943,7 +939,29 @@ const logout = () => {
                             <Link
                                 :href="route('reportes.conciliacion')"
                                 class="menu-link"
-                                ><div class="menu-text">Conciliación</div></Link
+                                ><div class="menu-text">Resumen General</div></Link
+                            >
+                        </div>
+                        <div
+                            v-if="
+                                user_logeado.permisos.includes('*') ||
+                                user_logeado.permisos.includes(
+                                    'reportes.ie_internos'
+                                )
+                            "
+                            class="menu-item"
+                            :class="[
+                                route_current == 'reportes.ie_internos'
+                                    ? 'active'
+                                    : '',
+                            ]"
+                        >
+                            <Link
+                                :href="route('reportes.ie_internos')"
+                                class="menu-link"
+                                ><div class="menu-text">
+                                    Ingresos y Egresos Internos
+                                </div></Link
                             >
                         </div>
                     </div>

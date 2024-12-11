@@ -183,7 +183,7 @@
         <h2 class="titulo">
             {{ $configuracion->first()->razon_social }}
         </h2>
-        <h4 class="texto">CONCILIACIÓN PRESUPUESTO - CONTABLE (BIENES DE CONSUMO)</h4>
+        <h4 class="texto">RESUMEN GENERAL PRESUPUESTO - CONTABLE (BIENES DE CONSUMO)</h4>
         <h4 class="fecha">{{ $texto_fecha }}</h4>
         <h4 class="fecha">(Expresado en bolivianos)</h4>
 

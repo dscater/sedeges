@@ -5,6 +5,7 @@ use App\Http\Controllers\CargoController;
 use App\Http\Controllers\CentroController;
 use App\Http\Controllers\ConfiguracionController;
 use App\Http\Controllers\EgresoController;
+use App\Http\Controllers\IEInternoController;
 use App\Http\Controllers\IngresoController;
 use App\Http\Controllers\InicioController;
 use App\Http\Controllers\PacienteController;
@@ -87,10 +88,17 @@ Route::middleware(['auth', 'permisoUsuario'])->prefix("admin")->group(function (
     // ALMACENS
     Route::get("almacens/listadoByUser", [AlmacenController::class, 'listadoByUser'])->name("almacens.listadoByUser");
     Route::get("almacens/listado", [AlmacenController::class, 'listado'])->name("almacens.listado");
+    Route::get("almacens/listadoSinCentral", [AlmacenController::class, 'listadoSinCentral'])->name("almacens.listadoSinCentral");
     Route::get("almacens/show/{almacen}", [AlmacenController::class, 'show'])->name("almacens.show");
 
     Route::get("almacens", [AlmacenController::class, 'index'])->name("almacens.index");
+    Route::get("almacens/stockAlmacen/{almacen}", [AlmacenController::class, 'stockAlmacen'])->name("almacens.stockAlmacen");
     Route::get("almacens/productos/{almacen}", [AlmacenController::class, 'productos'])->name("almacens.productos");
+
+    // IE INTERNOS
+    Route::get("almacens/ie_internos/{almacen}", [IEInternoController::class, 'index'])->name("ie_internos.index");
+    Route::get("almacens/ie_internos/getIngresosCentral/{almacen}", [IEInternoController::class, 'getIngresosCentral'])->name("ie_internos.getIngresosCentral");
+    Route::put("almacens/ie_internos/{ie_interno}", [IEInternoController::class, 'update'])->name("ie_internos.update");
 
     // CARGOS
     Route::get("cargos/api", [CargoController::class, 'api'])->name("cargos.api");
@@ -176,5 +184,8 @@ Route::middleware(['auth', 'permisoUsuario'])->prefix("admin")->group(function (
 
     Route::get('reportes/conciliacion', [ReporteController::class, 'conciliacion'])->name("reportes.conciliacion");
     Route::get('reportes/r_conciliacion', [ReporteController::class, 'r_conciliacion'])->name("reportes.r_conciliacion");
+
+    Route::get('reportes/ie_internos', [ReporteController::class, 'ie_internos'])->name("reportes.ie_internos");
+    Route::get('reportes/r_ie_internos', [ReporteController::class, 'r_ie_internos'])->name("reportes.r_ie_internos");
 });
 require __DIR__ . '/auth.php';

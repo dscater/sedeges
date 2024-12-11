@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Almacen;
 use App\Models\Egreso;
+use App\Models\IEInterno;
 use App\Models\Ingreso;
 use App\Models\Producto;
 use App\Models\UserAlmacen;
@@ -24,10 +25,26 @@ class AlmacenController extends Controller
         ]);
     }
 
-    public function listadoByUser()
+    public function listadoSinCentral()
+    {
+        $almacens = Almacen::select("almacens.*");
+        $almacens->where("id", "!=", 1);
+        $almacens = $almacens->get();
+        return response()->JSON([
+            "almacens" => $almacens
+        ]);
+    }
+
+    public function listadoByUser(Request $request)
     {
         $id_almacens = AlmacenController::getIdAlmacensPermiso(Auth::user());
         $almacens = Almacen::select("almacens.*");
+        if ($request->grupo) {
+            $almacens->where("grupo", $request->grupo);
+        }
+        if ($request->grupos) {
+            $almacens->whereIn("grupo", $request->grupos);
+        }
         $almacens->whereIn("id", $id_almacens);
         $almacens = $almacens->get();
         return response()->JSON([
@@ -42,7 +59,7 @@ class AlmacenController extends Controller
         if (isset($request["g"])) {
             $grupo = $request["g"];
             $id_almacens = AlmacenController::getIdAlmacensPermiso(Auth::user());
-            Log::debug($id_almacens);
+            // Log::debug($id_almacens);
             $almacens = Almacen::select("almacens.*");
             $almacens->where("grupo", $request["g"]);
             $almacens->whereIn("id", $id_almacens);
@@ -50,13 +67,19 @@ class AlmacenController extends Controller
         }
         return Inertia::render("Almacens/Index", compact("almacens", "grupo"));
     }
+
+    public function stockAlmacen(Almacen $almacen)
+    {
+        return Inertia::render("Almacens/StockAlmacen", compact("almacen"));
+    }
+
     public function productos(Almacen $almacen)
     {
         $data = [];
-        $productos = Producto::all();
+        // $productos = Producto::all();
 
         $user = Auth::user();
-
+        // Ingreso::corrigeCodigos();
         // foreach ($productos as $key => $producto) {
         //     $ingresos = Ingreso::where("almacen_id", $almacen->id)
         //         ->where("producto_id", $producto->id);
@@ -106,7 +129,7 @@ class AlmacenController extends Controller
         //     ];
         // }
 
-        $ingresos = Ingreso::with(["almacen", "partida", "producto", "unidad_medida", "unidad", "programa", "egreso"])->select("ingresos.*");
+        $ingresos = Ingreso::with(["almacen", "partida", "producto", "unidad_medida", "unidad", "egreso"])->select("ingresos.*");
         $ingresos->where("almacen_id", $almacen->id);
         if ($user->tipo == 'EXTERNO') {
             $ingresos->where("unidad_id", $user->unidad_id);

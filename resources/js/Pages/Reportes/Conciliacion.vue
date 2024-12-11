@@ -46,7 +46,7 @@ const generarReporte = () => {
 };
 
 const cargarAlmacens = () => {
-    axios.get(route("almacens.listado")).then((response) => {
+    axios.get(route("almacens.listadoByUser")).then((response) => {
         listAlmacens.value = response.data.almacens;
     });
 };
@@ -56,15 +56,15 @@ onMounted(() => {
 });
 </script>
 <template>
-    <Head title="Reporte Conciliación"></Head>
+    <Head title="Reporte Resumen General"></Head>
     <!-- BEGIN breadcrumb -->
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="javascript:;">Inicio</a></li>
-        <li class="breadcrumb-item active">Reportes > Conciliación</li>
+        <li class="breadcrumb-item active">Reportes > Resumen General</li>
     </ol>
     <!-- END breadcrumb -->
     <!-- BEGIN page-header -->
-    <h1 class="page-header">Reportes > Conciliación</h1>
+    <h1 class="page-header">Reportes > Resumen General</h1>
     <!-- END page-header -->
     <div class="row">
         <div class="col-md-6 mx-auto">

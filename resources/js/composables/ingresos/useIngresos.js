@@ -7,7 +7,6 @@ const oIngreso = ref({
     almacen_id: "",
     partida_id: "",
     unidad_id: "",
-    programa_id: "",
     codigo: "",
     donacion: "",
     producto_id: "",
@@ -149,7 +148,6 @@ export const useIngresos = () => {
             oIngreso.value.almacen_id = item.almacen_id;
             oIngreso.value.partida_id = item.partida_id;
             oIngreso.value.unidad_id = item.unidad_id;
-            oIngreso.value.programa_id = item.programa_id;
             oIngreso.value.codigo = item.codigo;
             oIngreso.value.donacion = item.donacion;
             oIngreso.value.producto_id = item.producto_id;
@@ -169,7 +167,6 @@ export const useIngresos = () => {
         oIngreso.value.almacen_id = "";
         oIngreso.value.partida_id = "";
         oIngreso.value.unidad_id = "";
-        oIngreso.value.programa_id = "";
         oIngreso.value.codigo = "";
         oIngreso.value.donacion = "";
         oIngreso.value.producto_id = "";

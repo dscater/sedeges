@@ -3,7 +3,6 @@ import { useApp } from "@/composables/useApp";
 import { computed, onMounted, ref } from "vue";
 import { Head, usePage } from "@inertiajs/vue3";
 const { user } = usePage().props.auth;
-
 const obtenerFechaActual = () => {
     const fecha = new Date();
     const anio = fecha.getFullYear();
@@ -16,7 +15,6 @@ const form = ref({
     almacen_id: user.tipo == "EXTERNO" ? user.almacen_id : "todos",
     fecha_ini: obtenerFechaActual(),
     fecha_fin: obtenerFechaActual(),
-    formato: "detalle",
     tipo: "pdf",
 });
 
@@ -29,10 +27,6 @@ const txtBtn = computed(() => {
 });
 
 const listAlmacens = ref([]);
-const listFormato = ref([
-    { value: "detalle", label: "DETALLE" },
-    { value: "resumen", label: "RESUMEN" },
-]);
 
 const listTipo = ref([
     { value: "pdf", label: "PDF" },
@@ -41,7 +35,7 @@ const listTipo = ref([
 
 const generarReporte = () => {
     generando.value = true;
-    const url = route("reportes.r_cuatrimestral", form.value);
+    const url = route("reportes.r_ie_internos", form.value);
     window.open(url, "_blank");
     setTimeout(() => {
         generando.value = false;
@@ -49,15 +43,9 @@ const generarReporte = () => {
 };
 
 const cargarAlmacens = () => {
-    axios
-        .get(route("almacens.listadoByUser"), {
-            params: {
-                grupos: ["CENTRAL", "FARMACIAS", "PROGRAMAS"],
-            },
-        })
-        .then((response) => {
-            listAlmacens.value = response.data.almacens;
-        });
+    axios.get(route("almacens.listadoByUser")).then((response) => {
+        listAlmacens.value = response.data.almacens;
+    });
 };
 
 onMounted(() => {
@@ -65,15 +53,15 @@ onMounted(() => {
 });
 </script>
 <template>
-    <Head title="Reporte Cuatrimestral"></Head>
+    <Head title="Reporte Ingresos y Egresos Interno"></Head>
     <!-- BEGIN breadcrumb -->
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="javascript:;">Inicio</a></li>
-        <li class="breadcrumb-item active">Reportes > Cuatrimestral</li>
+        <li class="breadcrumb-item active">Reportes > Ingresos y Egresos Interno</li>
     </ol>
     <!-- END breadcrumb -->
     <!-- BEGIN page-header -->
-    <h1 class="page-header">Reportes > Cuatrimestral</h1>
+    <h1 class="page-header">Reportes > Ingresos y Egresos Interno</h1>
     <!-- END page-header -->
     <div class="row">
         <div class="col-md-6 mx-auto">
@@ -127,29 +115,6 @@ onMounted(() => {
                                         />
                                     </div>
                                 </div>
-                            </div>
-                            <div class="col-md-12 mt-2">
-                                <label>Seleccionar formato</label>
-                                <select
-                                    :hide-details="
-                                        form.errors?.formato ? false : true
-                                    "
-                                    :error="form.errors?.formato ? true : false"
-                                    :error-messages="
-                                        form.errors?.formato
-                                            ? form.errors?.formato
-                                            : ''
-                                    "
-                                    v-model="form.formato"
-                                    class="form-control"
-                                >
-                                    <option
-                                        v-for="item in listFormato"
-                                        :value="item.value"
-                                    >
-                                        {{ item.label }}
-                                    </option>
-                                </select>
                             </div>
                             <div class="col-md-12 mt-2">
                                 <label>Seleccionar tipo reporte</label>

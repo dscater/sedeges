@@ -213,7 +213,8 @@
                 @endphp
                 @foreach ($partidas as $partida)
                     @php
-                        $ingresos = App\Models\Ingreso::where('donacion', 'NO');
+                        // $ingresos = App\Models\Ingreso::where('donacion', 'NO');
+                        $ingresos = App\Models\Ingreso::select('ingresos.*');
                         $ingresos->where('ingresos.almacen_id', $almacen->id);
                         if ($fecha_ini && $fecha_fin) {
                             $ingresos->whereBetween('fecha_registro', [$fecha_ini, $fecha_fin]);
@@ -226,7 +227,7 @@
                             $ingresos->where('ingresos.user_id', $user->id);
                         }
                         $ingresos = $ingresos->sum('total');
-                        $egresos = App\Models\Ingreso::where('donacion', 'NO')->join(
+                        $egresos = App\Models\Ingreso::select('ingresos.*')->join(
                             'egresos',
                             'egresos.ingreso_id',
                             '=',

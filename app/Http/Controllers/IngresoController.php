@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Almacen;
 use App\Models\Egreso;
 use App\Models\HistorialAccion;
 use App\Models\Ingreso;
@@ -63,6 +64,7 @@ class IngresoController extends Controller
     public function almacen_partida(Request $request)
     {
 
+        $user = Auth::user();
         $permisos = Auth::user()->permisos;
         $almacen_id = $request->almacen_id;
         $partida_id = $request->partida_id;
@@ -70,6 +72,10 @@ class IngresoController extends Controller
         $ingresos = Ingreso::select("ingresos.*");
         $ingresos->where("almacen_id", $almacen_id);
         $ingresos->where("partida_id", $partida_id);
+        if ($user->tipo == 'EXTERNO') {
+            $ingresos->where("unidad_id", $user->unidad_id);
+            $ingresos->where("user_id", $user->id);
+        }
         $ingresos->doesntHave("egreso");
         $ingresos = $ingresos->orderBy("id", "desc")->get();
 
@@ -96,9 +102,16 @@ class IngresoController extends Controller
         }
 
         // recargar registros
-        $ingresos = Ingreso::with(["unidad_medida", "producto", "egreso"])->select("ingresos.*");
+        $ingresos = Ingreso::with(["unidad_medida", "producto", "egreso.destino"])->select("ingresos.*");
         $ingresos->where("almacen_id", $almacen_id);
         $ingresos->where("partida_id", $partida_id);
+
+        if ($user->tipo == 'EXTERNO') {
+            $ingresos->where("unidad_id", $user->unidad_id);
+            $ingresos->where("user_id", $user->id);
+        }
+
+
         $ingresos = $ingresos->orderBy("id", "desc")->get();
 
         return response()->JSON($ingresos);
@@ -106,14 +119,15 @@ class IngresoController extends Controller
 
     public function api(Request $request)
     {
-        $ingresos = Ingreso::with(["almacen", "partida", "producto", "unidad_medida", "unidad", "programa"])->select("ingresos.*");
+        $ingresos = Ingreso::with(["almacen", "partida", "producto", "unidad_medida", "unidad"])->select("ingresos.*");
         $user = Auth::user();
         if ($user->tipo == 'EXTERNO') {
             $ingresos->where("almacen_id", $user->almacen_id);
             $ingresos->where("unidad_id", $user->unidad_id);
             $ingresos->where("user_id", $user->id);
         }
-
+        $id_almacens = AlmacenController::getIdAlmacensPermiso(Auth::user());
+        $ingresos->whereIn("almacen_id", $id_almacens);
         $ingresos = $ingresos->orderBy("id", "desc")->get();
         return response()->JSON(["data" => $ingresos]);
     }
@@ -135,11 +149,9 @@ class IngresoController extends Controller
 
     public function store(Request $request)
     {
-        if ($request->almacen_id == 1) {
+        $almacen = Almacen::find($request["almacen_id"]);
+        if ($almacen && $almacen->grupo == 'CENTROS') {
             $this->validacion["unidad_id"] = "required";
-        }
-        if ($request->almacen_id == 2) {
-            $this->validacion["programa_id"] = "required";
         }
         if (Auth::user()->tipo != 'EXTERNO') {
             $this->validacion["partida_id"] = "required";
@@ -148,7 +160,8 @@ class IngresoController extends Controller
         DB::beginTransaction();
         try {
             // crear la ingreso
-            $array_codigo = Ingreso::getCodigoIngresoPartida($request["partida_id"]);
+            $gestion = date("Y", strtotime($request["fecha_ingreso"]));
+            $array_codigo = Ingreso::getCodigoIngresoPartida($request["almacen_id"], $request["partida_id"], $gestion);
             $data_ingreso = [
                 "almacen_id" => $request["almacen_id"],
                 "partida_id" => NULL,
@@ -173,11 +186,8 @@ class IngresoController extends Controller
                 $data_ingreso["nro"] = $array_codigo[1];
             }
 
-            if ($request->almacen_id == 1) {
+            if ($almacen->grupo == 'CENTROS') {
                 $data_ingreso["unidad_id"] = $request["unidad_id"];
-            }
-            if ($request->almacen_id == 2) {
-                $data_ingreso["programa_id"] = $request["programa_id"];
             }
 
             $nueva_ingreso = Ingreso::create($data_ingreso);
@@ -210,21 +220,20 @@ class IngresoController extends Controller
 
     public function update(Ingreso $ingreso, Request $request)
     {
-
-        if ($request->almacen_id == 1) {
+        $almacen = Almacen::find($request["almacen_id"]);
+        if ($almacen && $almacen->grupo == 'CENTROS') {
             $this->validacion["unidad_id"] = "required";
         }
-        if ($request->almacen_id == 2) {
-            $this->validacion["programa_id"] = "required";
+        if (Auth::user()->tipo != 'EXTERNO') {
+            $this->validacion["partida_id"] = "required";
         }
 
         $request->validate($this->validacion, $this->mensajes);
         DB::beginTransaction();
         try {
-            $array_codigo = Ingreso::getCodigoIngresoPartida($request["partida_id"]);
+            $gestion = date("Y", strtotime($request["fecha_ingreso"]));
+            $array_codigo = Ingreso::getCodigoIngresoPartida($request["almacen_id"], $request["partida_id"], $gestion);
             $data_ingreso = [
-                "codigo" => Auth::user()->tipo != 'EXTERNO' && $ingreso->codigo == NULL ?  $array_codigo[0] : NULL,
-                "nro" => Auth::user()->tipo != 'EXTERNO' && $ingreso->codigo == NULL ? $array_codigo[1] : NULL,
                 "almacen_id" => $request["almacen_id"],
                 "partida_id" => NULL,
                 "unidad_id" => NULL,
@@ -243,14 +252,12 @@ class IngresoController extends Controller
                 $data_ingreso["partida_id"] = $request["partida_id"];
             }
 
-            if ($request->almacen_id == 1) {
+            if ($almacen->grupo == 'CENTROS') {
                 $data_ingreso["unidad_id"] = $request["unidad_id"];
             }
-            if ($request->almacen_id == 2) {
-                $data_ingreso["programa_id"] = $request["programa_id"];
-            }
-            if ($ingreso->partida_id == null || $ingreso->partida_id != $request->partida_id) {
-                $array_codigo = Ingreso::getCodigoIngresoPartida($request["partida_id"]);
+
+            if ($ingreso->partida_id == null || $ingreso->codigo == null || $ingreso->partida_id != $request->partida_id) {
+                $array_codigo = Ingreso::getCodigoIngresoPartida($request["almacen_id"], $request["partida_id"], $gestion);
                 $data_ingreso["codigo"] = $array_codigo[0];
                 $data_ingreso["nro"] = $array_codigo[1];
             }

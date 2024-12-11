@@ -17,6 +17,7 @@ return new class extends Migration
             $table->unsignedBigInteger("almacen_id");
             $table->unsignedBigInteger("partida_id")->nullable();
             $table->unsignedBigInteger("producto_id");
+            $table->unsignedBigInteger("destino_id")->nullable();
             $table->integer("cantidad");
             $table->decimal("costo", 24, 2);
             $table->decimal("total", 24, 2);
@@ -28,6 +29,7 @@ return new class extends Migration
             $table->foreign("almacen_id")->on("almacens")->references("id");
             $table->foreign("partida_id")->on("partidas")->references("id");
             $table->foreign("producto_id")->on("productos")->references("id");
+            $table->foreign("destino_id")->on("almacens")->references("id");
         });
     }
 

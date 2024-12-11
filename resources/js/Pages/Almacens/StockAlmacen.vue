@@ -134,6 +134,7 @@ onBeforeUnmount(() => {
     <!-- BEGIN breadcrumb -->
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="javascript:;">Inicio</a></li>
+        <li class="breadcrumb-item"><Link :href="route('almacens.index') + '?g='+propsParams.almacen.grupo">{{propsParams.almacen.grupo}}</Link></li>
         <li class="breadcrumb-item active">{{ propsParams.almacen.nombre }}</li>
     </ol>
     <!-- END breadcrumb -->

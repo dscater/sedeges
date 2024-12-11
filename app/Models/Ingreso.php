@@ -14,7 +14,6 @@ class Ingreso extends Model
         "almacen_id",
         "partida_id",
         "unidad_id",
-        "programa_id",
         "codigo",
         "nro",
         "donacion",
@@ -55,12 +54,6 @@ class Ingreso extends Model
         return $this->belongsTo(Unidad::class, 'unidad_id');
     }
 
-
-    public function programa()
-    {
-        return $this->belongsTo(Programa::class, 'programa_id');
-    }
-
     public function producto()
     {
         return $this->belongsTo(Producto::class, 'producto_id');
@@ -82,20 +75,56 @@ class Ingreso extends Model
     }
 
     // FUNCIONES
-    public static function getCodigoIngresoPartida($partida_id)
+    public static function getCodigoIngresoPartida($almacen_id, $partida_id, $gestion)
     {
         $partida = Partida::find($partida_id);
         $codigo = NULL;
         $nro = NULL;
         if ($partida) {
-            $ultimo = Ingreso::where("partida_id", $partida_id)->orderBy("nro", "desc")->get()->first();
+            $ultimo = Ingreso::where("almacen_id", $almacen_id)
+                ->where("partida_id", $partida_id)
+                ->where("fecha_ingreso", "LIKE", "$gestion%")
+                ->orderBy("nro", "desc")
+                ->get()
+                ->first();
             // Log::debug($ultimo);
             $nro = 1;
             if ($ultimo) {
                 $nro = (int)$ultimo->nro + 1;
             }
-            $codigo = $partida->abreviatura . '-' . $nro;
+            $txtgestion = substr($gestion, 2, 3);
+            $codigo = $partida->abreviatura . $txtgestion . $nro;
         }
         return [$codigo, $nro];
+    }
+
+    public static function corrigeCodigos()
+    {
+        $almacens = Almacen::all();
+
+        foreach ($almacens as $almacen) {
+            $partidas = Ingreso::where("almacen_id", $almacen->id)
+                ->distinct()
+                ->pluck("partida_id")
+                ->toArray();
+
+            foreach ($partidas as $value) {
+                $ingresos = Ingreso::where("almacen_id", $almacen->id)
+                    ->where("partida_id", $value)
+                    ->orderBy("created_at", "asc")
+                    ->get();
+                foreach ($ingresos as $key => $ingreso) {
+                    $gestion = date("Y", strtotime($ingreso->fecha_ingreso));
+                    $txtgestion = substr($gestion, 2, 3);
+                    $partida = Partida::find($value);
+                    $nro = $key + 1;
+                    $codigo = $partida->abreviatura . $txtgestion . $nro;
+                    $ingreso->nro = $nro;
+                    $ingreso->codigo = $codigo;
+                    $ingreso->save();
+                }
+            }
+        }
+        return true;
     }
 }

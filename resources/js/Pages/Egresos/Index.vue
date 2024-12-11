@@ -10,11 +10,19 @@ const form = ref({
 });
 
 const listAlmacens = ref([]);
+const listAlmacensSinCentral = ref([]);
+
 const listPartidas = ref([]);
 
 const cargarAlmacens = () => {
-    axios.get(route("almacens.listado")).then((response) => {
+    axios.get(route("almacens.listadoByUser")).then((response) => {
         listAlmacens.value = response.data.almacens;
+    });
+};
+
+const cargarAlmacensSinCentral = () => {
+    axios.get(route("almacens.listadoSinCentral")).then((response) => {
+        listAlmacensSinCentral.value = response.data.almacens;
     });
 };
 
@@ -62,11 +70,21 @@ const detectaKeyUpCantidad = async (e, index) => {
     spin.value = document.getElementById("spin" + index);
     clearInterval(intervalKeyup.value);
     spin.value.classList.remove("oculto");
-    if (value && value > 0 && value <= oIngreso.cantidad) {
+    if (
+        form.value.almacen_id &&
+        value &&
+        value > 0 &&
+        value <= oIngreso.cantidad
+    ) {
         intervalKeyup.value = setTimeout(async () => {
-            const res = await actualizaCantidad(value, oIngreso.egreso.id);
+            const res = await actualizaCantidad(
+                value,
+                oIngreso.egreso.id,
+                oIngreso.egreso.destino_id,
+                form.value.almacen_id
+            );
             if (res) {
-                listIngresos.value[index].egreso = res;
+                listIngresos.value[index].egreso = res.egreso;
                 spin.value.classList.add("oculto");
             }
         }, 700);
@@ -85,13 +103,31 @@ const detectaKeyUpCantidad = async (e, index) => {
     }
 };
 
-const actualizaCantidad = async (value, id) => {
+const verificaDisabled = (index, egreso) => {
+    let oIngreso = listIngresos.value[index];
+    if (egreso) {
+        if (
+            (egreso.destino_id && egreso.destino_id != "") ||
+            form.value.almacen_id != 1
+        ) {
+            return false;
+        }
+    }
+    // disabled
+    return true;
+};
+
+const verificaDestino = (value, index) => {};
+
+const actualizaCantidad = async (value, egreso_id, destino_id, almacen_id) => {
     try {
         const response = await axios.post(
-            route("egresos.update", id),
+            route("egresos.update", egreso_id),
             {
                 _method: "put",
                 cantidad: value,
+                destino_id: destino_id,
+                almacen_id: almacen_id,
             },
             {
                 headers: { Accept: "application/json" },
@@ -122,6 +158,7 @@ const actualizaCantidad = async (value, id) => {
 };
 
 onMounted(async () => {
+    cargarAlmacensSinCentral();
     cargarAlmacens();
     cargarPartidas();
 });
@@ -210,6 +247,13 @@ onBeforeUnmount(() => {});
                                         <th rowspan="2">UNIDAD</th>
                                         <th rowspan="2">DESCRIPCIÓN</th>
                                         <th rowspan="2">FECHA INGRESO</th>
+                                        <th
+                                            rowspan="2"
+                                            width="200px"
+                                            v-if="form.almacen_id == 1"
+                                        >
+                                            DESTINO
+                                        </th>
                                         <th colspan="3" class="text-center bg1">
                                             INGRESO ALMACENES
                                         </th>
@@ -256,6 +300,56 @@ onBeforeUnmount(() => {});
                                             </td>
                                             <td>{{ item.producto.nombre }}</td>
                                             <td>{{ item.fecha_ingreso_t }}</td>
+                                            <td v-if="form.almacen_id == 1">
+                                                <div
+                                                    v-if="
+                                                        item.egreso &&
+                                                        item.egreso.editable ==
+                                                            1
+                                                    "
+                                                >
+                                                    <el-select
+                                                        class="w-100"
+                                                        placeholder="- Seleccione -"
+                                                        v-model="
+                                                            item.egreso
+                                                                .destino_id
+                                                        "
+                                                        @change="
+                                                            verificaDestino(
+                                                                $event,
+                                                                index
+                                                            )
+                                                        "
+                                                        filterable
+                                                    >
+                                                        <el-option value=""
+                                                            >- Seleccione
+                                                            -</el-option
+                                                        >
+                                                        <el-option
+                                                            v-for="item in listAlmacensSinCentral"
+                                                            :value="item.id"
+                                                            :label="item.nombre"
+                                                        >
+                                                            {{ item.nombre }}
+                                                        </el-option>
+                                                    </el-select>
+                                                </div>
+                                                <div v-else>
+                                                    <span
+                                                        v-if="
+                                                            item.egreso &&
+                                                            item.egreso.destino
+                                                        "
+                                                    >
+                                                        {{
+                                                            item.egreso.destino
+                                                                .nombre
+                                                        }}
+                                                    </span>
+                                                </div>
+                                            </td>
                                             <td class="bg1">
                                                 {{ item.cantidad }}
                                             </td>
@@ -281,6 +375,12 @@ onBeforeUnmount(() => {});
                                                     "
                                                 >
                                                     <input
+                                                        :disabled="
+                                                            verificaDisabled(
+                                                                index,
+                                                                item.egreso
+                                                            )
+                                                        "
                                                         type="number"
                                                         class="form-control"
                                                         v-model="

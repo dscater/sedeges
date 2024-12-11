@@ -15,6 +15,7 @@ class Egreso extends Model
         "almacen_id",
         "partida_id",
         "producto_id",
+        "destino_id",
         "cantidad",
         "costo",
         "total",
@@ -30,8 +31,8 @@ class Egreso extends Model
 
     public function getSTotalAttribute()
     {
-        Log::debug($this->ingreso->total);
-        Log::debug($this->total);
+        // Log::debug($this->ingreso->total);
+        // Log::debug($this->total);
         return (float)$this->ingreso->total - (float)$this->total;
     }
 
@@ -49,6 +50,12 @@ class Egreso extends Model
     {
         return $this->belongsTo(Almacen::class, 'almacen_id');
     }
+
+    public function destino()
+    {
+        return $this->belongsTo(Almacen::class, 'destino_id');
+    }
+
     public function partida()
     {
         return $this->belongsTo(Partida::class, 'partida_id');
@@ -57,5 +64,10 @@ class Egreso extends Model
     public function producto()
     {
         return $this->belongsTo(Producto::class, 'producto_id');
+    }
+
+    public function ie_interno()
+    {
+        return $this->hasOne(IEInterno::class, 'egreso_id');
     }
 }

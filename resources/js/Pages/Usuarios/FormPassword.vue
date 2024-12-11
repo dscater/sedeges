@@ -41,7 +41,7 @@ const tituloDialog = computed(() => {
 });
 
 const enviarFormulario = () => {
-    let url = route("usuarios.password", oUsuario.value.id);
+    let url = route("usuarios.password", oUsuario.id);
 
     form.put(url, {
         preserveScroll: true,

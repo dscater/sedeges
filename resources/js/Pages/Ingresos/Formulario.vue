@@ -67,9 +67,11 @@ watch(
                 getInfoAlmacen(form.almacen_id);
                 getInfoUnidad(form.unidad_id);
             }
-
             if (props.p_almacen_id != 0) {
                 form.almacen_id = props.p_almacen_id;
+                getInfoAlmacen(form.almacen_id);
+            }
+            if (form.id != 0 && form.almacen_id) {
                 getInfoAlmacen(form.almacen_id);
             }
         }
@@ -151,7 +153,7 @@ const cerrarDialog = () => {
 };
 
 const cargarAlmacens = () => {
-    axios.get(route("almacens.listado")).then((response) => {
+    axios.get(route("almacens.listadoByUser")).then((response) => {
         listAlmacens.value = response.data.almacens;
     });
 };
@@ -198,12 +200,18 @@ const calculaTotal = () => {
 };
 
 const getInfoAlmacen = (id) => {
+    form.donacion = "";
     if (!id) {
         oAlmacen.value = null;
         return;
     }
     axios.get(route("almacens.show", id)).then((response) => {
         oAlmacen.value = response.data;
+        if (oAlmacen.value.grupo == "CENTROS") {
+            form.donacion = "SI";
+        }
+        console.log(oAlmacen.value);
+        console.log(form);
     });
 };
 
@@ -280,6 +288,7 @@ onMounted(() => {});
                                         }"
                                         v-model="form.almacen_id"
                                         filterable
+                                        @change="getInfoAlmacen"
                                     >
                                         <el-option value=""
                                             >- Seleccione -</el-option
@@ -304,7 +313,7 @@ onMounted(() => {});
                                 <!-- unidad -->
                                 <div
                                     class="col-md-4"
-                                    v-if="form.almacen_id == 1"
+                                    v-if="oAlmacen?.grupo == 'CENTROS'"
                                 >
                                     <label>Seleccionar Unidad/Centro*</label>
                                     <el-select
@@ -361,7 +370,7 @@ onMounted(() => {});
                                 <div
                                     class="col-md-4"
                                     v-if="
-                                        form.almacen_id == 1 &&
+                                        oAlmacen?.grupo == 'CENTROS' &&
                                         (auth.user.tipo == 'INTERNO' ||
                                             auth.user.id == 1)
                                     "
@@ -402,7 +411,7 @@ onMounted(() => {});
                                     <!-- unidad text -->
                                     <div
                                         class="col-md-4"
-                                        v-if="form.almacen_id == 1"
+                                        v-if="oAlmacen?.grupo == 'CENTROS'"
                                     >
                                         <label
                                             >Seleccionar Unidad/Centro*</label
@@ -424,39 +433,6 @@ onMounted(() => {});
                                     </div>
                                 </template>
                             </template>
-                            <!-- programas -->
-                            <div class="col-md-4" v-if="form.almacen_id == 2">
-                                <label>Seleccionar programa*</label>
-                                <el-select
-                                    class="w-100"
-                                    placeholder="- Seleccione -"
-                                    :class="{
-                                        'border border-red rounded':
-                                            form.errors?.programa_id,
-                                    }"
-                                    v-model="form.programa_id"
-                                    filterable
-                                >
-                                    <el-option value=""
-                                        >- Seleccione -</el-option
-                                    >
-                                    <el-option
-                                        v-for="item in listProgramas"
-                                        :value="item.id"
-                                        :label="item.nombre"
-                                    >
-                                        {{ item.nombre }}
-                                    </el-option>
-                                </el-select>
-                                <ul
-                                    v-if="form.errors?.programa_id"
-                                    class="parsley-errors-list filled"
-                                >
-                                    <li class="parsley-required">
-                                        {{ form.errors?.programa_id }}
-                                    </li>
-                                </ul>
-                            </div>
                             <div
                                 class="col-md-8"
                                 v-if="auth.user.tipo != 'EXTERNO'"
@@ -497,7 +473,10 @@ onMounted(() => {});
                                     </li>
                                 </ul>
                             </div>
-                            <div class="col-md-4">
+                            <div
+                                class="col-md-4"
+                                v-if="oAlmacen?.grupo != 'CENTROS'"
+                            >
                                 <label>Donación*</label>
                                 <select
                                     class="form-control"
