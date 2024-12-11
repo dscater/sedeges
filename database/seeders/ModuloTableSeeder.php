@@ -233,26 +233,26 @@ class ModuloTableSeeder extends Seeder
         ]);
 
         // ALMACENES
-        Modulo::create([
-            "modulo" => "Almacén",
-            "nombre" => "almacen1.index",
-            "accion" => "ALMACÉN CENTROS",
-            "descripcion" => "VER LA LISTA DE PRODUCTOS DEL ALMACÉN CENTROS"
-        ]);
+        // Modulo::create([
+        //     "modulo" => "Almacén",
+        //     "nombre" => "almacen1.index",
+        //     "accion" => "ALMACÉN CENTROS",
+        //     "descripcion" => "VER LA LISTA DE PRODUCTOS DEL ALMACÉN CENTROS"
+        // ]);
 
-        Modulo::create([
-            "modulo" => "Almacén",
-            "nombre" => "almacen2.index",
-            "accion" => "ALMACÉN PROGRAMAS",
-            "descripcion" => "VER LA LISTA DE PRODUCTOS DEL ALMACÉN PROGRAMAS"
-        ]);
+        // Modulo::create([
+        //     "modulo" => "Almacén",
+        //     "nombre" => "almacen2.index",
+        //     "accion" => "ALMACÉN PROGRAMAS",
+        //     "descripcion" => "VER LA LISTA DE PRODUCTOS DEL ALMACÉN PROGRAMAS"
+        // ]);
 
-        Modulo::create([
-            "modulo" => "Almacén",
-            "nombre" => "almacen3.index",
-            "accion" => "ALMACÉN FARMACIAS",
-            "descripcion" => "VER LA LISTA DE PRODUCTOS DEL ALMACÉN FARMACIAS"
-        ]);
+        // Modulo::create([
+        //     "modulo" => "Almacén",
+        //     "nombre" => "almacen3.index",
+        //     "accion" => "ALMACÉN FARMACIAS",
+        //     "descripcion" => "VER LA LISTA DE PRODUCTOS DEL ALMACÉN FARMACIAS"
+        // ]);
 
         // INGRESOS
         Modulo::create([
@@ -325,6 +325,35 @@ class ModuloTableSeeder extends Seeder
             "nombre" => "programas.destroy",
             "accion" => "ELIMINAR",
             "descripcion" => "ELIMINAR PROGRAMAS"
+        ]);
+
+        // CENTROS
+        Modulo::create([
+            "modulo" => "Centros",
+            "nombre" => "centros.index",
+            "accion" => "VER",
+            "descripcion" => "VER LA LISTA DE CENTROS"
+        ]);
+
+        Modulo::create([
+            "modulo" => "Centros",
+            "nombre" => "centros.create",
+            "accion" => "CREAR",
+            "descripcion" => "CREAR CENTROS"
+        ]);
+
+        Modulo::create([
+            "modulo" => "Centros",
+            "nombre" => "centros.edit",
+            "accion" => "EDITAR",
+            "descripcion" => "EDITAR CENTROS"
+        ]);
+
+        Modulo::create([
+            "modulo" => "Centros",
+            "nombre" => "centros.destroy",
+            "accion" => "ELIMINAR",
+            "descripcion" => "ELIMINAR CENTROS"
         ]);
 
         // REPORTES

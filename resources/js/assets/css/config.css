@@ -20,6 +20,24 @@ html {
     overflow-y: overlay;
 }
 
+.formulario {
+    position: relative;
+}
+.loading {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.89);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.3rem;
+    z-index: 200;
+    color: gray;
+}
+
 .text-gray {
     color: gray;
 }

@@ -401,13 +401,16 @@ const submenus = {
 };
 
 const route_current = ref("");
-const url_almacen_id = ref(null);
+const url_almacen_g = ref("");
 
 router.on("navigate", (event) => {
     route_current.value = route().current();
-    url_almacen_id.value = null;
-    if (route().routeParams && route().routeParams.almacen) {
-        url_almacen_id.value = route().routeParams.almacen;
+    url_almacen_g.value = null;
+    // if (route().routeParams && route().routeParams.almacen) {
+    //     url_almacen_g.value = route().routeParams.almacen;
+    // }
+    if (route().queryParams && route().queryParams.g) {
+        url_almacen_g.value = route().queryParams.g;
     }
     appOption.appSidebarMobileToggled = false;
     // if (mobile.value) {
@@ -526,9 +529,10 @@ const logout = () => {
                 <div
                     v-if="
                         user_logeado.permisos == '*' ||
-                        user_logeado.permisos.includes('almacen1.index') ||
-                        user_logeado.permisos.includes('almacen2.index') ||
-                        user_logeado.permisos.includes('almacen3.index')
+                        user_logeado.permisos.includes('CENTRAL') ||
+                        user_logeado.permisos.includes('FARMACIAS') ||
+                        user_logeado.permisos.includes('PROGRAMAS') ||
+                        user_logeado.permisos.includes('CENTROS')
                     "
                     class="menu-item has-sub"
                     :class="[
@@ -556,18 +560,18 @@ const logout = () => {
                         <div
                             v-if="
                                 user_logeado.permisos == '*' ||
-                                user_logeado.permisos.includes('almacen1.index')
+                                user_logeado.permisos.includes('CENTROS')
                             "
                             class="menu-item"
                             :class="[
                                 route_current == 'almacens.index' &&
-                                url_almacen_id == 1
+                                url_almacen_g == 'CENTROS'
                                     ? 'active'
                                     : 'none',
                             ]"
                         >
                             <Link
-                                :href="route('almacens.index', 1)"
+                                :href="route('almacens.index') + '?g=CENTROS'"
                                 class="menu-link"
                                 ><div class="menu-text">Almacén Centros</div>
                             </Link>
@@ -575,18 +579,18 @@ const logout = () => {
                         <div
                             v-if="
                                 user_logeado.permisos == '*' ||
-                                user_logeado.permisos.includes('almacen2.index')
+                                user_logeado.permisos.includes('PROGRAMAS')
                             "
                             class="menu-item"
                             :class="[
                                 route_current == 'almacens.index' &&
-                                url_almacen_id == 2
+                                url_almacen_g == 'PROGRAMAS'
                                     ? 'active'
                                     : 'none',
                             ]"
                         >
                             <Link
-                                :href="route('almacens.index', 2)"
+                                :href="route('almacens.index') + '?g=PROGRAMAS'"
                                 class="menu-link"
                                 ><div class="menu-text">Almacén Programas</div>
                             </Link>
@@ -594,20 +598,39 @@ const logout = () => {
                         <div
                             v-if="
                                 user_logeado.permisos == '*' ||
-                                user_logeado.permisos.includes('almacen3.index')
+                                user_logeado.permisos.includes('FARMACIAS')
                             "
                             class="menu-item"
                             :class="[
                                 route_current == 'almacens.index' &&
-                                url_almacen_id == 3
+                                url_almacen_g == 'FARMACIAS'
                                     ? 'active'
                                     : 'none',
                             ]"
                         >
                             <Link
-                                :href="route('almacens.index', 3)"
+                                :href="route('almacens.index') + '?g=FARMACIAS'"
                                 class="menu-link"
                                 ><div class="menu-text">Almacén Farmacias</div>
+                            </Link>
+                        </div>
+                        <div
+                            v-if="
+                                user_logeado.permisos == '*' ||
+                                user_logeado.permisos.includes('CENTRAL')
+                            "
+                            class="menu-item"
+                            :class="[
+                                route_current == 'almacens.index' &&
+                                url_almacen_g == 'CENTRAL'
+                                    ? 'active'
+                                    : 'none',
+                            ]"
+                        >
+                            <Link
+                                :href="route('almacens.index') + '?g=CENTRAL'"
+                                class="menu-link"
+                                ><div class="menu-text">Almacén Central</div>
                             </Link>
                         </div>
                     </div>
@@ -722,6 +745,21 @@ const logout = () => {
                             <i class="fa fa-list"></i>
                         </div>
                         <div class="menu-text">Cargos</div>
+                    </Link>
+                </div>
+                <div
+                    v-if="
+                        user_logeado.permisos == '*' ||
+                        user_logeado.permisos.includes('centros.index')
+                    "
+                    class="menu-item"
+                    :class="[route_current == 'centros.index' ? 'active' : '']"
+                >
+                    <Link :href="route('centros.index')" class="menu-link">
+                        <div class="menu-icon">
+                            <i class="fa fa-list"></i>
+                        </div>
+                        <div class="menu-text">Centros</div>
                     </Link>
                 </div>
                 <div

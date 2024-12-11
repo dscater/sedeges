@@ -4,11 +4,13 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
+use App\Http\Controllers\UserAlmacenController;
 use App\Http\Controllers\UserController;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class User extends Authenticatable
 {
@@ -35,12 +37,13 @@ class User extends Authenticatable
         "cargo_id",
         "unidad_id",
         "almacen_id",
+        "almacen_todos",
         "role_id",
         "fecha_registro",
         "acceso",
         "status",
     ];
-    protected $appends = ["permisos", "url_foto", "foto_b64", "full_name", "full_ci", "fecha_registro_t"];
+    protected $appends = ["permisos", "url_foto", "foto_b64", "full_name", "full_ci", "fecha_registro_t", "id_almacens"];
 
     /**
      * The attributes that should be hidden for serialization.
@@ -105,6 +108,16 @@ class User extends Authenticatable
         return $base64;
     }
 
+    public function getIdAlmacensAttribute()
+    {
+        $id_almacens = [];
+        if ($this->almacen_todos != 1) {
+            $id_almacens = UserAlmacen::where("user_id", $this->id)
+                ->get()->pluck("almacen_id")->toArray();
+        }
+        return $id_almacens;
+    }
+
     // RELACIONES
     public function cargo()
     {
@@ -124,6 +137,11 @@ class User extends Authenticatable
     public function role()
     {
         return $this->belongsTo(Role::class, 'role_id');
+    }
+
+    public function user_almacens()
+    {
+        return $this->hasMany(UserAlmacen::class, 'user_id');
     }
 
     // FUNCIONES
@@ -148,6 +166,9 @@ class User extends Authenticatable
             ->pluck("modulos.nombre")
             ->toArray();
 
+
+        $almacen_menu = UserAlmacenController::getAlmacensYGrupos(Auth::user(), $permisos);
+        $permisos = array_merge($permisos, $almacen_menu);
         return $permisos;
     }
 }

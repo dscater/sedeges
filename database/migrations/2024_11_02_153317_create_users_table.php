@@ -28,6 +28,7 @@ return new class extends Migration
             $table->unsignedBigInteger("cargo_id")->nullable();
             $table->unsignedBigInteger("unidad_id")->nullable();
             $table->unsignedBigInteger("almacen_id")->nullable();
+            $table->integer("almacen_todos")->default(0);
             $table->unsignedBigInteger("role_id")->nullable();
             $table->date("fecha_registro");
             $table->integer("acceso");

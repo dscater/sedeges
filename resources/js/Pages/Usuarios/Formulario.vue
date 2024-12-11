@@ -24,16 +24,16 @@ const { getRoles } = useRoles();
 const listAlmacens = ref([]);
 const accion = ref(props.accion_dialog);
 const dialog = ref(props.open_dialog);
-let form = useForm(oUsuario.value);
+let form = useForm(oUsuario);
 let switcheryInstance = null;
 watch(
     () => props.open_dialog,
     async (newValue) => {
         dialog.value = newValue;
         if (dialog.value) {
-            cargarListas();
+            await cargarListas();
             const accesoCheckbox = $("#acceso");
-            if (oUsuario.value.acceso == 1) {
+            if (oUsuario.acceso == 1) {
                 accesoCheckbox.prop("checked", false).trigger("click");
             } else {
                 accesoCheckbox.prop("checked", true).trigger("click");
@@ -42,7 +42,9 @@ watch(
             document
                 .getElementsByTagName("body")[0]
                 .classList.add("modal-open");
-            form = useForm(oUsuario.value);
+            Object.assign(form, oUsuario);
+            handleCheckAll(form.almacen_todos);
+            loading_form.value = false;
         }
     }
 );
@@ -52,6 +54,8 @@ watch(
         accion.value = newValue;
     }
 );
+
+const loading_form = ref(false);
 
 const { flash } = usePage().props;
 
@@ -147,11 +151,12 @@ const cerrarDialog = () => {
     document.getElementsByTagName("body")[0].classList.remove("modal-open");
 };
 
-const cargarListas = () => {
-    cargarCargos();
-    cargarUnidads();
-    cargarAlmacens();
-    cargarRoles();
+const cargarListas = async () => {
+    loading_form.value = true;
+    await cargarCargos();
+    await cargarUnidads();
+    await cargarAlmacens();
+    await cargarRoles();
 };
 
 const cargarCargos = async () => {
@@ -167,6 +172,34 @@ const cargarAlmacens = async () => {
 };
 const cargarRoles = async () => {
     listRoles.value = await getRoles();
+};
+
+const indeterminate = ref(false);
+watch(
+    () => form.id_almacens,
+    (val) => {
+        if (val.length === 0) {
+            form.almacen_todos = false;
+            indeterminate.value = false;
+        } else if (val.length === listAlmacens.value.length) {
+            form.almacen_todos = true;
+            indeterminate.value = false;
+        } else {
+            indeterminate.value = true;
+        }
+    }
+);
+
+const handleCheckAll = (val) => {
+    indeterminate.value = false;
+    if (val) {
+        form.id_almacens = listAlmacens.value.map((_) => _.id);
+    } else {
+        console.log(form.id_almacens)
+        if(form.id == 0){
+            form.id_almacens = [];
+        }
+    }
 };
 
 onMounted(() => {
@@ -196,7 +229,13 @@ onMounted(() => {
                     ></button>
                 </div>
                 <div class="modal-body">
-                    <form @submit.prevent="enviarFormulario()">
+                    <form
+                        @submit.prevent="enviarFormulario()"
+                        class="formulario"
+                    >
+                        <div class="loading" v-if="loading_form">
+                            <i class="fa fa-spin fa-spinner"></i>
+                        </div>
                         <div class="row">
                             <div class="col-md-4">
                                 <label>Nombre(s)*</label>
@@ -422,41 +461,6 @@ onMounted(() => {
                                     </li>
                                 </ul>
                             </div>
-                            <div
-                                class="col-md-4 mt-2"
-                                v-if="form.tipo == 'EXTERNO'"
-                            >
-                                <label>Asignar Almacén*</label>
-                                <el-select
-                                    class="w-100"
-                                    placeholder="- Seleccione -"
-                                    :class="{
-                                        'border border-red rounded':
-                                            form.errors?.almacen_id,
-                                    }"
-                                    v-model="form.almacen_id"
-                                    filterable
-                                >
-                                    <el-option value=""
-                                        >- Seleccione -</el-option
-                                    >
-                                    <el-option
-                                        v-for="item in listAlmacens"
-                                        :value="item.id"
-                                        :label="item.nombre"
-                                    >
-                                        {{ item.nombre }}
-                                    </el-option>
-                                </el-select>
-                                <ul
-                                    v-if="form.errors?.almacen_id"
-                                    class="parsley-errors-list filled"
-                                >
-                                    <li class="parsley-required">
-                                        {{ form.errors?.almacen_id }}
-                                    </li>
-                                </ul>
-                            </div>
                             <div class="col-md-4 mt-2">
                                 <label>Cargo*</label>
                                 <el-select
@@ -518,6 +522,48 @@ onMounted(() => {
                                 >
                                     <li class="parsley-required">
                                         {{ form.errors?.role_id }}
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="col-md-4 mt-2">
+                                <label>Asignar Almacén*</label>
+                                <el-select
+                                    class="w-100"
+                                    :class="{
+                                        'border border-red rounded':
+                                            form.errors?.id_almacens,
+                                    }"
+                                    multiple
+                                    clearable
+                                    collapse-tags
+                                    placeholder="- Seleccione -"
+                                    popper-class="custom-header"
+                                    :max-collapse-tags="1"
+                                    filterable
+                                    v-model="form.id_almacens"
+                                >
+                                    <template #header>
+                                        <el-checkbox
+                                            v-model="form.almacen_todos"
+                                            :indeterminate="indeterminate"
+                                            @change="handleCheckAll"
+                                        >
+                                            Todos
+                                        </el-checkbox>
+                                    </template>
+                                    <el-option
+                                        v-for="item in listAlmacens"
+                                        :key="item.id"
+                                        :value="item.id"
+                                        :label="item.nombre"
+                                    />
+                                </el-select>
+                                <ul
+                                    v-if="form.errors?.id_almacens"
+                                    class="parsley-errors-list filled"
+                                >
+                                    <li class="parsley-required">
+                                        {{ form.errors?.id_almacens }}
                                     </li>
                                 </ul>
                             </div>
@@ -591,3 +637,9 @@ onMounted(() => {
         </div>
     </div>
 </template>
+<style scoped>
+.custom-header .el-checkbox {
+    display: flex;
+    height: unset;
+}
+</style>

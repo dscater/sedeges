@@ -6,6 +6,7 @@ use App\Models\Almacen;
 use App\Models\Egreso;
 use App\Models\Ingreso;
 use App\Models\Producto;
+use App\Models\UserAlmacen;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -16,6 +17,15 @@ class AlmacenController extends Controller
 
     public function listado()
     {
+        $almacens = Almacen::select("almacens.*");
+        $almacens = $almacens->get();
+        return response()->JSON([
+            "almacens" => $almacens
+        ]);
+    }
+
+    public function listadoByUser()
+    {
         $id_almacens = AlmacenController::getIdAlmacensPermiso(Auth::user());
         $almacens = Almacen::select("almacens.*");
         $almacens->whereIn("id", $id_almacens);
@@ -25,9 +35,20 @@ class AlmacenController extends Controller
         ]);
     }
 
-    public function index(Almacen $almacen)
+    public function index(Request $request)
     {
-        return Inertia::render("Almacens/Index", compact("almacen"));
+        $almacens = [];
+        $grupo = "";
+        if (isset($request["g"])) {
+            $grupo = $request["g"];
+            $id_almacens = AlmacenController::getIdAlmacensPermiso(Auth::user());
+            Log::debug($id_almacens);
+            $almacens = Almacen::select("almacens.*");
+            $almacens->where("grupo", $request["g"]);
+            $almacens->whereIn("id", $id_almacens);
+            $almacens = $almacens->get();
+        }
+        return Inertia::render("Almacens/Index", compact("almacens", "grupo"));
     }
     public function productos(Almacen $almacen)
     {
@@ -100,28 +121,10 @@ class AlmacenController extends Controller
 
     public static function getIdAlmacensPermiso($user)
     {
-        $permisos = $user->permisos;
-        $id_almacens = [];
-        if ($permisos == '*') {
-            $id_almacens = [1, 2, 3];
-        } else {
-            if (in_array("almacen1.index", $permisos)) {
-                $id_almacens[] = 1;
-            }
-            if (in_array("almacen2.index", $permisos)) {
-                $id_almacens[] = 2;
-            }
-            if (in_array("almacen3.index", $permisos)) {
-                $id_almacens[] = 3;
-            }
+        $id_almacens = Almacen::get()->pluck("id")->toArray();
+        if ($user->almacen_todos != 1) {
+            $id_almacens = UserAlmacen::where("user_id", $user->id)->get()->pluck("almacen_id")->toArray();
         }
-        $user = Auth::user();
-        if ($user->tipo == 'EXTERNO') {
-            if (!in_array($user->almacen_id, $id_almacens)) {
-                $id_almacens[] = $user->almacen_id;
-            }
-        }
-
         return $id_almacens;
     }
 

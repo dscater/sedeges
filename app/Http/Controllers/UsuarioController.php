@@ -27,6 +27,7 @@ class UsuarioController extends Controller
         "cargo_id" => "required",
         "unidad_id" => "required",
         "role_id" => "required",
+        'id_almacens' => 'required|array|min:1'
     ];
 
     public $mensajes = [
@@ -48,6 +49,8 @@ class UsuarioController extends Controller
         "unidad_id.required" => "Este campo es obligatorio",
         "almacen_id.required" => "Este campo es obligatorio",
         "role_id.required" => "Este campo es obligatorio",
+        "id_almacens.required" => "Este campo es obligatorio",
+        "id_almacens.min" => "Debes seleccionar al menos :min almacen",
     ];
 
     public function index()
@@ -113,9 +116,6 @@ class UsuarioController extends Controller
         if ($request->hasFile('foto')) {
             $this->validacion['foto'] = 'image|mimes:jpeg,jpg,png|max:4096';
         }
-        if ($request->tipo == 'EXTERNO') {
-            $this->validacion['almacen_id'] = 'required';
-        }
 
         $request->validate($this->validacion, $this->mensajes);
 
@@ -146,14 +146,11 @@ class UsuarioController extends Controller
                 "tipo" => $request["tipo"],
                 "cargo_id" => $request["cargo_id"],
                 "unidad_id" => $request["unidad_id"],
-                "almacen_id" => $request["tipo"] == 'EXTERNO' ? $request["almacen_id"] : NULL,
                 "role_id" => $request["role_id"],
                 "fecha_registro" => date("Y-m-d"),
                 "acceso" => $request["acceso"],
+                "almacen_todos" => $request["almacen_todos"] == "true" || $request["almacen_todos"] == 1 ? 1 : 0,
             ];
-
-            $request['tipo'] = $request->tipo;
-            $request['fecha_registro'] = date('Y-m-d');
 
             // crear el Usuario
             $nuevo_usuario = User::create($data_user);
@@ -166,6 +163,14 @@ class UsuarioController extends Controller
                 $file->move(public_path() . '/imgs/users/', $nom_foto);
             }
             $nuevo_usuario->save();
+
+            // Almacen user
+            if ($nuevo_usuario->almacen_todos != 1 && count($request["id_almacens"]) > 0) {
+                foreach ($request["id_almacens"] as $value) {
+                    $nuevo_usuario->user_almacens()->create(["almacen_id" => $value]);
+                }
+            }
+
 
             $datos_original = HistorialAccion::getDetalleRegistro($nuevo_usuario, "users");
             HistorialAccion::create([
@@ -209,9 +214,6 @@ class UsuarioController extends Controller
         if ($request->hasFile('foto')) {
             $this->validacion['foto'] = 'image|mimes:jpeg,jpg,png|max:4096';
         }
-        if ($request->tipo == 'EXTERNO') {
-            $this->validacion['almacen_id'] = 'required';
-        }
 
         $request->validate($this->validacion, $this->mensajes);
         DB::beginTransaction();
@@ -230,9 +232,9 @@ class UsuarioController extends Controller
                 "tipo" => $request["tipo"],
                 "cargo_id" => $request["cargo_id"],
                 "unidad_id" => $request["unidad_id"],
-                "almacen_id" => $request["tipo"] == 'EXTERNO' ? $request["almacen_id"] : NULL,
                 "role_id" => $request["role_id"],
                 "acceso" => $request["acceso"],
+                "almacen_todos" => $request["almacen_todos"] == "true" || $request["almacen_todos"] == 1 ? 1 : 0,
             ];
 
             $user->update($data_user);
@@ -247,6 +249,22 @@ class UsuarioController extends Controller
                 $file->move(public_path() . '/imgs/users/', $nom_foto);
             }
             $user->save();
+
+            // Almacen user
+            // validar cambios
+            $a1 = $user->id_almacens;
+            $a2 = $request["id_almacens"];
+            sort($a1);
+            sort($a2);
+            if ($a1 != $a2 || $user->almacen_todos == 1) {
+                $user->user_almacens()->delete();
+                if ($user->almacen_todos != 1 && count($request["id_almacens"]) > 0) {
+                    foreach ($request["id_almacens"] as $value) {
+                        $user->user_almacens()->create(["almacen_id" => $value]);
+                    }
+                }
+            }
+
 
             $datos_nuevo = HistorialAccion::getDetalleRegistro($user, "users");
             HistorialAccion::create([

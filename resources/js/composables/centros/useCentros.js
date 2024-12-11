@@ -1,37 +1,21 @@
 import axios from "axios";
-import { onMounted, reactive } from "vue";
+import { onMounted, ref } from "vue";
 import { usePage } from "@inertiajs/vue3";
 
-const oUsuario = reactive({
+const oCentro = ref({
     id: 0,
     nombre: "",
-    paterno: "",
-    materno: "",
-    ci: "",
-    ci_exp: "",
-    dir: "",
-    email: "",
-    fono: "",
-    password: "",
-    foto: "",
-    tipo: "",
-    cargo_id: "",
-    unidad_id: "",
-    id_almacens: [],
-    almacen_todos: false,
-    role_id: "",
-    acceso: 0 + "",
     _method: "POST",
 });
 
-export const useUsuarios = () => {
+export const useCentros = () => {
     const { flash } = usePage().props;
-    const getUsuarios = async () => {
+    const getCentros = async () => {
         try {
-            const response = await axios.get(route("usuarios.listado"), {
+            const response = await axios.get(route("centros.listado"), {
                 headers: { Accept: "application/json" },
             });
-            return response.data.usuarios;
+            return response.data.centros;
         } catch (err) {
             Swal.fire({
                 icon: "error",
@@ -50,25 +34,28 @@ export const useUsuarios = () => {
         }
     };
 
-    const getUsuariosByTipo = async (data) => {
+    const getCentrosByTipo = async (data) => {
         try {
-            const response = await axios.get(route("usuarios.byTipo"), {
+            const response = await axios.get(route("centros.byTipo"), {
                 headers: { Accept: "application/json" },
                 params: data,
             });
-            return response.data.usuarios;
+            return response.data.centros;
         } catch (error) {
             console.error("Error:", error);
             throw error; // Puedes manejar el error según tus necesidades
         }
     };
 
-    const getUsuariosApi = async (data) => {
+    const getCentrosApi = async (data) => {
         try {
-            const response = await axios.get(route("usuarios.paginado", data), {
-                headers: { Accept: "application/json" },
-            });
-            return response.data.usuarios;
+            const response = await axios.get(
+                route("centros.paginado", data),
+                {
+                    headers: { Accept: "application/json" },
+                }
+            );
+            return response.data.centros;
         } catch (err) {
             Swal.fire({
                 icon: "error",
@@ -86,40 +73,9 @@ export const useUsuarios = () => {
             throw err; // Puedes manejar el error según tus necesidades
         }
     };
-    const saveUsuario = async (data) => {
+    const saveCentro = async (data) => {
         try {
-            const response = await axios.post(route("usuarios.store", data), {
-                headers: { Accept: "application/json" },
-            });
-            Swal.fire({
-                icon: "success",
-                title: "Correcto",
-                text: `${flash.bien ? flash.bien : "Proceso realizado"}`,
-                confirmButtonColor: "#3085d6",
-                confirmButtonText: `Aceptar`,
-            });
-            return response.data;
-        } catch (err) {
-            Swal.fire({
-                icon: "error",
-                title: "Error",
-                text: `${
-                    flash.error
-                        ? flash.error
-                        : err.response?.data
-                        ? err.response?.data?.message
-                        : "Hay errores en el formulario"
-                }`,
-                confirmButtonColor: "#3085d6",
-                confirmButtonText: `Aceptar`,
-            });
-            throw err; // Puedes manejar el error según tus necesidades
-        }
-    };
-
-    const deleteUsuario = async (id) => {
-        try {
-            const response = await axios.delete(route("usuarios.destroy", id), {
+            const response = await axios.post(route("centros.store", data), {
                 headers: { Accept: "application/json" },
             });
             Swal.fire({
@@ -148,65 +104,66 @@ export const useUsuarios = () => {
         }
     };
 
-    const setUsuario = (item = null) => {
+    const deleteCentro = async (id) => {
+        try {
+            const response = await axios.delete(
+                route("centros.destroy", id),
+                {
+                    headers: { Accept: "application/json" },
+                }
+            );
+            Swal.fire({
+                icon: "success",
+                title: "Correcto",
+                text: `${flash.bien ? flash.bien : "Proceso realizado"}`,
+                confirmButtonColor: "#3085d6",
+                confirmButtonText: `Aceptar`,
+            });
+            return response.data;
+        } catch (err) {
+            Swal.fire({
+                icon: "error",
+                title: "Error",
+                text: `${
+                    flash.error
+                        ? flash.error
+                        : err.response?.data
+                        ? err.response?.data?.message
+                        : "Hay errores en el formulario"
+                }`,
+                confirmButtonColor: "#3085d6",
+                confirmButtonText: `Aceptar`,
+            });
+            throw err; // Puedes manejar el error según tus necesidades
+        }
+    };
+
+    const setCentro = (item = null) => {
         if (item) {
-            oUsuario.id = item.id;
-            oUsuario.nombre = item.nombre;
-            oUsuario.paterno = item.paterno;
-            oUsuario.materno = item.materno;
-            oUsuario.ci = item.ci;
-            oUsuario.ci_exp = item.ci_exp;
-            oUsuario.dir = item.dir;
-            oUsuario.email = item.email;
-            oUsuario.fono = item.fono;
-            oUsuario.password = item.password;
-            oUsuario.foto = item.foto;
-            oUsuario.tipo = item.tipo;
-            oUsuario.cargo_id = item.cargo_id;
-            oUsuario.unidad_id = item.unidad_id;
-            oUsuario.id_almacens = item.id_almacens;
-            oUsuario.almacen_todos =
-                item.almacen_todos == 1 ? true : false;
-            oUsuario.role_id = item.role_id;
-            oUsuario.acceso = item.acceso + "";
-            oUsuario._method = "PUT";
-            return oUsuario;
+            oCentro.value.id = item.id;
+            oCentro.value.nombre = item.nombre;
+            oCentro.value._method = "PUT";
+            return oCentro;
         }
         return false;
     };
 
-    const limpiarUsuario = () => {
-        oUsuario.id = 0;
-        oUsuario.nombre = "";
-        oUsuario.paterno = "";
-        oUsuario.materno = "";
-        oUsuario.ci = "";
-        oUsuario.ci_exp = "";
-        oUsuario.dir = "";
-        oUsuario.email = "";
-        oUsuario.fono = "";
-        oUsuario.password = "";
-        oUsuario.foto = "";
-        oUsuario.tipo = "";
-        oUsuario.cargo_id = "";
-        oUsuario.unidad_id = "";
-        oUsuario.id_almacens = [];
-        oUsuario.almacen_todos = false;
-        oUsuario.role_id = "";
-        oUsuario.acceso = 0 + "";
-        oUsuario._method = "POST";
+    const limpiarCentro = () => {
+        oCentro.value.id = 0;
+        oCentro.value.nombre = "";
+        oCentro.value._method = "POST";
     };
 
     onMounted(() => {});
 
     return {
-        oUsuario,
-        getUsuarios,
-        getUsuariosApi,
-        saveUsuario,
-        deleteUsuario,
-        setUsuario,
-        limpiarUsuario,
-        getUsuariosByTipo,
+        oCentro,
+        getCentros,
+        getCentrosApi,
+        saveCentro,
+        deleteCentro,
+        setCentro,
+        limpiarCentro,
+        getCentrosByTipo,
     };
 };

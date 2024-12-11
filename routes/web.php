@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AlmacenController;
 use App\Http\Controllers\CargoController;
+use App\Http\Controllers\CentroController;
 use App\Http\Controllers\ConfiguracionController;
 use App\Http\Controllers\EgresoController;
 use App\Http\Controllers\IngresoController;
@@ -52,7 +53,6 @@ Route::middleware(['auth', 'permisoUsuario'])->prefix("admin")->group(function (
     Route::delete('profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::get("getUser", [UserController::class, 'getUser'])->name('users.getUser');
-    Route::get("permisos", [UserController::class, 'permisos']);
 
     // USUARIOS
     Route::put("usuarios/password/{user}", [UsuarioController::class, 'actualizaPassword'])->name("usuarios.password");
@@ -85,10 +85,11 @@ Route::middleware(['auth', 'permisoUsuario'])->prefix("admin")->group(function (
     );
 
     // ALMACENS
+    Route::get("almacens/listadoByUser", [AlmacenController::class, 'listadoByUser'])->name("almacens.listadoByUser");
     Route::get("almacens/listado", [AlmacenController::class, 'listado'])->name("almacens.listado");
     Route::get("almacens/show/{almacen}", [AlmacenController::class, 'show'])->name("almacens.show");
 
-    Route::get("almacens/{almacen}", [AlmacenController::class, 'index'])->name("almacens.index");
+    Route::get("almacens", [AlmacenController::class, 'index'])->name("almacens.index");
     Route::get("almacens/productos/{almacen}", [AlmacenController::class, 'productos'])->name("almacens.productos");
 
     // CARGOS
@@ -145,8 +146,22 @@ Route::middleware(['auth', 'permisoUsuario'])->prefix("admin")->group(function (
     Route::get("programas/api", [ProgramaController::class, 'api'])->name("programas.api");
     Route::get("programas/paginado", [ProgramaController::class, 'paginado'])->name("programas.paginado");
     Route::get("programas/listado", [ProgramaController::class, 'listado'])->name("programas.listado");
+    Route::put("programas/{programa}", [ProgramaController::class, 'update'])->name("programas.update");
+    Route::get("programas/{programa}", [ProgramaController::class, 'show'])->name("programas.show");
+    Route::delete("programas/{programa}", [ProgramaController::class, 'destroy'])->name("programas.destroy");
     Route::resource("programas", ProgramaController::class)->only(
-        ["index", "store", "update", "show", "destroy"]
+        ["index", "store"]
+    );
+
+    // CENTROS
+    Route::get("centros/api", [CentroController::class, 'api'])->name("centros.api");
+    Route::get("centros/paginado", [CentroController::class, 'paginado'])->name("centros.paginado");
+    Route::get("centros/listado", [CentroController::class, 'listado'])->name("centros.listado");
+    Route::put("centros/{centro}", [CentroController::class, 'update'])->name("centros.update");
+    Route::get("centros/{centro}", [CentroController::class, 'show'])->name("centros.show");
+    Route::delete("centros/{centro}", [CentroController::class, 'destroy'])->name("centros.destroy");
+    Route::resource("centros", CentroController::class)->only(
+        ["index", "store"]
     );
 
     // REPORTES

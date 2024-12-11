@@ -1,7 +1,7 @@
 <script setup>
 import { useApp } from "@/composables/useApp";
 import { Head, Link, usePage } from "@inertiajs/vue3";
-import { useProgramas } from "@/composables/programas/useProgramas";
+import { useCentros } from "@/composables/centros/useCentros";
 import { initDataTable } from "@/composables/datatable.js";
 import { ref, onMounted, onBeforeUnmount } from "vue";
 import PanelToolbar from "@/Components/PanelToolbar.vue";
@@ -14,8 +14,8 @@ onMounted(() => {
     }, 300);
 });
 
-const { getProgramas, setPrograma, limpiarPrograma, deletePrograma } =
-    useProgramas();
+const { getCentros, setCentro, limpiarCentro, deleteCentro } =
+    useCentros();
 
 const columns = [
     {
@@ -23,7 +23,7 @@ const columns = [
         data: "id",
     },
     {
-        title: "NOMBRE PROGRAMA",
+        title: "NOMBRE CENTRO",
         data: "nombre",
     },
     {
@@ -38,20 +38,20 @@ const columns = [
 
             if (
                 props_page.auth?.user.permisos == "*" ||
-                props_page.auth?.user.permisos.includes("programas.edit")
+                props_page.auth?.user.permisos.includes("centros.edit")
             ) {
                 buttons += `<button class="mx-0 rounded-0 btn btn-warning editar" data-id="${row.id}"><i class="fa fa-edit"></i></button>`;
             }
 
             if (
                 props_page.auth?.user.permisos == "*" ||
-                props_page.auth?.user.permisos.includes("programas.destroy")
+                props_page.auth?.user.permisos.includes("centros.destroy")
             ) {
                 buttons += ` <button class="mx-0 rounded-0 btn btn-danger eliminar"
                  data-id="${row.id}"
                  data-nombre="${row.nombre}"
                  data-url="${route(
-                     "programas.destroy",
+                     "centros.destroy",
                      row.id
                  )}"><i class="fa fa-trash"></i></button>`;
             }
@@ -64,24 +64,24 @@ const accion_dialog = ref(0);
 const open_dialog = ref(false);
 
 const agregarRegistro = () => {
-    limpiarPrograma();
+    limpiarCentro();
     accion_dialog.value = 0;
     open_dialog.value = true;
 };
 
 const accionesRow = () => {
     // editar
-    $("#table-programa").on("click", "button.editar", function (e) {
+    $("#table-centro").on("click", "button.editar", function (e) {
         e.preventDefault();
         let id = $(this).attr("data-id");
-        axios.get(route("programas.show", id)).then((response) => {
-            setPrograma(response.data);
+        axios.get(route("centros.show", id)).then((response) => {
+            setCentro(response.data);
             accion_dialog.value = 1;
             open_dialog.value = true;
         });
     });
     // eliminar
-    $("#table-programa").on("click", "button.eliminar", function (e) {
+    $("#table-centro").on("click", "button.eliminar", function (e) {
         e.preventDefault();
         let nombre = $(this).attr("data-nombre");
         let id = $(this).attr("data-id");
@@ -96,7 +96,7 @@ const accionesRow = () => {
         }).then(async (result) => {
             /* Read more about isConfirmed, isDenied below */
             if (result.isConfirmed) {
-                let respuesta = await deletePrograma(id);
+                let respuesta = await deleteCentro(id);
                 if (respuesta && respuesta.sw) {
                     updateDatatable();
                 }
@@ -113,9 +113,9 @@ const updateDatatable = () => {
 
 onMounted(async () => {
     datatable = initDataTable(
-        "#table-programa",
+        "#table-centro",
         columns,
-        route("programas.api")
+        route("centros.api")
     );
     datatableInitialized.value = true;
     accionesRow();
@@ -130,16 +130,16 @@ onBeforeUnmount(() => {
 });
 </script>
 <template>
-    <Head title="Programas"></Head>
+    <Head title="Centros"></Head>
 
     <!-- BEGIN breadcrumb -->
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="javascript:;">Inicio</a></li>
-        <li class="breadcrumb-item active">Programas</li>
+        <li class="breadcrumb-item active">Centros</li>
     </ol>
     <!-- END breadcrumb -->
     <!-- BEGIN page-header -->
-    <h1 class="page-header">Programas</h1>
+    <h1 class="page-header">Centros</h1>
     <!-- END page-header -->
 
     <div class="row">
@@ -153,7 +153,7 @@ onBeforeUnmount(() => {
                             v-if="
                                 props_page.auth?.user.permisos == '*' ||
                                 props_page.auth?.user.permisos.includes(
-                                    'programas.create'
+                                    'centros.create'
                                 )
                             "
                             type="button"
@@ -172,7 +172,7 @@ onBeforeUnmount(() => {
                 <!-- BEGIN panel-body -->
                 <div class="panel-body">
                     <table
-                        id="table-programa"
+                        id="table-centro"
                         width="100%"
                         class="table table-striped table-bordered align-middle text-nowrap tabla_datos"
                     >
