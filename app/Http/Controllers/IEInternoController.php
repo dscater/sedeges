@@ -17,12 +17,16 @@ class IEInternoController extends Controller
         return Inertia::render("Almacens/IngresosInterno", compact("almacen"));
     }
 
-    public function getIngresosCentral(Almacen $almacen)
+    public function egresos(Almacen $almacen)
+    {
+        return Inertia::render("Almacens/EgresosInterno", compact("almacen"));
+    }
+
+    public function api(Almacen $almacen)
     {
         $user = Auth::user();
-        $ie_internos = IEInterno::with(["producto", "ingreso.unidad_medida"])
+        $ie_internos = IEInterno::with(["producto", "ingreso.unidad_medida", "ingreso.partida"])
             ->join("ingresos", "ingresos.id", "=", "i_e_internos.ingreso_id");
-
         $ie_internos->where("i_e_internos.almacen_id", $almacen->id);
 
         if ($user->tipo == 'EXTERNO') {
@@ -30,6 +34,26 @@ class IEInternoController extends Controller
             $ie_internos->where("ingresos.user_id", $user->id);
         }
 
+        $ie_internos = $ie_internos->orderBy("i_e_internos.created_at", "desc")->get();
+        return response()->JSON(["data" => $ie_internos]);
+    }
+
+
+    public function getIngresosCentral(Almacen $almacen, Request $request)
+    {
+        $partida_id = $request->partida_id;
+        $user = Auth::user();
+        $ie_internos = IEInterno::with(["producto", "ingreso.unidad_medida"])
+            ->select("i_e_internos.*")
+            ->join("ingresos", "ingresos.id", "=", "i_e_internos.ingreso_id");
+        $ie_internos->where("i_e_internos.almacen_id", $almacen->id);
+
+        if ($user->tipo == 'EXTERNO') {
+            $ie_internos->where("ingresos.unidad_id", $user->unidad_id);
+            $ie_internos->where("ingresos.user_id", $user->id);
+        }
+
+        $ie_internos->where("ingresos.partida_id", $partida_id);
         $ie_internos = $ie_internos->orderBy("i_e_internos.created_at", "desc")->get();
         return response()->JSON([
             "ie_internos" => $ie_internos,

@@ -51,7 +51,7 @@ onBeforeUnmount(() => {});
                                 '?g=' +
                                 item.grupo
                             "
-                            >Administrar Ingresos desde Central</Link
+                            >Ingresos desde Central</Link
                         >
                         &nbsp;
                     </template>
@@ -62,7 +62,7 @@ onBeforeUnmount(() => {});
                             '?g=' +
                             item.grupo
                         "
-                        >Ver Ingresos</Link
+                        >Ingresos</Link
                     >
                 </div>
                 <!-- END panel-body -->

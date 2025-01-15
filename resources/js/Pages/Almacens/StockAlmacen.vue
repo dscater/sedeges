@@ -80,6 +80,34 @@ const columns = [
         title: "FECHA DE REGISTRO",
         data: "fecha_registro_t",
     },
+    {
+        title: "ACCIONES",
+        data: null,
+        render: function (data, type, row) {
+            let buttons = ``;
+
+            if (
+                props_page.auth?.user.permisos == "*" ||
+                props_page.auth?.user.permisos.includes("ingresos.edit")
+            ) {
+                buttons += `<button class="mx-0 rounded-0 btn btn-warning editar" data-id="${row.id}"><i class="fa fa-edit"></i></button>`;
+            }
+
+            if (
+                props_page.auth?.user.permisos == "*" ||
+                props_page.auth?.user.permisos.includes("ingresos.destroy")
+            ) {
+                buttons += ` <button class="mx-0 rounded-0 btn btn-danger eliminar"
+                 data-id="${row.id}"
+                 data-nombre="${row.codigo ?? "S/P"}"
+                 data-url="${route(
+                     "ingresos.destroy",
+                     row.id
+                 )}"><i class="fa fa-trash"></i></button>`;
+            }
+            return buttons;
+        },
+    },
 ];
 const loading = ref(false);
 const accion_dialog = ref(0);
@@ -96,10 +124,33 @@ const accionesRow = () => {
     $("#table-producto").on("click", "button.editar", function (e) {
         e.preventDefault();
         let id = $(this).attr("data-id");
-        axios.get(route("productos.show", id)).then((response) => {
-            setProducto(response.data);
+        axios.get(route("ingresos.show", id)).then((response) => {
+            setIngreso(response.data);
             accion_dialog.value = 1;
             open_dialog.value = true;
+        });
+    });
+    // eliminar
+    $("#table-producto").on("click", "button.eliminar", function (e) {
+        e.preventDefault();
+        let nombre = $(this).attr("data-nombre");
+        let id = $(this).attr("data-id");
+        Swal.fire({
+            title: "¿Quierés eliminar este registro?",
+            html: `<strong>${nombre}</strong>`,
+            showCancelButton: true,
+            confirmButtonColor: "#B61431",
+            confirmButtonText: "Si, eliminar",
+            cancelButtonText: "No, cancelar",
+            denyButtonText: `No, cancelar`,
+        }).then(async (result) => {
+            /* Read more about isConfirmed, isDenied below */
+            if (result.isConfirmed) {
+                let respuesta = await deleteIngreso(id);
+                if (respuesta && respuesta.sw) {
+                    updateDatatable();
+                }
+            }
         });
     });
 };
@@ -114,7 +165,13 @@ onMounted(async () => {
     datatable = initDataTable(
         "#table-producto",
         columns,
-        route("almacens.productos", propsParams.almacen.id)
+        route("almacens.productos", propsParams.almacen.id),
+        {
+            order: [
+                [10, "desc"],
+                [0, "desc"],
+            ],
+        }
     );
     datatableInitialized.value = true;
     accionesRow();
@@ -134,7 +191,14 @@ onBeforeUnmount(() => {
     <!-- BEGIN breadcrumb -->
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="javascript:;">Inicio</a></li>
-        <li class="breadcrumb-item"><Link :href="route('almacens.index') + '?g='+propsParams.almacen.grupo">{{propsParams.almacen.grupo}}</Link></li>
+        <li class="breadcrumb-item">
+            <Link
+                :href="
+                    route('almacens.index') + '?g=' + propsParams.almacen.grupo
+                "
+                >{{ propsParams.almacen.grupo }}</Link
+            >
+        </li>
         <li class="breadcrumb-item active">{{ propsParams.almacen.nombre }}</li>
     </ol>
     <!-- END breadcrumb -->
@@ -149,6 +213,13 @@ onBeforeUnmount(() => {
                 <!-- BEGIN panel-heading -->
                 <div class="panel-heading">
                     <h4 class="panel-title btn-nuevo">
+                        <Link
+                            class="d-inline-block btn btn-outline-secondary mx-1"
+                            :href="
+                                route('almacens.index') + '?g=' + almacen.grupo
+                            "
+                            ><i class="fa fa-arrow-left"></i> Volver</Link
+                        >
                         <button
                             v-if="
                                 props_page.auth?.user.permisos == '*' ||

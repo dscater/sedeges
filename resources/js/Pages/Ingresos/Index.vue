@@ -88,7 +88,7 @@ const columns = [
             ) {
                 buttons += ` <button class="mx-0 rounded-0 btn btn-danger eliminar"
                  data-id="${row.id}"
-                 data-nombre="${row.codigo}"
+                 data-nombre="${row.codigo ?? "S/P"}"
                  data-url="${route(
                      "ingresos.destroy",
                      row.id

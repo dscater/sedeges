@@ -1,121 +1,114 @@
 <script setup>
 import { useApp } from "@/composables/useApp";
 import { Head, Link, usePage } from "@inertiajs/vue3";
+import { useIngresos } from "@/composables/ingresos/useIngresos";
+import { initDataTable } from "@/composables/datatable.js";
 import { ref, onMounted, onBeforeUnmount } from "vue";
 import PanelToolbar from "@/Components/PanelToolbar.vue";
+import Formulario from "@/Pages/Ingresos/Formulario.vue";
+const { props: props_page } = usePage();
 const propsParams = defineProps({
     almacen: {
         type: Object,
         default: null,
     },
 });
-const { user, url_assets, auth } = usePage().props;
 
+const { getIngresos, setIngreso, limpiarIngreso, deleteIngreso } =
+    useIngresos();
+
+const { setLoading } = useApp();
+
+const columns = [
+    {
+        title: "CÓDIGO",
+        data: "ingreso.codigo",
+    },
+    {
+        title: "PARTIDA",
+        data: "ingreso.partida.nro_partida",
+    },
+    {
+        title: "DONACIÓN",
+        data: "ingreso.donacion",
+    },
+    {
+        title: "PRODUCTO",
+        data: "producto.nombre",
+    },
+    {
+        title: "UNIDAD DE MEDIDA",
+        data: "ingreso.unidad_medida.nombre",
+    },
+    {
+        title: "CANTIDAD",
+        data: "icantidad",
+    },
+    {
+        title: "COSTO",
+        data: "icosto",
+    },
+    {
+        title: "TOTAL",
+        data: "itotal",
+    },
+    {
+        title: "SALDO CANTIDAD",
+        data: null,
+        render: function (data, type, row) {
+            return row.s_cantidad;
+        },
+    },
+    {
+        title: "SALDO TOTAL",
+        data: null,
+        render: function (data, type, row) {
+            return row.s_total;
+        },
+    },
+    {
+        title: "FECHA DE REGISTRO",
+        data: "fecha_registro_t",
+    },
+];
 const loading = ref(false);
-const cargandoRegistros = ref(false);
-const listIEInternos = ref([]);
-const cargarIngresoAlmacenPartida = () => {
-    if (propsParams.almacen) {
-        cargandoRegistros.value = true;
-        axios
-            .get(
-                route("ie_internos.getIngresosCentral", propsParams.almacen.id)
-            )
-            .then((response) => {
-                cargandoRegistros.value = false;
-                listIEInternos.value = response.data.ie_internos;
-            })
-            .catch((error) => {
-                cargandoRegistros.value = false;
-                console.log("ERROR");
-                Swal.fire({
-                    icon: "info",
-                    title: "Error",
-                    text: `Ocurrió un error al intentar cargar los registros, intente mas tarde.`,
-                    confirmButtonColor: "#3085d6",
-                    confirmButtonText: `Aceptar`,
-                });
-            });
-    } else {
-        listIEInternos.value = [];
-    }
+const accion_dialog = ref(0);
+const open_dialog = ref(false);
+
+const agregarRegistro = () => {
+    limpiarIngreso();
+    accion_dialog.value = 0;
+    open_dialog.value = true;
 };
 
-const intervalKeyup = ref(null);
-const spin = ref(null);
-const detectaKeyUpCantidad = async (e, index) => {
-    let value = e.target.value;
-    console.log(value);
-    let oIEInterno = listIEInternos.value[index];
-    spin.value = document.getElementById("spin" + index);
-    clearInterval(intervalKeyup.value);
-    spin.value.classList.remove("oculto");
-    if (value && value > 0 && value <= oIEInterno.icantidad) {
-        intervalKeyup.value = setTimeout(async () => {
-            const res = await actualizaCantidad(value, oIEInterno.id);
-            if (res) {
-                listIEInternos.value[index] = res.ie_interno;
-                spin.value.classList.add("oculto");
-            }
-        }, 700);
-    } else {
-        spin.value.classList.add("oculto");
-        $.gritter.add({
-            title: "Error",
-            text:
-                "Debes ingresar una cantidad mayor a 0 y menor o igual a " +
-                oIEInterno.icantidad,
-            image: url_assets + "imgs/error.png",
-            sticky: false,
-            time: 1300,
-            class_name: "my-sticky-class",
-        });
-    }
-};
+const accionesRow = () => {};
 
-const actualizaCantidad = async (value, ie_interno_id) => {
-    try {
-        const response = await axios.post(
-            route("ie_internos.update", ie_interno_id),
-            {
-                _method: "put",
-                cantidad: value,
-            },
-            {
-                headers: { Accept: "application/json" },
-            }
-        );
-        if (response) {
-            $.gritter.add({
-                title: "Registro actualizado",
-                text: "",
-                image: url_assets + "imgs/check.png",
-                sticky: false,
-                time: 1000,
-                class_name: "my-sticky-class",
-            });
-        }
-        return response.data;
-    } catch (error) {
-        console.log(error);
-        $.gritter.add({
-            title: "No se pudo actualizar el registro",
-            text: "",
-            image: url_assets + "imgs/error.png",
-            sticky: false,
-            time: 1000,
-            class_name: "my-sticky-class",
-        });
-    }
+var datatable = null;
+const datatableInitialized = ref(false);
+const updateDatatable = () => {
+    datatable.ajax.reload();
 };
 
 onMounted(async () => {
-    cargarIngresoAlmacenPartida();
+    datatable = initDataTable(
+        "#table-ie-interno",
+        columns,
+        route("ie_internos.api", propsParams.almacen.id)
+    );
+    datatableInitialized.value = true;
+    accionesRow();
 });
-onBeforeUnmount(() => {});
+onBeforeUnmount(() => {
+    if (datatable) {
+        datatable.clear();
+        datatable.destroy(false); // Destruye la instancia del DataTable
+        datatable = null;
+        datatableInitialized.value = false;
+    }
+});
 </script>
 <template>
-    <Head title="Egresos"></Head>
+    <Head title=""></Head>
 
     <!-- BEGIN breadcrumb -->
     <ol class="breadcrumb">
@@ -128,13 +121,12 @@ onBeforeUnmount(() => {});
                 >{{ propsParams.almacen.grupo }}</Link
             >
         </li>
+        <li class="breadcrumb-item">DESDE CENTRAL</li>
         <li class="breadcrumb-item active">{{ propsParams.almacen.nombre }}</li>
     </ol>
     <!-- END breadcrumb -->
     <!-- BEGIN page-header -->
-    <h1 class="page-header">
-        Ingresos desde Central <small>> {{ propsParams.almacen.nombre }}</small>
-    </h1>
+    <h1 class="page-header"></h1>
     <!-- END page-header -->
 
     <div class="row">
@@ -145,179 +137,73 @@ onBeforeUnmount(() => {});
                 <div class="panel-heading">
                     <h4 class="panel-title btn-nuevo">
                         <Link
+                            class="d-inline-block btn btn-outline-secondary mx-1"
                             :href="
-                                route('almacens.index') +
-                                '?g=' +
-                                propsParams.almacen.grupo
+                                route('almacens.index') + '?g=' + almacen.grupo
                             "
-                            class="btn btn-outline-secondary d-inline-block"
                             ><i class="fa fa-arrow-left"></i> Volver</Link
                         >
+                        <Link
+                            v-if="
+                                props_page.auth?.user.permisos == '*' ||
+                                props_page.auth?.user.permisos.includes(
+                                    'egresos.create'
+                                )
+                            "
+                            class="btn btn-warning d-inline-block"
+                            :href="
+                                route(
+                                    'ie_internos.egresos',
+                                    almacen.id
+                                ) +
+                                '?g=' +
+                                almacen.grupo
+                            "
+                        >
+                            <i class="fa fa-sign-out"></i> Administrar egresos
+                        </Link>
                     </h4>
-                    <panel-toolbar :mostrar_loading="loading" />
+                    <panel-toolbar
+                        :mostrar_loading="loading"
+                        @loading="updateDatatable"
+                    />
                 </div>
                 <!-- END panel-heading -->
                 <!-- BEGIN panel-body -->
                 <div class="panel-body">
-                    <div class="row">
-                        <div class="col-12" style="overflow: auto">
-                            <table class="table table-bordered mitabla mt-3">
-                                <thead>
-                                    <tr>
-                                        <th rowspan="2">N°</th>
-                                        <th rowspan="2">CÓDIGO</th>
-                                        <th rowspan="2">DESCRIPCIÓN</th>
-                                        <th rowspan="2">UNIDAD</th>
-                                        <th rowspan="2">FECHA INGRESO</th>
-                                        <th colspan="3" class="text-center bg1">
-                                            INGRESOS
-                                        </th>
-                                        <th colspan="3" class="text-center bg2">
-                                            SALIDAS
-                                        </th>
-                                        <th colspan="3" class="text-center bg3">
-                                            SALDOS
-                                        </th>
-                                    </tr>
-                                    <tr>
-                                        <th class="bg1">CANT.</th>
-                                        <th class="bg1">C/U</th>
-                                        <th class="bg1">TOTAL BS.</th>
-                                        <th class="bg2">CANT.</th>
-                                        <th class="bg2">C/U</th>
-                                        <th class="bg2">TOTAL BS.</th>
-                                        <th class="bg3">CANT.</th>
-                                        <th class="bg3">C/U</th>
-                                        <th class="bg3">TOTAL BS.</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <template
-                                        v-if="
-                                            !cargandoRegistros &&
-                                            listIEInternos.length > 0
-                                        "
-                                    >
-                                        <tr
-                                            v-for="(
-                                                item, index
-                                            ) in listIEInternos"
-                                            :class="[
-                                                item.s_cantidad == 0
-                                                    ? 'bg-success'
-                                                    : '',
-                                            ]"
-                                        >
-                                            <td>{{ index + 1 }}</td>
-                                            <td>{{ item.ingreso.codigo }}</td>
-                                            <td>{{ item.producto.nombre }}</td>
-                                            <td>
-                                                {{
-                                                    item.ingreso.unidad_medida
-                                                        .nombre
-                                                }}
-                                            </td>
-                                            <td>{{ item.fecha_registro_t }}</td>
-                                            <td class="bg1">
-                                                {{ item.icantidad }}
-                                            </td>
-                                            <td class="bg1">
-                                                {{ item.icosto }}
-                                            </td>
-                                            <td class="bg1">
-                                                {{ item.itotal }}
-                                            </td>
-                                            <td class="bg2 text-center">
-                                                <template
-                                                    v-if="
-                                                        item.registro_egreso ==
-                                                            0 &&
-                                                        auth &&
-                                                        (auth.user.permisos.includes(
-                                                            '*'
-                                                        ) ||
-                                                            auth.user.permisos.includes(
-                                                                'egresos.create'
-                                                            ))
-                                                    "
-                                                >
-                                                    <input
-                                                        type="number"
-                                                        class="form-control"
-                                                        v-model="item.ecantidad"
-                                                        @keyup="
-                                                            detectaKeyUpCantidad(
-                                                                $event,
-                                                                index
-                                                            )
-                                                        " />
-                                                    <i
-                                                        class="fa fa-spin fa-spinner oculto"
-                                                        :id="'spin' + index"
-                                                    ></i
-                                                ></template>
-                                                <span v-else>{{
-                                                    item.ecantidad
-                                                }}</span>
-                                            </td>
-                                            <td class="bg2">
-                                                {{ item.icosto }}
-                                            </td>
-                                            <td class="bg2">
-                                                {{ item.etotal }}
-                                            </td>
-                                            <td class="bg3">
-                                                {{ item.s_cantidad }}
-                                            </td>
-                                            <td class="bg3">
-                                                {{ item.icosto }}
-                                            </td>
-                                            <td class="bg3">
-                                                {{ item.s_total }}
-                                            </td>
-                                        </tr>
-                                    </template>
-                                    <tr v-if="cargandoRegistros">
-                                        <td colspan="8">
-                                            Obteniendo registros...
-                                        </td>
-                                    </tr>
-                                    <tr
-                                        v-if="
-                                            listIEInternos.length == 0 &&
-                                            !cargandoRegistros
-                                        "
-                                    >
-                                        <td colspan="8">
-                                            No se encontrarón registros...
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+                    <table
+                        id="table-ie-interno"
+                        width="100%"
+                        class="table table-striped table-bordered align-middle text-nowrap tabla_datos"
+                    >
+                        <thead>
+                            <tr>
+                                <th width="2%"></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
                 </div>
                 <!-- END panel-body -->
             </div>
             <!-- END panel -->
         </div>
     </div>
-</template>
-<style scoped>
-.bg1 {
-    background-color: rgb(176, 248, 209);
-}
-.bg2 {
-    background-color: rgb(253, 229, 222);
-}
-.bg3 {
-    background-color: rgb(222, 232, 253);
-}
-.oculto {
-    display: none;
-}
 
-.bg-success td {
-    background-color: rgba(178, 252, 211, 0.897);
-}
-</style>
+    <Formulario
+        :p_almacen_id="propsParams.almacen.id"
+        :open_dialog="open_dialog"
+        :accion_dialog="accion_dialog"
+        @envio-formulario="updateDatatable"
+        @cerrar-dialog="open_dialog = false"
+    ></Formulario>
+</template>

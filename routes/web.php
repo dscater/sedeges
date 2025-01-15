@@ -97,6 +97,8 @@ Route::middleware(['auth', 'permisoUsuario'])->prefix("admin")->group(function (
 
     // IE INTERNOS
     Route::get("almacens/ie_internos/{almacen}", [IEInternoController::class, 'index'])->name("ie_internos.index");
+    Route::get("almacens/ie_internos/egresos/{almacen}", [IEInternoController::class, 'egresos'])->name("ie_internos.egresos");
+    Route::get("almacens/ie_internos/api/{almacen}", [IEInternoController::class, 'api'])->name("ie_internos.api");
     Route::get("almacens/ie_internos/getIngresosCentral/{almacen}", [IEInternoController::class, 'getIngresosCentral'])->name("ie_internos.getIngresosCentral");
     Route::put("almacens/ie_internos/{ie_interno}", [IEInternoController::class, 'update'])->name("ie_internos.update");
 

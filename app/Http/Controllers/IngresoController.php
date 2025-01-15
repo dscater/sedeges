@@ -122,7 +122,7 @@ class IngresoController extends Controller
         $ingresos = Ingreso::with(["almacen", "partida", "producto", "unidad_medida", "unidad"])->select("ingresos.*");
         $user = Auth::user();
         if ($user->tipo == 'EXTERNO') {
-            $ingresos->where("almacen_id", $user->almacen_id);
+            // $ingresos->where("almacen_id", $user->almacen_id);
             $ingresos->where("unidad_id", $user->unidad_id);
             $ingresos->where("user_id", $user->id);
         }
@@ -165,7 +165,7 @@ class IngresoController extends Controller
             $data_ingreso = [
                 "almacen_id" => $request["almacen_id"],
                 "partida_id" => NULL,
-                "unidad_id" => NULL,
+                "unidad_id" => Auth::user()->tipo == 'EXTERNO' ? Auth::user()->unidad_id : NULL,
                 "programa_id" => NULL,
                 "codigo" =>  NULL,
                 "nro" => NULL,
@@ -190,9 +190,9 @@ class IngresoController extends Controller
                 $data_ingreso["unidad_id"] = $request["unidad_id"];
             }
 
-            $nueva_ingreso = Ingreso::create($data_ingreso);
+            $nuevo_ingreso = Ingreso::create($data_ingreso);
 
-            $datos_original = HistorialAccion::getDetalleRegistro($nueva_ingreso, "ingresos");
+            $datos_original = HistorialAccion::getDetalleRegistro($nuevo_ingreso, "ingresos");
             HistorialAccion::create([
                 'user_id' => Auth::user()->id,
                 'accion' => 'CREACIÓN',
@@ -204,6 +204,12 @@ class IngresoController extends Controller
             ]);
 
             DB::commit();
+
+            if ($request["_redirect_group"] && (bool)$request["_redirect_group"] == true) {
+                return redirect()->route('almacens.stockAlmacen', $nuevo_ingreso->almacen_id)
+                    ->with("bien", "Registro realizado")
+                    ->withInput(['g' => $nuevo_ingreso->almacen->grupo]);
+            }
             return redirect()->route("ingresos.index")->with("bien", "Registro realizado");
         } catch (\Exception $e) {
             DB::rollBack();
@@ -236,7 +242,7 @@ class IngresoController extends Controller
             $data_ingreso = [
                 "almacen_id" => $request["almacen_id"],
                 "partida_id" => NULL,
-                "unidad_id" => NULL,
+                "unidad_id" => Auth::user()->tipo == 'EXTERNO' ? Auth::user()->unidad_id : NULL,
                 "programa_id" => NULL,
                 "donacion" => $request["donacion"],
                 "producto_id" => $request["producto_id"],
@@ -279,6 +285,14 @@ class IngresoController extends Controller
             ]);
 
             DB::commit();
+
+
+            if ($request["_redirect_group"] && (bool)$request["_redirect_group"] == true) {
+                return redirect()->route('almacens.stockAlmacen', $ingreso->almacen_id)
+                    ->with("bien", "Registro actualizado")
+                    ->withInput(['g' => $ingreso->almacen->grupo]);
+            }
+
             return redirect()->route("ingresos.index")->with("bien", "Registro actualizado");
         } catch (\Exception $e) {
             DB::rollBack();

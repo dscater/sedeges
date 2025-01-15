@@ -3,48 +3,40 @@ import { useApp } from "@/composables/useApp";
 import { Head, Link, usePage } from "@inertiajs/vue3";
 import { ref, onMounted, onBeforeUnmount } from "vue";
 import PanelToolbar from "@/Components/PanelToolbar.vue";
+const propsParams = defineProps({
+    almacen: {
+        type: Object,
+        default: null,
+    },
+});
 const { user, url_assets, auth } = usePage().props;
+
+const loading = ref(false);
+const cargandoRegistros = ref(false);
+const listIEInternos = ref([]);
 const form = ref({
-    almacen_id: "",
     partida_id: "",
 });
-
-const listAlmacens = ref([]);
-const listAlmacensSinCentral = ref([]);
-
 const listPartidas = ref([]);
-
-const cargarAlmacens = () => {
-    axios.get(route("almacens.listadoByUser")).then((response) => {
-        listAlmacens.value = response.data.almacens;
-    });
-};
-
-const cargarAlmacensSinCentral = () => {
-    axios.get(route("almacens.listadoSinCentral")).then((response) => {
-        listAlmacensSinCentral.value = response.data.almacens;
-    });
-};
-
 const cargarPartidas = () => {
     axios.get(route("partidas.listado")).then((response) => {
         listPartidas.value = response.data.partidas;
     });
 };
 
-const loading = ref(false);
-const cargandoRegistros = ref(false);
-const listIngresos = ref([]);
 const cargarIngresoAlmacenPartida = () => {
-    if (form.value.almacen_id && form.value.partida_id) {
+    if (propsParams.almacen) {
         cargandoRegistros.value = true;
         axios
-            .get(route("ingresos.almacen_partida"), {
-                params: form.value,
-            })
+            .get(
+                route("ie_internos.getIngresosCentral", propsParams.almacen.id),
+                {
+                    params: form.value,
+                }
+            )
             .then((response) => {
                 cargandoRegistros.value = false;
-                listIngresos.value = response.data;
+                listIEInternos.value = response.data.ie_internos;
             })
             .catch((error) => {
                 cargandoRegistros.value = false;
@@ -58,7 +50,7 @@ const cargarIngresoAlmacenPartida = () => {
                 });
             });
     } else {
-        listIngresos.value = [];
+        listIEInternos.value = [];
     }
 };
 
@@ -66,25 +58,16 @@ const intervalKeyup = ref(null);
 const spin = ref(null);
 const detectaKeyUpCantidad = async (e, index) => {
     let value = e.target.value;
-    let oIngreso = listIngresos.value[index];
+    console.log(value);
+    let oIEInterno = listIEInternos.value[index];
     spin.value = document.getElementById("spin" + index);
     clearInterval(intervalKeyup.value);
     spin.value.classList.remove("oculto");
-    if (
-        form.value.almacen_id &&
-        value &&
-        value > 0 &&
-        value <= oIngreso.cantidad
-    ) {
+    if (value && value > 0 && value <= oIEInterno.icantidad) {
         intervalKeyup.value = setTimeout(async () => {
-            const res = await actualizaCantidad(
-                value,
-                oIngreso.egreso.id,
-                oIngreso.egreso.destino_id,
-                form.value.almacen_id
-            );
+            const res = await actualizaCantidad(value, oIEInterno.id);
             if (res) {
-                listIngresos.value[index].egreso = res.egreso;
+                listIEInternos.value[index] = res.ie_interno;
                 spin.value.classList.add("oculto");
             }
         }, 700);
@@ -94,7 +77,7 @@ const detectaKeyUpCantidad = async (e, index) => {
             title: "Error",
             text:
                 "Debes ingresar una cantidad mayor a 0 y menor o igual a " +
-                oIngreso.cantidad,
+                oIEInterno.icantidad,
             image: url_assets + "imgs/error.png",
             sticky: false,
             time: 1300,
@@ -103,31 +86,13 @@ const detectaKeyUpCantidad = async (e, index) => {
     }
 };
 
-const verificaDisabled = (index, egreso) => {
-    let oIngreso = listIngresos.value[index];
-    if (egreso) {
-        if (
-            (egreso.destino_id && egreso.destino_id != "") ||
-            form.value.almacen_id != 1
-        ) {
-            return false;
-        }
-    }
-    // disabled
-    return true;
-};
-
-const verificaDestino = (value, index) => {};
-
-const actualizaCantidad = async (value, egreso_id, destino_id, almacen_id) => {
+const actualizaCantidad = async (value, ie_interno_id) => {
     try {
         const response = await axios.post(
-            route("egresos.update", egreso_id),
+            route("ie_internos.update", ie_interno_id),
             {
                 _method: "put",
                 cantidad: value,
-                destino_id: destino_id,
-                almacen_id: almacen_id,
             },
             {
                 headers: { Accept: "application/json" },
@@ -158,9 +123,8 @@ const actualizaCantidad = async (value, egreso_id, destino_id, almacen_id) => {
 };
 
 onMounted(async () => {
-    cargarAlmacensSinCentral();
-    cargarAlmacens();
     cargarPartidas();
+    cargarIngresoAlmacenPartida();
 });
 onBeforeUnmount(() => {});
 </script>
@@ -170,11 +134,23 @@ onBeforeUnmount(() => {});
     <!-- BEGIN breadcrumb -->
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="javascript:;">Inicio</a></li>
-        <li class="breadcrumb-item active">Egresos</li>
+        <li class="breadcrumb-item">
+            <Link
+                :href="
+                    route('ie_internos.index', almacen.id) +
+                    '?g=' +
+                    almacen.grupo
+                "
+                >{{ almacen.grupo }}</Link
+            >
+        </li>
+        <li class="breadcrumb-item active">{{ almacen.nombre }}</li>
     </ol>
     <!-- END breadcrumb -->
     <!-- BEGIN page-header -->
-    <h1 class="page-header">Egresos</h1>
+    <h1 class="page-header">
+      Desde central > <span class="text-muted">Administrar egresos</span> <small>> {{ almacen.nombre }}</small>
+    </h1>
     <!-- END page-header -->
 
     <div class="row">
@@ -183,7 +159,17 @@ onBeforeUnmount(() => {});
             <div class="panel panel-inverse">
                 <!-- BEGIN panel-heading -->
                 <div class="panel-heading">
-                    <h4 class="panel-title btn-nuevo"></h4>
+                    <h4 class="panel-title btn-nuevo">
+                        <Link
+                            :href="
+                                route('ie_internos.index', almacen.id) +
+                                '?g=' +
+                                almacen.grupo
+                            "
+                            class="btn btn-outline-secondary d-inline-block"
+                            ><i class="fa fa-arrow-left"></i> Volver</Link
+                        >
+                    </h4>
                     <panel-toolbar :mostrar_loading="loading" />
                 </div>
                 <!-- END panel-heading -->
@@ -191,35 +177,10 @@ onBeforeUnmount(() => {});
                 <div class="panel-body">
                     <div class="row">
                         <div class="col-md-6">
-                            <label>Seleccionar almacén</label>
-                            <el-select
-                                class="w-100"
-                                placeholder="- Seleccione -"
-                                :class="{
-                                    'parsley-error': form.errors?.almacen_id,
-                                }"
-                                v-model="form.almacen_id"
-                                @change="cargarIngresoAlmacenPartida"
-                                filterable
-                            >
-                                <el-option value="">- Seleccione -</el-option>
-                                <el-option
-                                    v-for="item in listAlmacens"
-                                    :value="item.id"
-                                    :label="item.nombre"
-                                >
-                                    {{ item.nombre }}
-                                </el-option>
-                            </el-select>
-                        </div>
-                        <div class="col-md-6">
                             <label>Seleccionar partida</label>
                             <el-select
                                 class="w-100"
                                 placeholder="- Seleccione -"
-                                :class="{
-                                    'parsley-error': form.errors?.partida_id,
-                                }"
                                 v-model="form.partida_id"
                                 @change="cargarIngresoAlmacenPartida"
                                 filterable
@@ -236,32 +197,23 @@ onBeforeUnmount(() => {});
                                 </el-option>
                             </el-select>
                         </div>
-                    </div>
-                    <div class="row">
                         <div class="col-12" style="overflow: auto">
                             <table class="table table-bordered mitabla mt-3">
                                 <thead>
                                     <tr>
                                         <th rowspan="2">N°</th>
                                         <th rowspan="2">CÓDIGO</th>
-                                        <th rowspan="2">UNIDAD</th>
                                         <th rowspan="2">DESCRIPCIÓN</th>
+                                        <th rowspan="2">UNIDAD</th>
                                         <th rowspan="2">FECHA INGRESO</th>
-                                        <th
-                                            rowspan="2"
-                                            width="200px"
-                                            v-if="form.almacen_id == 1"
-                                        >
-                                            DESTINO
-                                        </th>
                                         <th colspan="3" class="text-center bg1">
-                                            INGRESO ALMACENES
+                                            INGRESOS
                                         </th>
                                         <th colspan="3" class="text-center bg2">
-                                            SALIDA ALMACENES
+                                            SALIDAS
                                         </th>
                                         <th colspan="3" class="text-center bg3">
-                                            SALDO
+                                            SALDOS
                                         </th>
                                     </tr>
                                     <tr>
@@ -280,91 +232,43 @@ onBeforeUnmount(() => {});
                                     <template
                                         v-if="
                                             !cargandoRegistros &&
-                                            listIngresos.length > 0
+                                            listIEInternos.length > 0
                                         "
                                     >
                                         <tr
                                             v-for="(
                                                 item, index
-                                            ) in listIngresos"
+                                            ) in listIEInternos"
                                             :class="[
-                                                item.egreso.s_cantidad == 0
+                                                item.s_cantidad == 0
                                                     ? 'bg-success'
                                                     : '',
                                             ]"
                                         >
                                             <td>{{ index + 1 }}</td>
-                                            <td>{{ item.codigo }}</td>
-                                            <td>
-                                                {{ item.unidad_medida.nombre }}
-                                            </td>
+                                            <td>{{ item.ingreso.codigo }}</td>
                                             <td>{{ item.producto.nombre }}</td>
-                                            <td>{{ item.fecha_ingreso_t }}</td>
-                                            <td v-if="form.almacen_id == 1">
-                                                <div
-                                                    v-if="
-                                                        item.egreso &&
-                                                        item.egreso.editable ==
-                                                            1
-                                                    "
-                                                >
-                                                    <el-select
-                                                        class="w-100"
-                                                        placeholder="- Seleccione -"
-                                                        v-model="
-                                                            item.egreso
-                                                                .destino_id
-                                                        "
-                                                        @change="
-                                                            verificaDestino(
-                                                                $event,
-                                                                index
-                                                            )
-                                                        "
-                                                        filterable
-                                                    >
-                                                        <el-option value=""
-                                                            >- Seleccione
-                                                            -</el-option
-                                                        >
-                                                        <el-option
-                                                            v-for="item in listAlmacensSinCentral"
-                                                            :value="item.id"
-                                                            :label="item.nombre"
-                                                        >
-                                                            {{ item.nombre }}
-                                                        </el-option>
-                                                    </el-select>
-                                                </div>
-                                                <div v-else>
-                                                    <span
-                                                        v-if="
-                                                            item.egreso &&
-                                                            item.egreso.destino
-                                                        "
-                                                    >
-                                                        {{
-                                                            item.egreso.destino
-                                                                .nombre
-                                                        }}
-                                                    </span>
-                                                </div>
+                                            <td>
+                                                {{
+                                                    item.ingreso.unidad_medida
+                                                        .nombre
+                                                }}
+                                            </td>
+                                            <td>{{ item.fecha_registro_t }}</td>
+                                            <td class="bg1">
+                                                {{ item.icantidad }}
                                             </td>
                                             <td class="bg1">
-                                                {{ item.cantidad }}
+                                                {{ item.icosto }}
                                             </td>
                                             <td class="bg1">
-                                                {{ item.costo }}
-                                            </td>
-                                            <td class="bg1">
-                                                {{ item.total }}
+                                                {{ item.itotal }}
                                             </td>
                                             <td class="bg2 text-center">
                                                 <template
                                                     v-if="
-                                                        item.egreso.editable ==
-                                                            1 &&
-                                                        item.egreso &&
+                                                        item.registro_egreso ==
+                                                            0 &&
                                                         auth &&
                                                         (auth.user.permisos.includes(
                                                             '*'
@@ -375,17 +279,9 @@ onBeforeUnmount(() => {});
                                                     "
                                                 >
                                                     <input
-                                                        :disabled="
-                                                            verificaDisabled(
-                                                                index,
-                                                                item.egreso
-                                                            )
-                                                        "
                                                         type="number"
                                                         class="form-control"
-                                                        v-model="
-                                                            item.egreso.cantidad
-                                                        "
+                                                        v-model="item.ecantidad"
                                                         @keyup="
                                                             detectaKeyUpCantidad(
                                                                 $event,
@@ -403,38 +299,31 @@ onBeforeUnmount(() => {});
                                                         class="fa fa-spin fa-spinner oculto"
                                                         :id="'spin' + index"
                                                     ></i>
-
                                                     <span
-                                                        v-if="
-                                                            !verificaDisabled(
-                                                                index,
-                                                                item.egreso
-                                                            )
-                                                        "
                                                         class="fs-10px text-muted"
                                                         >Presione Enter o
                                                         modifique la
                                                         cantidad</span
-                                                    >
-                                                </template>
+                                                    ></template
+                                                >
                                                 <span v-else>{{
-                                                    item.egreso?.cantidad
+                                                    item.ecantidad
                                                 }}</span>
                                             </td>
                                             <td class="bg2">
-                                                {{ item.egreso?.costo }}
+                                                {{ item.icosto }}
                                             </td>
                                             <td class="bg2">
-                                                {{ item.egreso?.total }}
+                                                {{ item.etotal }}
                                             </td>
                                             <td class="bg3">
-                                                {{ item.egreso?.s_cantidad }}
+                                                {{ item.s_cantidad }}
                                             </td>
                                             <td class="bg3">
-                                                {{ item.costo }}
+                                                {{ item.icosto }}
                                             </td>
                                             <td class="bg3">
-                                                {{ item.egreso?.s_total }}
+                                                {{ item.s_total }}
                                             </td>
                                         </tr>
                                     </template>
@@ -445,7 +334,7 @@ onBeforeUnmount(() => {});
                                     </tr>
                                     <tr
                                         v-if="
-                                            listIngresos.length == 0 &&
+                                            listIEInternos.length == 0 &&
                                             !cargandoRegistros
                                         "
                                     >

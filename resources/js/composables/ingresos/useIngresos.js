@@ -15,6 +15,7 @@ const oIngreso = ref({
     costo: "",
     total: "",
     fecha_ingreso: "",
+    _redirect_group: false,
     _method: "POST",
 });
 
@@ -157,6 +158,7 @@ export const useIngresos = () => {
             oIngreso.value.total = item.total;
             oIngreso.value.fecha_ingreso = item.fecha_ingreso;
             oIngreso.value._method = "PUT";
+            oIngreso.value._redirect_group = false;
             return oIngreso;
         }
         return false;
@@ -175,6 +177,7 @@ export const useIngresos = () => {
         oIngreso.value.costo = "";
         oIngreso.value.total = "";
         oIngreso.value.fecha_ingreso = "";
+        oIngreso.value._redirect_group = false;
         oIngreso.value._method = "POST";
     };
 

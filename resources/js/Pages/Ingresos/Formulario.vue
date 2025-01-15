@@ -54,7 +54,7 @@ watch(
                 .getElementsByTagName("body")[0]
                 .classList.add("modal-open");
             form = useForm(oIngreso.value);
-            if (auth.user.tipo == "EXTERNO") {
+            if (auth.user.tipo == "EXTERNO" && form.id == 0) {
                 form.donacion = "SI";
             }
             if (form.id == 0) {
@@ -105,6 +105,9 @@ const enviarFormulario = () => {
             ? route("ingresos.store")
             : route("ingresos.update", form.id);
 
+    if (props.p_almacen_id != 0) {
+        form._redirect_group = true;
+    }
     form.post(url, {
         preserveScroll: true,
         forceFormData: true,
@@ -200,7 +203,7 @@ const calculaTotal = () => {
 };
 
 const getInfoAlmacen = (id) => {
-    form.donacion = "";
+    // form.donacion = "";
     if (!id) {
         oAlmacen.value = null;
         return;
@@ -210,8 +213,8 @@ const getInfoAlmacen = (id) => {
         if (oAlmacen.value.grupo == "CENTROS") {
             form.donacion = "SI";
         }
-        console.log(oAlmacen.value);
-        console.log(form);
+        // console.log(oAlmacen.value);
+        // console.log(form);
     });
 };
 
@@ -270,13 +273,7 @@ onMounted(() => {});
                 <div class="modal-body">
                     <form @submit.prevent="enviarFormulario()">
                         <div class="row">
-                            <template
-                                v-if="
-                                    (auth.user.tipo == 'INTERNO' ||
-                                        auth.user.id == 1) &&
-                                    props.p_almacen_id == 0
-                                "
-                            >
+                            <template v-if="props.p_almacen_id == 0">
                                 <div class="col-md-4">
                                     <label>Seleccionar almacén*</label>
                                     <el-select

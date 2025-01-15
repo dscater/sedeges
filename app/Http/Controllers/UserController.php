@@ -68,24 +68,12 @@ class UserController extends Controller
                 ];
             }
 
-            $user = Auth::user();
-            if ($permisos == '*' || (is_array($permisos) && in_array('almacen1.index', $permisos))) {
-                $ingresos = Ingreso::where("almacen_id", 1);
-                if ($user->tipo == 'EXTERNO') {
-                    $ingresos->where("unidad_id", $user->unidad_id);
-                    $ingresos->where("user_id", $user->id);
-                }
-                $ingresos = $ingresos->sum("total");
 
-                $egresos = Egreso::select("egresos.*")
-                    ->join("ingresos", "ingresos.id", "=", "egresos.ingreso_id")
-                    ->where("egresos.almacen_id", 1);
-                if ($user->tipo == 'EXTERNO') {
-                    $egresos->where("ingresos.unidad_id", $user->unidad_id);
-                    $egresos->where("ingresos.user_id", $user->id);
-                }
-                $egresos = $egresos->sum("egresos.total");
-                $total = $ingresos - $egresos;
+            // almacen-grupos
+            $user = Auth::user();
+            $id_almacens = AlmacenController::getIdAlmacensPermiso($user);
+            if ($permisos == '*' || (is_array($permisos) && in_array('CENTROS', $permisos))) {
+                $total = UserController::getInfoAlmacen("CENTROS", $id_almacens, $user);
                 $array_infos[] = [
                     'label' => 'ALMACÉN CENTROS',
                     'cantidad' => $total,
@@ -97,25 +85,9 @@ class UserController extends Controller
             }
 
 
-            if ($permisos == '*' || (is_array($permisos) && in_array('almacen2.index', $permisos))) {
+            if ($permisos == '*' || (is_array($permisos) && in_array('PROGRAMAS', $permisos))) {
 
-                $ingresos = Ingreso::where("almacen_id", 2);
-                if ($user->tipo == 'EXTERNO') {
-                    $ingresos->where("unidad_id", $user->unidad_id);
-                    $ingresos->where("user_id", $user->id);
-                }
-                $ingresos = $ingresos->sum("total");
-
-                $egresos = Egreso::select("egresos.*")
-                    ->join("ingresos", "ingresos.id", "=", "egresos.ingreso_id")
-                    ->where("egresos.almacen_id", 2);
-                if ($user->tipo == 'EXTERNO') {
-                    $egresos->where("ingresos.unidad_id", $user->unidad_id);
-                    $egresos->where("ingresos.user_id", $user->id);
-                }
-                $egresos = $egresos->sum("egresos.total");
-                $total = $ingresos - $egresos;
-
+                $total = UserController::getInfoAlmacen("PROGRAMAS", $id_almacens, $user);
                 $array_infos[] = [
                     'label' => 'ALMACÉN PROGRAMAS',
                     'cantidad' => $total,
@@ -127,25 +99,8 @@ class UserController extends Controller
             }
 
 
-            if ($permisos == '*' || (is_array($permisos) && in_array('almacen3.index', $permisos))) {
-
-                $ingresos = Ingreso::where("almacen_id", 3);
-                if ($user->tipo == 'EXTERNO') {
-                    $ingresos->where("unidad_id", $user->unidad_id);
-                    $ingresos->where("user_id", $user->id);
-                }
-                $ingresos = $ingresos->sum("total");
-
-                $egresos = Egreso::select("egresos.*")
-                    ->join("ingresos", "ingresos.id", "=", "egresos.ingreso_id")
-                    ->where("egresos.almacen_id", 3);
-                if ($user->tipo == 'EXTERNO') {
-                    $egresos->where("ingresos.unidad_id", $user->unidad_id);
-                    $egresos->where("ingresos.user_id", $user->id);
-                }
-                $egresos = $egresos->sum("egresos.total");
-                $total = $ingresos - $egresos;
-
+            if ($permisos == '*' || (is_array($permisos) && in_array('FARMACIAS', $permisos))) {
+                $total = UserController::getInfoAlmacen("FARMACIAS", $id_almacens, $user);
                 $array_infos[] = [
                     'label' => 'ALMACÉN FARMACIAS',
                     'cantidad' => $total,
@@ -155,7 +110,44 @@ class UserController extends Controller
                     "url" => route("almacens.index", 3)
                 ];
             }
+            
+            if ($permisos == '*' || (is_array($permisos) && in_array('CENTRAL', $permisos))) {
+                $total = UserController::getInfoAlmacen("CENTRAL", $id_almacens, $user);
+                $array_infos[] = [
+                    'label' => 'ALMACÉN CENTRAL',
+                    'cantidad' => $total,
+                    'color' => 'bg-purple',
+                    'icon' => "fa-list",
+                    "link" => true,
+                    "url" => route("almacens.index", 3)
+                ];
+            }
         }
         return $array_infos;
+    }
+
+    public static function getInfoAlmacen($grupo, $id_almacens, $user)
+    {
+        $ingresos = Ingreso::whereIn("almacen_id", $id_almacens);
+        $ingresos->join("almacens", "almacens.id", "=", "ingresos.almacen_id");
+        $ingresos->where("almacens.grupo", $grupo);
+        if ($user->tipo == 'EXTERNO') {
+            $ingresos->where("ingresos.unidad_id", $user->unidad_id);
+            $ingresos->where("ingresos.user_id", $user->id);
+        }
+        $ingresos = $ingresos->sum("total");
+
+        $egresos = Egreso::select("egresos.*")
+            ->join("ingresos", "ingresos.id", "=", "egresos.ingreso_id");
+        $egresos->join("almacens", "almacens.id", "=", "ingresos.almacen_id");
+        $egresos->where("almacens.grupo", $grupo);
+        $egresos->whereIn("egresos.almacen_id", $id_almacens);
+        if ($user->tipo == 'EXTERNO') {
+            $egresos->where("ingresos.unidad_id", $user->unidad_id);
+            $egresos->where("ingresos.user_id", $user->id);
+        }
+        $egresos = $egresos->sum("egresos.total");
+        $total = $ingresos - $egresos;
+        return $total;
     }
 }
