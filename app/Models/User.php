@@ -165,9 +165,8 @@ class User extends Authenticatable
             ->where("permisos.role_id", $role->id)
             ->pluck("modulos.nombre")
             ->toArray();
-
-
         $almacen_menu = UserAlmacenController::getAlmacensYGrupos(Auth::user(), $permisos);
+        Log::debug($almacen_menu);
         $permisos = array_merge($permisos, $almacen_menu);
         return $permisos;
     }
