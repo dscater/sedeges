@@ -12,6 +12,7 @@ class Egreso extends Model
 
     protected $fillable = [
         "ingreso_id",
+        "ingreso_detalle_id",
         "almacen_id",
         "partida_id",
         "producto_id",
@@ -26,14 +27,14 @@ class Egreso extends Model
 
     public function getSCantidadAttribute()
     {
-        return (float)$this->ingreso->cantidad - (float)$this->cantidad;
+        return (float)$this->ingreso_detalle->cantidad - (float)$this->cantidad;
     }
 
     public function getSTotalAttribute()
     {
-        // Log::debug($this->ingreso->total);
+        // Log::debug($this->ingreso_detalle->total);
         // Log::debug($this->total);
-        return (float)$this->ingreso->total - (float)$this->total;
+        return (float)$this->ingreso_detalle->total - (float)$this->total;
     }
 
     public function getFechaRegistroTAttribute()
@@ -44,6 +45,11 @@ class Egreso extends Model
     public function ingreso()
     {
         return $this->belongsTo(Ingreso::class, 'ingreso_id');
+    }
+
+    public function ingreso_detalle()
+    {
+        return $this->belongsTo(IngresoDetalle::class, 'ingreso_detalle_id');
     }
 
     public function almacen()

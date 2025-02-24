@@ -13,6 +13,7 @@ class IEInterno extends Model
         "almacen_id",
         "producto_id",
         "ingreso_id",
+        "ingreso_detalle_id",
         "egreso_id",
         "icantidad",
         "icosto",
@@ -63,6 +64,11 @@ class IEInterno extends Model
     public function ingreso()
     {
         return $this->belongsTo(Ingreso::class, 'ingreso_id');
+    }
+
+    public function ingreso_detalle()
+    {
+        return $this->belongsTo(IngresoDetalle::class, 'ingreso_detalle_id');
     }
 
     public function egreso()

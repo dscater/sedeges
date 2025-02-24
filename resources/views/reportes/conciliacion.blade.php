@@ -229,7 +229,12 @@
             @foreach ($partidas as $partida)
                 @php
                     // POR PARTIDAS
-                    $ingresos = App\Models\Ingreso::select('ingresos.*');
+                    $ingresos = App\Models\IngresoDetalle::select('ingresos.*')->join(
+                        'ingresos',
+                        'ingresos.id',
+                        '=',
+                        'ingreso_detalles.ingreso_id',
+                    );
                     if ($fecha_ini && $fecha_fin) {
                         $ingresos->whereBetween('fecha_registro', [$fecha_ini, $fecha_fin]);
                     }
@@ -241,14 +246,11 @@
                     }
 
                     $ingresos->where('partida_id', $partida->id);
-                    $ingresos = $ingresos->sum('total');
+                    $ingresos = $ingresos->sum('ingreso_detalles.total');
 
-                    $egresos = App\Models\Egreso::select('egresos.*')->join(
-                        'ingresos',
-                        'ingresos.id',
-                        '=',
-                        'egresos.ingreso_id',
-                    );
+                    $egresos = App\Models\Egreso::select('egresos.*')
+                        ->join('ingreso_detalles', 'ingreso_detalles.id', '=', 'egresos.ingreso_detalle_id')
+                        ->join('ingresos', 'ingresos.id', '=', 'ingreso_detalles.ingreso_id');
                     if ($fecha_ini && $fecha_fin) {
                         $egresos->whereBetween('egresos.fecha_registro', [$fecha_ini, $fecha_fin]);
                     }

@@ -34,7 +34,6 @@ class EgresoController extends Controller
             }
             $egreso->save();
 
-
             // CENTRAL
             // registrar ingreso individual
             if ($almacen_id == 1) {
@@ -45,6 +44,7 @@ class EgresoController extends Controller
                         "almacen_id" => $destino_id,
                         "producto_id" => $egreso->producto_id,
                         "ingreso_id" => $egreso->ingreso_id,
+                        "ingreso_detalle_id" => $egreso->ingreso_detalle_id,
                         "icantidad" => $egreso->cantidad,
                         "icosto" => $egreso->costo,
                         "itotal" => $egreso->total,

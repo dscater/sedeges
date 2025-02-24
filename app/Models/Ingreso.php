@@ -12,22 +12,37 @@ class Ingreso extends Model
 
     protected $fillable = [
         "almacen_id",
-        "partida_id",
         "unidad_id",
-        "codigo",
-        "nro",
-        "donacion",
-        "producto_id",
-        "unidad_medida_id",
-        "cantidad",
-        "costo",
+        "proveedor",
+        "con_fondos",
+        "nro_factura",
+        "pedido_interno",
         "total",
         "fecha_ingreso",
         "fecha_registro",
         "user_id",
     ];
 
-    protected $appends = ["fecha_ingreso_t", "fecha_registro_t"];
+    protected $appends = ["fecha_ingreso_t", "fecha_registro_t", "nro_cod"];
+
+    public function getNroCodAttribute()
+    {
+        $id = $this->id;
+        $cod = $id;
+        if ($id < 10) {
+            $cod = '00000' . $cod;
+        } elseif ($id < 100) {
+            $cod = '0000' . $cod;
+        } elseif ($id < 1000) {
+            $cod = '000' . $cod;
+        } elseif ($id < 10000) {
+            $cod = '00' . $cod;
+        } elseif ($id < 100000) {
+            $cod = '0' . $cod;
+        }
+
+        return $cod;
+    }
 
     public function getFechaIngresoTAttribute()
     {
@@ -44,24 +59,9 @@ class Ingreso extends Model
         return $this->belongsTo(Almacen::class, 'almacen_id');
     }
 
-    public function partida()
-    {
-        return $this->belongsTo(Partida::class, 'partida_id');
-    }
-
     public function unidad()
     {
         return $this->belongsTo(Unidad::class, 'unidad_id');
-    }
-
-    public function producto()
-    {
-        return $this->belongsTo(Producto::class, 'producto_id');
-    }
-
-    public function unidad_medida()
-    {
-        return $this->belongsTo(UnidadMedida::class, 'unidad_medida_id');
     }
 
     public function user()
@@ -69,9 +69,14 @@ class Ingreso extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function egreso()
+    public function egresos()
     {
-        return $this->hasOne(Egreso::class, 'ingreso_id');
+        return $this->hasMany(Egreso::class, 'ingreso_id');
+    }
+
+    public function ingreso_detalles()
+    {
+        return $this->hasMany(IngresoDetalle::class, 'ingreso_id');
     }
 
     // FUNCIONES

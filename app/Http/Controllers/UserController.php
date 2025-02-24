@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Egreso;
 use App\Models\Ingreso;
+use App\Models\IngresoDetalle;
 use App\Models\Lote;
 use App\Models\User;
 use App\Models\VentaLote;
@@ -110,7 +111,7 @@ class UserController extends Controller
                     "url" => route("almacens.index", 3)
                 ];
             }
-            
+
             if ($permisos == '*' || (is_array($permisos) && in_array('CENTRAL', $permisos))) {
                 $total = UserController::getInfoAlmacen("CENTRAL", $id_almacens, $user);
                 $array_infos[] = [
@@ -128,14 +129,16 @@ class UserController extends Controller
 
     public static function getInfoAlmacen($grupo, $id_almacens, $user)
     {
-        $ingresos = Ingreso::whereIn("almacen_id", $id_almacens);
-        $ingresos->join("almacens", "almacens.id", "=", "ingresos.almacen_id");
+        $ingresos = IngresoDetalle::select("ingreso_detalles.*");
+        $ingresos->join("almacens", "almacens.id", "=", "ingreso_detalles.almacen_id");
+        $ingresos->join("ingresos", "ingresos.id", "=", "ingreso_detalles.ingreso_id")
+            ->whereIn("ingresos.almacen_id", $id_almacens);
         $ingresos->where("almacens.grupo", $grupo);
         if ($user->tipo == 'EXTERNO') {
             $ingresos->where("ingresos.unidad_id", $user->unidad_id);
             $ingresos->where("ingresos.user_id", $user->id);
         }
-        $ingresos = $ingresos->sum("total");
+        $ingresos = $ingresos->sum("ingreso_detalles.total");
 
         $egresos = Egreso::select("egresos.*")
             ->join("ingresos", "ingresos.id", "=", "egresos.ingreso_id");

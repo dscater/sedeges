@@ -22,15 +22,15 @@ const { setLoading } = useApp();
 const columns = [
     {
         title: "CÓDIGO",
-        data: "ingreso.codigo",
+        data: "ingreso_id",
     },
     {
         title: "PARTIDA",
-        data: "ingreso.partida.nro_partida",
+        data: "ingreso_detalle.partida.nro_partida",
     },
     {
         title: "DONACIÓN",
-        data: "ingreso.donacion",
+        data: "ingreso_detalle.donacion",
     },
     {
         title: "PRODUCTO",
@@ -38,7 +38,7 @@ const columns = [
     },
     {
         title: "UNIDAD DE MEDIDA",
-        data: "ingreso.unidad_medida.nombre",
+        data: "ingreso_detalle.unidad_medida.nombre",
     },
     {
         title: "CANTIDAD",

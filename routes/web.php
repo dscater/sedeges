@@ -19,6 +19,7 @@ use App\Http\Controllers\UnidadController;
 use App\Http\Controllers\UnidadMedidaController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UsuarioController;
+use App\Models\Ingreso;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -37,6 +38,25 @@ Route::get('/login', function () {
 })->name("login");
 
 Route::get("configuracions/getConfiguracion", [ConfiguracionController::class, 'getConfiguracion'])->name("configuracions.getConfiguracion");
+
+Route::get("ingresos/iniciaDetalles", function () {
+    $ingresos = Ingreso::all();
+
+    foreach ($ingresos as $ingreso) {
+        $ingreso->ingreso_detalles()->create([
+            "almacen_id" => $ingreso->almacen_id,
+            "unidad_id" => $ingreso->unidad_id,
+            "partida_id" => $ingreso->partida_id,
+            "producto_id" => $ingreso->producto_id,
+            "unidad_medida_id" => $ingreso->unidad_medida_id,
+            "cantidad" => $ingreso->cantidad,
+            "costo" => $ingreso->costo,
+            "total" => $ingreso->total,
+        ]);
+    }
+
+    return 'Correcto <a href="/">Volver</a>';
+});
 
 Route::middleware(['auth', 'permisoUsuario'])->prefix("admin")->group(function () {
     // INICIO
@@ -140,6 +160,7 @@ Route::middleware(['auth', 'permisoUsuario'])->prefix("admin")->group(function (
     Route::get("ingresos/api", [IngresoController::class, 'api'])->name("ingresos.api");
     Route::get("ingresos/paginado", [IngresoController::class, 'paginado'])->name("ingresos.paginado");
     Route::get("ingresos/listado", [IngresoController::class, 'listado'])->name("ingresos.listado");
+    Route::get("ingresos/pdf/{ingreso}", [IngresoController::class, 'pdf'])->name("ingresos.pdf");
     Route::resource("ingresos", IngresoController::class)->only(
         ["index", "store", "update", "show", "destroy"]
     );

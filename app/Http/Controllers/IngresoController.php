@@ -2,44 +2,24 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\IngresoStoreRequest;
+use App\Http\Requests\IngresoUpdateRequest;
 use App\Models\Almacen;
 use App\Models\Egreso;
 use App\Models\HistorialAccion;
 use App\Models\Ingreso;
+use App\Models\IngresoDetalle;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
+use PDF;
+use App\library\numero_a_letras\src\NumeroALetras;
 
 class IngresoController extends Controller
 {
-    public $validacion = [
-        "almacen_id" => "required",
-        "donacion" => "required",
-        "producto_id" => "required",
-        "unidad_medida_id" => "required",
-        "cantidad" => "required",
-        "costo" => "required",
-        "total" => "required",
-        "fecha_ingreso" => "required",
-    ];
-
-    public $mensajes = [
-        "almacen_id.required" => "Este campo es obligatorio",
-        "partida_id.required" => "Este campo es obligatorio",
-        "unidad_id.required" => "Este campo es obligatorio",
-        "programa_id.required" => "Este campo es obligatorio",
-        "donacion.required" => "Este campo es obligatorio",
-        "producto_id.required" => "Este campo es obligatorio",
-        "unidad_medida_id.required" => "Este campo es obligatorio",
-        "cantidad.required" => "Este campo es obligatorio",
-        "costo.required" => "Este campo es obligatorio",
-        "total.required" => "Este campo es obligatorio",
-        "fecha_ingreso.required" => "Este campo es obligatorio",
-    ];
-
     public function index()
     {
         return Inertia::render("Ingresos/Index");
@@ -69,17 +49,19 @@ class IngresoController extends Controller
         $almacen_id = $request->almacen_id;
         $partida_id = $request->partida_id;
 
-        $ingresos = Ingreso::select("ingresos.*");
-        $ingresos->where("almacen_id", $almacen_id);
-        $ingresos->where("partida_id", $partida_id);
+        $ingreso_detalles = IngresoDetalle::with(["ingreso"])->select("ingreso_detalles.*");
+        $ingreso_detalles->where("almacen_id", $almacen_id);
+        $ingreso_detalles->where("partida_id", $partida_id);
         if ($user->tipo == 'EXTERNO') {
-            $ingresos->where("unidad_id", $user->unidad_id);
-            $ingresos->where("user_id", $user->id);
+            $ingreso_detalles->where("unidad_id", $user->unidad_id);
+            $ingreso_detalles->whereHas("ingreso", function ($query) use ($user) {
+                $query->where("user_id", $user->id);
+            });
         }
-        $ingresos->doesntHave("egreso");
-        $ingresos = $ingresos->orderBy("id", "desc")->get();
+        $ingreso_detalles->doesntHave("egreso");
+        $ingreso_detalles = $ingreso_detalles->orderBy("id", "asc")->get();
 
-        foreach ($ingresos as $i) {
+        foreach ($ingreso_detalles as $i) {
             $registra = false;
             if (!is_array($permisos) && $permisos == '*') {
                 $registra = true;
@@ -90,6 +72,7 @@ class IngresoController extends Controller
 
             if ($registra) {
                 $i->egreso()->create([
+                    "ingreso_id" => $i->ingreso_id,
                     "almacen_id" => $i->almacen_id,
                     "partida_id" => $i->partida_id,
                     "producto_id" => $i->producto_id,
@@ -102,24 +85,25 @@ class IngresoController extends Controller
         }
 
         // recargar registros
-        $ingresos = Ingreso::with(["unidad_medida", "producto", "egreso.destino"])->select("ingresos.*");
-        $ingresos->where("almacen_id", $almacen_id);
-        $ingresos->where("partida_id", $partida_id);
+        $ingreso_detalles = IngresoDetalle::with(["unidad_medida", "producto", "ingreso", "egreso.destino"])->select("ingreso_detalles.*");
+        $ingreso_detalles->where("almacen_id", $almacen_id);
+        $ingreso_detalles->where("partida_id", $partida_id);
 
         if ($user->tipo == 'EXTERNO') {
-            $ingresos->where("unidad_id", $user->unidad_id);
-            $ingresos->where("user_id", $user->id);
+            $ingreso_detalles->where("unidad_id", $user->unidad_id);
+            $ingreso_detalles->whereHas("ingreso", function ($query) use ($user) {
+                $query->where("user_id", $user->id);
+            });
         }
 
+        $ingreso_detalles = $ingreso_detalles->orderBy("id", "asc")->get();
 
-        $ingresos = $ingresos->orderBy("id", "desc")->get();
-
-        return response()->JSON($ingresos);
+        return response()->JSON($ingreso_detalles);
     }
 
     public function api(Request $request)
     {
-        $ingresos = Ingreso::with(["almacen", "partida", "producto", "unidad_medida", "unidad"])->select("ingresos.*");
+        $ingresos = Ingreso::with(["almacen", "unidad"])->select("ingresos.*");
         $user = Auth::user();
         if ($user->tipo == 'EXTERNO') {
             // $ingresos->where("almacen_id", $user->almacen_id);
@@ -128,7 +112,7 @@ class IngresoController extends Controller
         }
         $id_almacens = AlmacenController::getIdAlmacensPermiso(Auth::user());
         $ingresos->whereIn("almacen_id", $id_almacens);
-        $ingresos = $ingresos->orderBy("id", "desc")->get();
+        $ingresos = $ingresos->orderBy("id", "asc")->get();
         return response()->JSON(["data" => $ingresos]);
     }
 
@@ -147,50 +131,41 @@ class IngresoController extends Controller
         ]);
     }
 
-    public function store(Request $request)
+    public function store(IngresoStoreRequest $request)
     {
-        $almacen = Almacen::find($request["almacen_id"]);
-        if ($almacen && $almacen->grupo == 'CENTROS') {
-            $this->validacion["unidad_id"] = "required";
-        }
-        if (Auth::user()->tipo != 'EXTERNO') {
-            $this->validacion["partida_id"] = "required";
-        }
-        $request->validate($this->validacion, $this->mensajes);
         DB::beginTransaction();
         try {
-            // crear la ingreso
-            $gestion = date("Y", strtotime($request["fecha_ingreso"]));
-            $array_codigo = Ingreso::getCodigoIngresoPartida($request["almacen_id"], $request["partida_id"], $gestion);
+            // crear el ingreso
+            // $array_codigo = Ingreso::getCodigoIngresoPartida($request["almacen_id"], $request["partida_id"], $gestion);
             $data_ingreso = [
                 "almacen_id" => $request["almacen_id"],
-                "partida_id" => NULL,
                 "unidad_id" => Auth::user()->tipo == 'EXTERNO' ? Auth::user()->unidad_id : NULL,
-                "programa_id" => NULL,
-                "codigo" =>  NULL,
-                "nro" => NULL,
-                "donacion" => $request["donacion"],
-                "producto_id" => $request["producto_id"],
-                "unidad_medida_id" => $request["unidad_medida_id"],
-                "cantidad" => $request["cantidad"],
-                "costo" => $request["costo"],
+                "proveedor" => mb_strtoupper($request["proveedor"]),
+                "con_fondos" => mb_strtoupper($request["con_fondos"]),
+                "nro_factura" => $request["nro_factura"],
+                "pedido_interno" => mb_strtoupper($request["pedido_interno"]),
                 "total" => $request["total"],
                 "fecha_ingreso" => $request["fecha_ingreso"],
                 "fecha_registro" => date('Y-m-d'),
                 "user_id" => Auth::user()->id,
             ];
 
-            if (Auth::user()->tipo != 'EXTERNO' || Auth::user()->id == 1) {
-                $data_ingreso["partida_id"] = $request["partida_id"];
-                $data_ingreso["codigo"] = $array_codigo[0];
-                $data_ingreso["nro"] = $array_codigo[1];
-            }
-
-            if ($almacen->grupo == 'CENTROS') {
-                $data_ingreso["unidad_id"] = $request["unidad_id"];
-            }
-
             $nuevo_ingreso = Ingreso::create($data_ingreso);
+
+            // registrar detalles
+            foreach ($request["ingreso_detalles"] as $item) {
+                $nuevo_ingreso->ingreso_detalles()->create([
+                    "almacen_id" => $nuevo_ingreso->almacen_id,
+                    "unidad_id" => $nuevo_ingreso->unidad_id,
+                    "partida_id" => $item["partida_id"],
+                    "donacion" => $item["donacion"],
+                    "producto_id" => $item["producto_id"],
+                    "unidad_medida_id" => $item["unidad_medida_id"],
+                    "cantidad" => $item["cantidad"],
+                    "costo" => $item["costo"],
+                    "total" => $item["total"],
+                ]);
+            }
 
             $datos_original = HistorialAccion::getDetalleRegistro($nuevo_ingreso, "ingresos");
             HistorialAccion::create([
@@ -208,9 +183,10 @@ class IngresoController extends Controller
             if ($request["_redirect_group"] && (bool)$request["_redirect_group"] == true) {
                 return redirect()->route('almacens.stockAlmacen', $nuevo_ingreso->almacen_id)
                     ->with("bien", "Registro realizado")
+                    ->with("param", $nuevo_ingreso->id)
                     ->withInput(['g' => $nuevo_ingreso->almacen->grupo]);
             }
-            return redirect()->route("ingresos.index")->with("bien", "Registro realizado");
+            return redirect()->route("ingresos.index")->with("bien", "Registro realizado")->with("param", $nuevo_ingreso->id);
         } catch (\Exception $e) {
             DB::rollBack();
             throw ValidationException::withMessages([
@@ -221,51 +197,70 @@ class IngresoController extends Controller
 
     public function show(Ingreso $ingreso)
     {
-        return response()->JSON($ingreso);
+        return response()->JSON($ingreso->load(["ingreso_detalles.egreso"]));
     }
 
-    public function update(Ingreso $ingreso, Request $request)
+    public function pdf(Ingreso $ingreso)
     {
-        $almacen = Almacen::find($request["almacen_id"]);
-        if ($almacen && $almacen->grupo == 'CENTROS') {
-            $this->validacion["unidad_id"] = "required";
-        }
-        if (Auth::user()->tipo != 'EXTERNO') {
-            $this->validacion["partida_id"] = "required";
-        }
+        $convertir = new NumeroALetras();
+        $array_monto = explode('.', $ingreso->total);
+        $literal = $convertir->convertir($array_monto[0]);
+        $literal .= " " . $array_monto[1];
+        $literal = mb_strtoupper($literal);
+        $literal = ucfirst($literal) . "/100." . " BOLIVIANOS";;
+        $pdf = PDF::loadView('reportes.ingreso', compact('ingreso', 'literal'))->setPaper('letter', 'portrait');
 
-        $request->validate($this->validacion, $this->mensajes);
+        // ENUMERAR LAS PÁGINAS USANDO CANVAS
+        $pdf->output();
+        $dom_pdf = $pdf->getDomPDF();
+        $canvas = $dom_pdf->get_canvas();
+        $alto = $canvas->get_height();
+        $ancho = $canvas->get_width();
+        $canvas->page_text($ancho - 90, $alto - 25, "Página {PAGE_NUM} de {PAGE_COUNT}", null, 9, array(0, 0, 0));
+
+        return $pdf->stream('ingreso.pdf');
+    }
+
+    public function update(Ingreso $ingreso, IngresoUpdateRequest $request)
+    {
         DB::beginTransaction();
         try {
             $gestion = date("Y", strtotime($request["fecha_ingreso"]));
             $array_codigo = Ingreso::getCodigoIngresoPartida($request["almacen_id"], $request["partida_id"], $gestion);
             $data_ingreso = [
                 "almacen_id" => $request["almacen_id"],
-                "partida_id" => NULL,
                 "unidad_id" => Auth::user()->tipo == 'EXTERNO' ? Auth::user()->unidad_id : NULL,
-                "programa_id" => NULL,
-                "donacion" => $request["donacion"],
-                "producto_id" => $request["producto_id"],
-                "unidad_medida_id" => $request["unidad_medida_id"],
-                "cantidad" => $request["cantidad"],
-                "costo" => $request["costo"],
+                "proveedor" => mb_strtoupper($request["proveedor"]),
+                "con_fondos" => mb_strtoupper($request["con_fondos"]),
+                "nro_factura" => $request["nro_factura"],
+                "pedido_interno" => mb_strtoupper($request["pedido_interno"]),
                 "total" => $request["total"],
                 "fecha_ingreso" => $request["fecha_ingreso"],
-                "fecha_registro" => date('Y-m-d')
+                "user_id" => Auth::user()->id,
             ];
 
-            if (Auth::user()->tipo != 'EXTERNO' || Auth::user()->id == 1) {
-                $data_ingreso["partida_id"] = $request["partida_id"];
-            }
+            // actualizar detalles
+            foreach ($request["ingreso_detalles"] as $item) {
+                $data_indet = [
+                    "almacen_id" => $ingreso->almacen_id,
+                    "unidad_id" => $ingreso->unidad_id,
+                    "partida_id" => $item["partida_id"],
+                    "donacion" => $item["donacion"],
+                    "producto_id" => $item["producto_id"],
+                    "unidad_medida_id" => $item["unidad_medida_id"],
+                    "cantidad" => $item["cantidad"],
+                    "costo" => $item["costo"],
+                    "total" => $item["total"]
+                ];
 
-            if ($almacen->grupo == 'CENTROS') {
-                $data_ingreso["unidad_id"] = $request["unidad_id"];
-            }
-
-            if ($ingreso->partida_id == null || $ingreso->codigo == null || $ingreso->partida_id != $request->partida_id) {
-                $array_codigo = Ingreso::getCodigoIngresoPartida($request["almacen_id"], $request["partida_id"], $gestion);
-                $data_ingreso["codigo"] = $array_codigo[0];
-                $data_ingreso["nro"] = $array_codigo[1];
+                if ($item["id"] == 0) {
+                    $ingreso->ingreso_detalles()->create($data_indet);
+                } else {
+                    $ingreso_detalle = IngresoDetalle::find($item["id"]);
+                    if ($ingreso_detalle) {
+                        $ingreso_detalle->update($data_indet);
+                    }
+                }
             }
 
             $datos_original = HistorialAccion::getDetalleRegistro($ingreso, "ingresos");

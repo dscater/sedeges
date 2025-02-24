@@ -1,6 +1,6 @@
 <script setup>
 import { useApp } from "@/composables/useApp";
-import { Head, Link, usePage } from "@inertiajs/vue3";
+import { Head, Link, usePage, router } from "@inertiajs/vue3";
 import { useIngresos } from "@/composables/ingresos/useIngresos";
 import { initDataTable } from "@/composables/datatable.js";
 import { ref, onMounted, onBeforeUnmount } from "vue";
@@ -20,42 +20,36 @@ const { getIngresos, setIngreso, limpiarIngreso, deleteIngreso } =
 const columns = [
     {
         title: "CÓDIGO",
-        data: "codigo",
+        data: "id",
     },
     {
-        title: "ALMACÉN",
+        title: "DESTINO",
         data: "almacen.nombre",
         render: function (data, type, row) {
             let info = `${row.almacen.nombre}`;
             if (row.almacen.grupo == "CENTROS") {
-                info += `<br/><strong>${row.unidad?.nombre}</strong>`;
+                info += `<br/><strong>${
+                    row.unidad ? row.unidad.nombre : ""
+                }</strong>`;
             }
             return info;
         },
     },
     {
-        title: "PARTIDA",
-        data: "partida.nro_partida",
+        title: "PROVEEDOR",
+        data: "proveedor",
     },
     {
-        title: "DONACIÓN",
-        data: "donacion",
+        title: "CON FONDOS",
+        data: "con_fondos",
     },
     {
-        title: "PRODUCTO",
-        data: "producto.nombre",
+        title: "NRO. FACTURA",
+        data: "nro_factura",
     },
     {
-        title: "UNIDAD DE MEDIDA",
-        data: "unidad_medida.nombre",
-    },
-    {
-        title: "CANTIDAD",
-        data: "cantidad",
-    },
-    {
-        title: "COSTO",
-        data: "costo",
+        title: "DE PEDIDO INTERNO",
+        data: "pedido_interno",
     },
     {
         title: "TOTAL",
@@ -74,6 +68,7 @@ const columns = [
         data: null,
         render: function (data, type, row) {
             let buttons = ``;
+            buttons += `<button class="mx-1 rounded-0 btn btn-primary pdf" data-id="${row.id}"><i class="fa fa-print"></i></button>`;
 
             if (
                 props_page.auth?.user.permisos == "*" ||
@@ -88,7 +83,7 @@ const columns = [
             ) {
                 buttons += ` <button class="mx-0 rounded-0 btn btn-danger eliminar"
                  data-id="${row.id}"
-                 data-nombre="${row.codigo ?? "S/P"}"
+                 data-nombre="${row.id ?? "S/P"}"
                  data-url="${route(
                      "ingresos.destroy",
                      row.id
@@ -109,6 +104,12 @@ const agregarRegistro = () => {
 };
 
 const accionesRow = () => {
+    // pdf
+    $("#table-ingreso").on("click", "button.pdf", function (e) {
+        e.preventDefault();
+        let id = $(this).attr("data-id");
+        window.open(route("ingresos.pdf", id), "_blank");
+    });
     // editar
     $("#table-ingreso").on("click", "button.editar", function (e) {
         e.preventDefault();

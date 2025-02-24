@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\HistorialAccion;
+use App\Models\Ingreso;
 use App\Models\User;
 use App\Models\VentaLote;
 use Illuminate\Http\Request;
@@ -121,19 +122,11 @@ class UsuarioController extends Controller
 
         DB::beginTransaction();
         try {
-            $cont = 0;
-            do {
-                $nombre_usuario = User::getNombreUsuario($request->nombre, $request->paterno);
-                if ($cont > 0) {
-                    $nombre_usuario = $nombre_usuario . $cont;
-                }
-                $request['usuario'] = $nombre_usuario;
-                $cont++;
-            } while (User::where('usuario', $nombre_usuario)->get()->first());
+            $nombre_usuario = self::generaNombreUsuario($request["nombre"], $request["paterno"]);
 
             $request['password'] = '';
             $data_user = [
-                "usuario" => $request["usuario"],
+                "usuario" => $nombre_usuario,
                 "nombre" => mb_strtoupper($request["nombre"]),
                 "paterno" => mb_strtoupper($request["paterno"]),
                 "materno" => mb_strtoupper($request["materno"]),
@@ -220,7 +213,10 @@ class UsuarioController extends Controller
         try {
             $datos_original = HistorialAccion::getDetalleRegistro($user, "users");
 
+            $nombre_usuario =  self::generaNombreUsuario($request["nombre"], $request["paterno"], $user->id);
+
             $data_user = [
+                "usuario" => $nombre_usuario,
                 "nombre" => mb_strtoupper($request["nombre"]),
                 "paterno" => mb_strtoupper($request["paterno"]),
                 "materno" => mb_strtoupper($request["materno"]),
@@ -264,7 +260,6 @@ class UsuarioController extends Controller
                     }
                 }
             }
-
 
             $datos_nuevo = HistorialAccion::getDetalleRegistro($user, "users");
             HistorialAccion::create([
@@ -331,7 +326,7 @@ class UsuarioController extends Controller
     {
         DB::beginTransaction();
         try {
-            $usos = VentaLote::where("user_id", $user->id)->get();
+            $usos = Ingreso::where("user_id", $user->id)->get();
             if (count($usos) > 0) {
                 throw ValidationException::withMessages([
                     'error' =>  "No es posible eliminar este registro porque esta siendo utilizado por otros registros",
@@ -343,6 +338,9 @@ class UsuarioController extends Controller
                 \File::delete(public_path() . '/imgs/users/' . $antiguo);
             }
             $datos_original = HistorialAccion::getDetalleRegistro($user, "users");
+
+            $user->user_almacens()->delete();
+
             $user->delete();
             HistorialAccion::create([
                 'user_id' => Auth::user()->id,
@@ -364,5 +362,27 @@ class UsuarioController extends Controller
                 'error' =>  $e->getMessage(),
             ]);
         }
+    }
+
+    public static function generaNombreUsuario(string $nom, string $pat, int $id = 0)
+    {
+        $cont = 0;
+        $nombre = mb_strtoupper($nom);
+        $paterno = mb_strtoupper($pat);
+        do {
+            $nombre_usuario = User::getNombreUsuario($nombre, $paterno);
+            if ($cont > 0) {
+                $nombre_usuario = $nombre_usuario . $cont;
+            }
+            $cont++;
+
+            $existe = User::where("usuario", $nombre_usuario);
+            if ($id != 0) {
+                $existe->where("id", "!=", $id);
+            }
+            $existe = $existe->get()->first();
+        } while ($existe);
+
+        return $nombre_usuario;
     }
 }

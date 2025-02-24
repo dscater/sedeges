@@ -5,16 +5,15 @@ import { usePage } from "@inertiajs/vue3";
 const oIngreso = ref({
     id: 0,
     almacen_id: "",
-    partida_id: "",
     unidad_id: "",
-    codigo: "",
-    donacion: "",
-    producto_id: "",
-    unidad_medida_id: "",
-    cantidad: "",
-    costo: "",
-    total: "",
+    proveedor: "",
+    con_fondos: "",
+    nro_factura: "",
+    pedido_interno: "",
+    total: 0,
     fecha_ingreso: "",
+    fecha_registro: "",
+    ingreso_detalles: [],
     _redirect_group: false,
     _method: "POST",
 });
@@ -147,16 +146,15 @@ export const useIngresos = () => {
         if (item) {
             oIngreso.value.id = item.id;
             oIngreso.value.almacen_id = item.almacen_id;
-            oIngreso.value.partida_id = item.partida_id;
             oIngreso.value.unidad_id = item.unidad_id;
-            oIngreso.value.codigo = item.codigo;
-            oIngreso.value.donacion = item.donacion;
-            oIngreso.value.producto_id = item.producto_id;
-            oIngreso.value.unidad_medida_id = item.unidad_medida_id;
-            oIngreso.value.cantidad = item.cantidad;
-            oIngreso.value.costo = item.costo;
+            oIngreso.value.proveedor = item.proveedor;
+            oIngreso.value.con_fondos = item.con_fondos;
+            oIngreso.value.nro_factura = item.nro_factura;
+            oIngreso.value.pedido_interno = item.pedido_interno;
             oIngreso.value.total = item.total;
             oIngreso.value.fecha_ingreso = item.fecha_ingreso;
+            oIngreso.value.fecha_registro = item.fecha_registro;
+            oIngreso.value.ingreso_detalles = item.ingreso_detalles;
             oIngreso.value._method = "PUT";
             oIngreso.value._redirect_group = false;
             return oIngreso;
@@ -167,16 +165,15 @@ export const useIngresos = () => {
     const limpiarIngreso = () => {
         oIngreso.value.id = 0;
         oIngreso.value.almacen_id = "";
-        oIngreso.value.partida_id = "";
         oIngreso.value.unidad_id = "";
-        oIngreso.value.codigo = "";
-        oIngreso.value.donacion = "";
-        oIngreso.value.producto_id = "";
-        oIngreso.value.unidad_medida_id = "";
-        oIngreso.value.cantidad = "";
-        oIngreso.value.costo = "";
-        oIngreso.value.total = "";
+        oIngreso.value.proveedor = "";
+        oIngreso.value.con_fondos = "";
+        oIngreso.value.nro_factura = "";
+        oIngreso.value.pedido_interno = "";
+        oIngreso.value.total = 0;
         oIngreso.value.fecha_ingreso = "";
+        oIngreso.value.fecha_registro = "";
+        oIngreso.value.ingreso_detalles = [];
         oIngreso.value._redirect_group = false;
         oIngreso.value._method = "POST";
     };

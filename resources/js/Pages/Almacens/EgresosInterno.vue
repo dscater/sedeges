@@ -149,7 +149,8 @@ onBeforeUnmount(() => {});
     <!-- END breadcrumb -->
     <!-- BEGIN page-header -->
     <h1 class="page-header">
-      Desde central > <span class="text-muted">Administrar egresos</span> <small>> {{ almacen.nombre }}</small>
+        Desde central > <span class="text-muted">Administrar egresos</span>
+        <small>> {{ almacen.nombre }}</small>
     </h1>
     <!-- END page-header -->
 
@@ -202,7 +203,6 @@ onBeforeUnmount(() => {});
                                 <thead>
                                     <tr>
                                         <th rowspan="2">N°</th>
-                                        <th rowspan="2">CÓDIGO</th>
                                         <th rowspan="2">DESCRIPCIÓN</th>
                                         <th rowspan="2">UNIDAD</th>
                                         <th rowspan="2">FECHA INGRESO</th>
@@ -246,12 +246,11 @@ onBeforeUnmount(() => {});
                                             ]"
                                         >
                                             <td>{{ index + 1 }}</td>
-                                            <td>{{ item.ingreso.codigo }}</td>
                                             <td>{{ item.producto.nombre }}</td>
                                             <td>
                                                 {{
-                                                    item.ingreso.unidad_medida
-                                                        .nombre
+                                                    item.ingreso_detalle
+                                                        .unidad_medida.nombre
                                                 }}
                                             </td>
                                             <td>{{ item.fecha_registro_t }}</td>

@@ -257,12 +257,9 @@
                     @endphp
                     @php
                         // INGRESOS RANGO FECHAS
-                        $ie_internos = App\Models\IEInterno::select('i_e_internos.*')->join(
-                            'ingresos',
-                            'ingresos.id',
-                            '=',
-                            'i_e_internos.ingreso_id',
-                        );
+                        $ie_internos = App\Models\IEInterno::select('i_e_internos.*')
+                            ->join('ingreso_detalles', 'ingreso_detalles.id', '=', 'i_e_internos.ingreso_detalle_id')
+                            ->join('ingresos', 'ingresos.id', '=', 'ingreso_detalles.ingreso_id');
                         $ie_internos->where('i_e_internos.almacen_id', $almacen->id);
                         if ($fecha_ini && $fecha_fin) {
                             $ie_internos->whereBetween('i_e_internos.fecha_registro', [$fecha_ini, $fecha_fin]);
@@ -287,12 +284,14 @@
                             // SALDOS
                             $saldo = 0;
                             if ($fecha_ini && $fecha_fin) {
-                                $reg_ingresos = App\Models\IEInterno::select('i_e_internos.*')->join(
-                                    'ingresos',
-                                    'ingresos.id',
-                                    '=',
-                                    'i_e_internos.ingreso_id',
-                                );
+                                $reg_ingresos = App\Models\IEInterno::select('i_e_internos.*')
+                                    ->join(
+                                        'ingreso_detalles',
+                                        'ingreso_detalles.id',
+                                        '=',
+                                        'i_e_internos.ingreso_detalle_id',
+                                    )
+                                    ->join('ingresos', 'ingresos.id', '=', 'ingreso_detalles.ingreso_id');
                                 $reg_ingresos->where('i_e_internos.almacen_id', $almacen->id);
                                 $reg_ingresos->where('i_e_internos.fecha_registro', '<', $fecha_ini);
                                 $reg_ingresos->where('partida_id', $partida->id);
@@ -305,12 +304,14 @@
                                 }
                                 $reg_ingresos = $reg_ingresos->sum('itotal');
 
-                                $reg_egresos = App\Models\IEInterno::select('i_e_internos.*')->join(
-                                    'ingresos',
-                                    'ingresos.id',
-                                    '=',
-                                    'i_e_internos.ingreso_id',
-                                );
+                                $reg_egresos = App\Models\IEInterno::select('i_e_internos.*')
+                                    ->join(
+                                        'ingreso_detalles',
+                                        'ingreso_detalles.id',
+                                        '=',
+                                        'i_e_internos.ingreso_detalle_id',
+                                    )
+                                    ->join('ingresos', 'ingresos.id', '=', 'ingreso_detalles.ingreso_id');
                                 $reg_egresos->where('i_e_internos.almacen_id', $almacen->id);
                                 $reg_egresos->where('i_e_internos.fecha_egreso', '<', $fecha_ini);
                                 $reg_egresos->where('partida_id', $partida->id);
@@ -328,8 +329,8 @@
 
                         <tr>
                             <td>{{ $cont++ }}</td>
-                            <td>{{ $ie_interno->codigo }}</td>
-                            <td>{{ $ie_interno->ingreso->unidad_medida->nombre }}</td>
+                            <td>{{ $ie_interno->ingreso->id }}</td>
+                            <td>{{ $ie_interno->ingreso_detalle->unidad_medida->nombre }}</td>
                             <td>{{ $ie_interno->producto->nombre }}</td>
                             <td class="centreado bg4"></td>
                             <td class="centreado bg4"></td>
@@ -368,12 +369,14 @@
                             $saldo = 0;
                             $reg_ingresos = [];
                             if ($fecha_ini && $fecha_fin) {
-                                $reg_ingresos = App\Models\IEInterno::select('i_e_internos.*')->join(
-                                    'ingresos',
-                                    'ingresos.id',
-                                    '=',
-                                    'i_e_internos.ingreso_id',
-                                );
+                                $reg_ingresos = App\Models\IEInterno::select('i_e_internos.*')
+                                    ->join(
+                                        'ingreso_detalles',
+                                        'ingreso_detalles.id',
+                                        '=',
+                                        'i_e_internos.ingreso_detalle_id',
+                                    )
+                                    ->join('ingresos', 'ingresos.id', '=', 'ingreso_detalles.ingreso_id');
                                 $reg_ingresos->where('i_e_internos.almacen_id', $almacen->id);
                                 $reg_ingresos->where('i_e_internos.fecha_registro', '<', $fecha_ini);
                                 $reg_ingresos->where('partida_id', $partida->id);
@@ -397,8 +400,8 @@
                             @endphp
                             <tr>
                                 <td>{{ $cont++ }}</td>
-                                <td>{{ $r_ingreso->ingreso->codigo }}</td>
-                                <td>{{ $r_ingreso->ingreso->unidad_medida->nombre }}</td>
+                                <td>{{ $r_ingreso->ingreso->id }}</td>
+                                <td>{{ $r_ingreso->ingreso_detalle->unidad_medida->nombre }}</td>
                                 <td>{{ $r_ingreso->producto->nombre }}</td>
                                 <td class="centreado bg4"></td>
                                 <td class="centreado bg4"></td>

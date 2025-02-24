@@ -213,26 +213,28 @@
                 @endphp
                 @foreach ($partidas as $partida)
                     @php
-                        // $ingresos = App\Models\Ingreso::where('donacion', 'NO');
-                        $ingresos = App\Models\Ingreso::select('ingresos.*');
+                        // $ingresos = App\Models\IngresoDetalle::where('donacion', 'NO');
+                        $ingresos = App\Models\IngresoDetalle::select('ingreso_detalles.*')->join(
+                            'ingresos',
+                            'ingresos.id',
+                            '=',
+                            'ingreso_detalles.ingreso_id',
+                        );
                         $ingresos->where('ingresos.almacen_id', $almacen->id);
                         if ($fecha_ini && $fecha_fin) {
                             $ingresos->whereBetween('fecha_registro', [$fecha_ini, $fecha_fin]);
                         }
-                        $ingresos->where('ingresos.partida_id', $partida->id);
+                        $ingresos->where('ingreso_detalles.partida_id', $partida->id);
                         // EXTERNO
                         $user = Auth::user();
                         if ($user->tipo == 'EXTERNO') {
                             $ingresos->where('ingresos.unidad_id', $user->unidad_id);
                             $ingresos->where('ingresos.user_id', $user->id);
                         }
-                        $ingresos = $ingresos->sum('total');
-                        $egresos = App\Models\Ingreso::select('ingresos.*')->join(
-                            'egresos',
-                            'egresos.ingreso_id',
-                            '=',
-                            'ingresos.id',
-                        );
+                        $ingresos = $ingresos->sum('ingreso_detalles.total');
+                        $egresos = App\Models\IngresoDetalle::select('ingreso_detalles.*')
+                            ->join('ingresos', 'ingresos.id', '=', 'ingreso_detalles.ingreso_id')
+                            ->join('egresos', 'egresos.ingreso_id', '=', 'ingresos.id');
                         $egresos->where('egresos.almacen_id', $almacen->id);
                         if ($fecha_ini && $fecha_fin) {
                             $egresos->whereBetween('egresos.fecha_registro', [$fecha_ini, $fecha_fin]);

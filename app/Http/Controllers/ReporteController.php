@@ -7,6 +7,7 @@ use App\Models\Configuracion;
 use App\Models\Egreso;
 use App\Models\IEInterno;
 use App\Models\Ingreso;
+use App\Models\IngresoDetalle;
 use App\Models\Partida;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -141,7 +142,7 @@ class ReporteController extends Controller
             $usuarios->where("role_id", $role_id);
         }
 
-        $usuarios = $usuarios->orderBy("paterno", "ASC")->get();
+        $usuarios = $usuarios->orderBy("id", "ASC")->get();
 
         $pdf = PDF::loadView('reportes.usuarios', compact('usuarios'))->setPaper('legal', 'landscape');
 
@@ -308,49 +309,53 @@ class ReporteController extends Controller
                         $sheet->mergeCells("A" . $fila . ":C" . $fila);  //COMBINAR CELDAS
                         $sheet->getStyle('A' . $fila . ':C' . $fila)->applyFromArray($this->bodyTabla);
                         // INGRESOS RANGO FECHAS
-                        $ingresos = Ingreso::where('donacion', 'SI');
-                        $ingresos->where('almacen_id', $almacen->id);
+                        $ingreso_detalles = IngresoDetalle::select("ingreso_detalles.*")
+                            ->join("ingresos", "ingresos.id", "=", "ingreso_detalles.ingreso_id")
+                            ->where('donacion', 'SI');
+                        $ingreso_detalles->where('ingresos.almacen_id', $almacen->id);
                         if ($fecha_ini && $fecha_fin) {
-                            $ingresos->whereBetween('fecha_registro', [$fecha_ini, $fecha_fin]);
+                            $ingreso_detalles->whereBetween('fecha_registro', [$fecha_ini, $fecha_fin]);
                         }
 
                         // EXTERNO
                         $user = Auth::user();
                         if ($user->tipo == 'EXTERNO') {
-                            $ingresos->where('unidad_id', $user->unidad_id);
-                            $ingresos->where('user_id', $user->id);
+                            $ingreso_detalles->where('ingresos.unidad_id', $user->unidad_id);
+                            $ingreso_detalles->where('ingresos.user_id', $user->id);
                         }
 
-                        $ingresos->where('partida_id', $partida->id);
-                        $ingresos = $ingresos->get();
+                        $ingreso_detalles->where('partida_id', $partida->id);
+                        $ingreso_detalles = $ingreso_detalles->get();
                         $fila++;
-                        if (count($ingresos) > 0) {
-
-
-                            foreach ($ingresos as $ingreso) {
+                        if (count($ingreso_detalles) > 0) {
+                            foreach ($ingreso_detalles as $ingreso) {
                                 // SALDOS
                                 $saldo = 0;
                                 if ($fecha_ini && $fecha_fin) {
-                                    $reg_ingresos = Ingreso::where('donacion', 'SI');
-                                    $reg_ingresos->where('almacen_id', $almacen->id);
+                                    $reg_ingresos = IngresoDetalle::select("ingreso_detalles.*")
+                                        ->join("ingresos", "ingresos.id", "=", "ingreso_detalles.ingreso_id")
+                                        ->where('donacion', 'SI');
+                                    $reg_ingresos->where('ingresos.almacen_id', $almacen->id);
                                     $reg_ingresos->where('fecha_registro', '<', $fecha_ini);
                                     $reg_ingresos->where('partida_id', $partida->id);
                                     $reg_ingresos->where('producto_id', $ingreso->producto_id);
                                     // EXTERNO
                                     $user = Auth::user();
                                     if ($user->tipo == 'EXTERNO') {
-                                        $reg_ingresos->where('unidad_id', $user->unidad_id);
-                                        $reg_ingresos->where('user_id', $user->id);
+                                        $reg_ingresos->where('ingresos.unidad_id', $user->unidad_id);
+                                        $reg_ingresos->where('ingresos.user_id', $user->id);
                                     }
 
-                                    $reg_ingresos = $reg_ingresos->sum('total');
+                                    $reg_ingresos = $reg_ingresos->sum('ingreso_detalles.total');
 
-                                    $reg_egresos = Ingreso::where('donacion', 'SI')->join(
-                                        'egresos',
-                                        'egresos.ingreso_id',
-                                        '=',
-                                        'ingresos.id',
-                                    );
+                                    $reg_egresos = IngresoDetalle::select("ingreso_detalles.*")
+                                        ->join("ingresos", "ingresos.id", "=", "ingreso_detalles.ingreso_id")
+                                        ->where('donacion', 'SI')->join(
+                                            'egresos',
+                                            'egresos.ingreso_detalle_id',
+                                            '=',
+                                            'ingreso_detalles.id',
+                                        );
                                     $reg_egresos->where('egresos.almacen_id', $almacen->id);
                                     $reg_egresos->where('egresos.fecha_registro', '<', $fecha_ini);
                                     $reg_egresos->where('egresos.partida_id', $partida->id);
@@ -366,7 +371,7 @@ class ReporteController extends Controller
                                 }
 
                                 $sheet->setCellValue('A' . $fila, $cont++);
-                                $sheet->setCellValue('B' . $fila, $ingreso->codigo);
+                                $sheet->setCellValue('B' . $fila, $ingreso->ingreso_id);
                                 $sheet->setCellValue('C' . $fila, $ingreso->unidad_medida->nombre);
                                 $sheet->setCellValue('D' . $fila, $ingreso->producto->nombre);
                                 $sheet->setCellValue('G' . $fila, $saldo);
@@ -403,16 +408,18 @@ class ReporteController extends Controller
                             $saldo = 0;
                             $reg_ingresos = [];
                             if ($fecha_ini && $fecha_fin) {
-                                $reg_ingresos = Ingreso::where('donacion', 'SI');
-                                $reg_ingresos->where('almacen_id', $almacen->id);
+                                $reg_ingresos = IngresoDetalle::select("ingreso_detalles.*")
+                                    ->join("ingresos", "ingresos.id", "=", "ingreso_detalles.ingreso_id")
+                                    ->where('donacion', 'SI');
+                                $reg_ingresos->where('ingresos.almacen_id', $almacen->id);
                                 $reg_ingresos->where('fecha_registro', '<', $fecha_ini);
                                 $reg_ingresos->where('partida_id', $partida->id);
 
                                 // EXTERNO
                                 $user = Auth::user();
                                 if ($user->tipo == 'EXTERNO') {
-                                    $reg_ingresos->where('unidad_id', $user->unidad_id);
-                                    $reg_ingresos->where('user_id', $user->id);
+                                    $reg_ingresos->where('ingresos.unidad_id', $user->unidad_id);
+                                    $reg_ingresos->where('ingresos.user_id', $user->id);
                                 }
 
                                 $reg_ingresos = $reg_ingresos->get();
@@ -425,7 +432,7 @@ class ReporteController extends Controller
                                 }
 
                                 $sheet->setCellValue('A' . $fila, $cont++);
-                                $sheet->setCellValue('B' . $fila, $r_ingreso->codigo);
+                                $sheet->setCellValue('B' . $fila, $r_ingreso->ingreso_id);
                                 $sheet->setCellValue('C' . $fila, $r_ingreso->unidad_medida->nombre);
                                 $sheet->setCellValue('D' . $fila, $r_ingreso->producto->nombre);
                                 $sheet->setCellValue('G' . $fila, $saldo);
@@ -520,12 +527,13 @@ class ReporteController extends Controller
                     $total3 = 0;
                     $cont = 1;
                     foreach ($partidas as $partida) {
-                        $ingresos = Ingreso::where('donacion', 'SI');
+                        $ingresos = IngresoDetalle::select("ingreso_detalles.*")
+                            ->join("ingresos", "ingresos.id", "=", "ingreso_detalles.ingreso_id")->where('donacion', 'SI');
                         $ingresos->where('ingresos.almacen_id', $almacen->id);
                         if ($fecha_ini && $fecha_fin) {
                             $ingresos->whereBetween('fecha_registro', [$fecha_ini, $fecha_fin]);
                         }
-                        $ingresos->where('ingresos.partida_id', $partida->id);
+                        $ingresos->where('ingreso_detalles.partida_id', $partida->id);
                         // EXTERNO
                         $user = Auth::user();
                         if ($user->tipo == 'EXTERNO') {
@@ -533,14 +541,15 @@ class ReporteController extends Controller
                             $ingresos->where('ingresos.user_id', $user->id);
                         }
 
-                        $ingresos = $ingresos->sum('total');
+                        $ingresos = $ingresos->sum('ingreso_detalles.total');
 
-                        $egresos = Ingreso::where('donacion', 'SI')->join(
-                            'egresos',
-                            'egresos.ingreso_id',
-                            '=',
-                            'ingresos.id',
-                        );
+                        $egresos = IngresoDetalle::select("ingreso_detalles.*")
+                            ->join("ingresos", "ingresos.id", "=", "ingreso_detalles.ingreso_id")->where('donacion', 'SI')->join(
+                                'egresos',
+                                'egresos.ingreso_detalle_id',
+                                '=',
+                                'ingreso_detalles.id',
+                            );
                         $egresos->where('egresos.almacen_id', $almacen->id);
                         if ($fecha_ini && $fecha_fin) {
                             $egresos->whereBetween('egresos.fecha_registro', [$fecha_ini, $fecha_fin]);
@@ -641,7 +650,7 @@ class ReporteController extends Controller
         $texto_fecha = ReporteController::getFechaTexto($fecha_ini, $fecha_fin);
 
         $almacens = $almacens->get();
-
+        return $almacen_id;
         if ($tipo == 'pdf') {
             $archivo = "reportes.cuatrimestral_" . $formato;
             $orientacion = $formato == 'detalle' ? 'landscape' : 'portrait';
@@ -766,8 +775,9 @@ class ReporteController extends Controller
                         $sheet->getStyle('A' . $fila . ':C' . $fila)->applyFromArray($this->bg1);
                         $sheet->mergeCells("A" . $fila . ":C" . $fila);  //COMBINAR CELDAS
                         $sheet->getStyle('A' . $fila . ':C' . $fila)->applyFromArray($this->bodyTabla);
-                        $ingresos = Ingreso::where('donacion', 'NO');
-                        $ingresos->where('almacen_id', $almacen->id);
+                        $ingresos = IngresoDetalle::select("ingreso_detalles.*")
+                            ->join("ingresos", "ingresos.id", "=", "ingreso_detalles.ingreso_id")->where('donacion', 'NO');
+                        $ingresos->where('ingresos.almacen_id', $almacen->id);
                         if ($fecha_ini && $fecha_fin) {
                             $ingresos->whereBetween('fecha_registro', [$fecha_ini, $fecha_fin]);
                         }
@@ -775,8 +785,8 @@ class ReporteController extends Controller
                         // EXTERNO
                         $user = Auth::user();
                         if ($user->tipo == 'EXTERNO') {
-                            $ingresos->where('unidad_id', $user->unidad_id);
-                            $ingresos->where('user_id', $user->id);
+                            $ingresos->where('ingresos.unidad_id', $user->unidad_id);
+                            $ingresos->where('ingresos.user_id', $user->id);
                         }
 
                         $ingresos->where('partida_id', $partida->id);
@@ -789,25 +799,27 @@ class ReporteController extends Controller
                                 // SALDOS
                                 $saldo = 0;
                                 if ($fecha_ini && $fecha_fin) {
-                                    $reg_ingresos = Ingreso::where('donacion', 'NO');
-                                    $reg_ingresos->where('almacen_id', $almacen->id);
+                                    $reg_ingresos = IngresoDetalle::select("ingreso_detalles.*")
+                                        ->join("ingresos", "ingresos.id", "=", "ingreso_detalles.ingreso_id")->where('donacion', 'NO');
+                                    $reg_ingresos->where('ingresos.almacen_id', $almacen->id);
                                     $reg_ingresos->where('fecha_registro', '<', $fecha_ini);
                                     $reg_ingresos->where('partida_id', $partida->id);
                                     $reg_ingresos->where('producto_id', $ingreso->producto_id);
                                     // EXTERNO
                                     $user = Auth::user();
                                     if ($user->tipo == 'EXTERNO') {
-                                        $reg_ingresos->where('unidad_id', $user->unidad_id);
-                                        $reg_ingresos->where('user_id', $user->id);
+                                        $reg_ingresos->where('ingresos.unidad_id', $user->unidad_id);
+                                        $reg_ingresos->where('ingresos.user_id', $user->id);
                                     }
-                                    $reg_ingresos = $reg_ingresos->sum('total');
+                                    $reg_ingresos = $reg_ingresos->sum('ingreso_detalles.total');
 
-                                    $reg_egresos = Ingreso::where('donacion', 'NO')->join(
-                                        'egresos',
-                                        'egresos.ingreso_id',
-                                        '=',
-                                        'ingresos.id',
-                                    );
+                                    $reg_egresos = IngresoDetalle::select("ingreso_detalles.*")
+                                        ->join("ingresos", "ingresos.id", "=", "ingreso_detalles.ingreso_id")->where('donacion', 'NO')->join(
+                                            'egresos',
+                                            'egresos.ingreso_id',
+                                            '=',
+                                            'ingresos.id',
+                                        );
                                     $reg_egresos->where('egresos.almacen_id', $almacen->id);
                                     $reg_egresos->where('egresos.fecha_registro', '<', $fecha_ini);
                                     $reg_egresos->where('egresos.partida_id', $partida->id);
@@ -823,7 +835,7 @@ class ReporteController extends Controller
                                 }
 
                                 $sheet->setCellValue('A' . $fila, $cont++);
-                                $sheet->setCellValue('B' . $fila, $ingreso->codigo);
+                                $sheet->setCellValue('B' . $fila, $ingreso->ingreso_id);
                                 $sheet->setCellValue('C' . $fila, $ingreso->unidad_medida->nombre);
                                 $sheet->setCellValue('D' . $fila, $ingreso->producto->nombre);
                                 $sheet->setCellValue('G' . $fila, $saldo);
@@ -861,8 +873,9 @@ class ReporteController extends Controller
                             $saldo = 0;
                             $reg_ingresos = [];
                             if ($fecha_ini && $fecha_fin) {
-                                $reg_ingresos = Ingreso::where('donacion', 'NO');
-                                $reg_ingresos->where('almacen_id', $almacen->id);
+                                $reg_ingresos = IngresoDetalle::select("ingreso_detalles.*")
+                                    ->join("ingresos", "ingresos.id", "=", "ingreso_detalles.ingreso_id")->where('donacion', 'NO');
+                                $reg_ingresos->where('ingresos.almacen_id', $almacen->id);
                                 $reg_ingresos->where('fecha_registro', '<', $fecha_ini);
                                 $reg_ingresos->where('partida_id', $partida->id);
                                 $reg_ingresos = $reg_ingresos->get();
@@ -875,7 +888,7 @@ class ReporteController extends Controller
                                 }
 
                                 $sheet->setCellValue('A' . $fila, $cont++);
-                                $sheet->setCellValue('B' . $fila, $r_ingreso->codigo);
+                                $sheet->setCellValue('B' . $fila, $r_ingreso->ingreso_id);
                                 $sheet->setCellValue('C' . $fila, $r_ingreso->unidad_medida->nombre);
                                 $sheet->setCellValue('D' . $fila, $r_ingreso->producto->nombre);
                                 $sheet->setCellValue('G' . $fila, $saldo);
@@ -970,26 +983,28 @@ class ReporteController extends Controller
                     $total3 = 0;
                     $cont = 1;
                     foreach ($partidas as $partida) {
-                        $ingresos = Ingreso::where('donacion', 'NO');
+                        $ingresos = IngresoDetalle::select("ingreso_detalles.*")
+                            ->join("ingresos", "ingresos.id", "=", "ingreso_detalles.ingreso_id")->where('donacion', 'NO');
                         $ingresos->where('ingresos.almacen_id', $almacen->id);
                         if ($fecha_ini && $fecha_fin) {
                             $ingresos->whereBetween('fecha_registro', [$fecha_ini, $fecha_fin]);
                         }
-                        $ingresos->where('ingresos.partida_id', $partida->id);
+                        $ingresos->where('ingreso_detalles.partida_id', $partida->id);
                         // EXTERNO
                         $user = Auth::user();
                         if ($user->tipo == 'EXTERNO') {
                             $ingresos->where('ingresos.unidad_id', $user->unidad_id);
                             $ingresos->where('ingresos.user_id', $user->id);
                         }
-                        $ingresos = $ingresos->sum('total');
+                        $ingresos = $ingresos->sum('ingreso_detalles.total');
 
-                        $egresos = Ingreso::where('donacion', 'NO')->join(
-                            'egresos',
-                            'egresos.ingreso_id',
-                            '=',
-                            'ingresos.id',
-                        );
+                        $egresos = IngresoDetalle::select("ingreso_detalles.*")
+                            ->join("ingresos", "ingresos.id", "=", "ingreso_detalles.ingreso_id")->where('donacion', 'NO')->join(
+                                'egresos',
+                                'egresos.ingreso_id',
+                                '=',
+                                'ingresos.id',
+                            );
                         $egresos->where('egresos.almacen_id', $almacen->id);
                         if ($fecha_ini && $fecha_fin) {
                             $egresos->whereBetween('egresos.fecha_registro', [$fecha_ini, $fecha_fin]);
@@ -1182,7 +1197,8 @@ class ReporteController extends Controller
             $cont = 1;
             foreach ($partidas as $partida) {
                 // POR PARTIDAS
-                $ingresos = Ingreso::select("ingresos.*");
+                $ingresos = IngresoDetalle::select("ingreso_detalles.*")
+                    ->join("ingresos", "ingresos.id", "=", "ingreso_detalles.ingreso_id");
                 if ($fecha_ini && $fecha_fin) {
                     $ingresos->whereBetween('fecha_registro', [$fecha_ini, $fecha_fin]);
                 }
@@ -1193,14 +1209,14 @@ class ReporteController extends Controller
                     $ingresos->where('ingresos.user_id', $user->id);
                 }
                 $ingresos->where('partida_id', $partida->id);
-                $ingresos = $ingresos->sum('total');
+                $ingresos = $ingresos->sum('ingreso_detalles.total');
 
                 $egresos = Egreso::select('egresos.*')->join(
-                    'ingresos',
-                    'ingresos.id',
+                    'ingreso_detalles',
+                    'ingreso_detalles.id',
                     '=',
-                    'egresos.ingreso_id',
-                );
+                    'egresos.ingreso_detalle_id',
+                )->join('ingresos', 'ingresos.id', '=', 'ingreso_detalles.ingreso_id');
                 if ($fecha_ini && $fecha_fin) {
                     $egresos->whereBetween('egresos.fecha_registro', [$fecha_ini, $fecha_fin]);
                 }
@@ -1440,11 +1456,12 @@ class ReporteController extends Controller
                     $sheet->getStyle('A' . $fila . ':C' . $fila)->applyFromArray($this->bodyTabla);
                     // INGRESOS RANGO FECHAS
                     $ie_internos = IEInterno::select('i_e_internos.*')->join(
-                        'ingresos',
-                        'ingresos.id',
+                        'ingreso_detalles',
+                        'ingreso_detalles.id',
                         '=',
-                        'i_e_internos.ingreso_id',
-                    );
+                        'i_e_internos.ingreso_detalle_id',
+                    )
+                        ->join('ingresos', 'ingresos.id', '=', 'ingreso_detalles.ingreso_id');
                     $ie_internos->where('i_e_internos.almacen_id', $almacen->id);
                     if ($fecha_ini && $fecha_fin) {
                         $ie_internos->whereBetween('i_e_internos.fecha_registro', [$fecha_ini, $fecha_fin]);
@@ -1467,11 +1484,12 @@ class ReporteController extends Controller
                             $saldo = 0;
                             if ($fecha_ini && $fecha_fin) {
                                 $reg_ingresos = IEInterno::select('i_e_internos.*')->join(
-                                    'ingresos',
-                                    'ingresos.id',
+                                    'ingreso_detalles',
+                                    'ingreso_detalles.id',
                                     '=',
-                                    'i_e_internos.ingreso_id',
-                                );
+                                    'i_e_internos.ingreso_detalle_id',
+                                )
+                                    ->join('ingresos', 'ingresos.id', '=', 'ingreso_detalles.ingreso_id');
                                 $reg_ingresos->where('i_e_internos.almacen_id', $almacen->id);
                                 $reg_ingresos->where('i_e_internos.fecha_registro', '<', $fecha_ini);
                                 $reg_ingresos->where('partida_id', $partida->id);
@@ -1485,11 +1503,12 @@ class ReporteController extends Controller
                                 $reg_ingresos = $reg_ingresos->sum('itotal');
 
                                 $reg_egresos = IEInterno::select('i_e_internos.*')->join(
-                                    'ingresos',
-                                    'ingresos.id',
+                                    'ingreso_detalles',
+                                    'ingreso_detalles.id',
                                     '=',
-                                    'i_e_internos.ingreso_id',
-                                );
+                                    'i_e_internos.ingreso_detalle_id',
+                                )
+                                    ->join('ingresos', 'ingresos.id', '=', 'ingreso_detalles.ingreso_id');
                                 $reg_egresos->where('i_e_internos.almacen_id', $almacen->id);
                                 $reg_egresos->where('i_e_internos.fecha_egreso', '<', $fecha_ini);
                                 $reg_egresos->where('partida_id', $partida->id);
@@ -1505,8 +1524,8 @@ class ReporteController extends Controller
                             }
 
                             $sheet->setCellValue('A' . $fila, $cont++);
-                            $sheet->setCellValue('B' . $fila, $ie_interno->ingreso->codigo);
-                            $sheet->setCellValue('C' . $fila, $ie_interno->ingreso->unidad_medida->nombre);
+                            $sheet->setCellValue('B' . $fila, $ie_interno->ingreso->id);
+                            $sheet->setCellValue('C' . $fila, $ie_interno->ingreso_detalle->unidad_medida->nombre);
                             $sheet->setCellValue('D' . $fila, $ie_interno->producto->nombre);
                             $sheet->setCellValue('G' . $fila, $saldo);
                             $sheet->setCellValue('H' . $fila, $ie_interno->fecha_registro_t);
@@ -1543,11 +1562,12 @@ class ReporteController extends Controller
                         $reg_ingresos = [];
                         if ($fecha_ini && $fecha_fin) {
                             $reg_ingresos = IEInterno::select('i_e_internos.*')->join(
-                                'ingresos',
-                                'ingresos.id',
+                                'ingreso_detalles',
+                                'ingreso_detalles.id',
                                 '=',
-                                'i_e_internos.ingreso_id',
-                            );
+                                'i_e_internos.ingreso_detalle_id',
+                            )
+                                ->join('ingresos', 'ingresos.id', '=', 'ingreso_detalles.ingreso_id');
                             $reg_ingresos->where('i_e_internos.almacen_id', $almacen->id);
                             $reg_ingresos->where('i_e_internos.fecha_registro', '<', $fecha_ini);
                             $reg_ingresos->where('partida_id', $partida->id);
@@ -1569,8 +1589,8 @@ class ReporteController extends Controller
                             }
 
                             $sheet->setCellValue('A' . $fila, $cont++);
-                            $sheet->setCellValue('B' . $fila, $r_ingreso->ingreso->codigo);
-                            $sheet->setCellValue('C' . $fila, $r_ingreso->ingreso->unidad_medida->nombre);
+                            $sheet->setCellValue('B' . $fila, $r_ingreso->ingreso->id);
+                            $sheet->setCellValue('C' . $fila, $r_ingreso->ingreso_detalle->unidad_medida->nombre);
                             $sheet->setCellValue('D' . $fila, $r_ingreso->producto->nombre);
                             $sheet->setCellValue('G' . $fila, $saldo);
                             // $sheet->setCellValue('J' . $fila, $r_ingreso->costo);

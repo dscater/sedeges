@@ -129,14 +129,14 @@ class AlmacenController extends Controller
         //     ];
         // }
 
-        $ingresos = Ingreso::with(["almacen", "partida", "producto", "unidad_medida", "unidad", "egreso"])->select("ingresos.*");
+        $ingresos = Ingreso::with(["almacen", "unidad"])->select("ingresos.*");
         $ingresos->where("almacen_id", $almacen->id);
         if ($user->tipo == 'EXTERNO') {
             $ingresos->where("unidad_id", $user->unidad_id);
             $ingresos->where("user_id", $user->id);
         }
 
-        $ingresos = $ingresos->orderBy("id", "desc")->get();
+        $ingresos = $ingresos->orderBy("id", "asc")->get();
 
         return response()->JSON(["data" => $ingresos]);
     }

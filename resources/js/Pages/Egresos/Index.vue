@@ -108,7 +108,9 @@ const verificaDisabled = (index, egreso) => {
     if (egreso) {
         if (
             (egreso.destino_id && egreso.destino_id != "") ||
-            form.value.almacen_id != 1
+            form.value.almacen_id != 1 ||
+            auth.user.permisos == "*" ||
+            auth.user.permisos.includes("egresos.edit")
         ) {
             return false;
         }
@@ -243,7 +245,6 @@ onBeforeUnmount(() => {});
                                 <thead>
                                     <tr>
                                         <th rowspan="2">N°</th>
-                                        <th rowspan="2">CÓDIGO</th>
                                         <th rowspan="2">UNIDAD</th>
                                         <th rowspan="2">DESCRIPCIÓN</th>
                                         <th rowspan="2">FECHA INGRESO</th>
@@ -288,18 +289,22 @@ onBeforeUnmount(() => {});
                                                 item, index
                                             ) in listIngresos"
                                             :class="[
+                                                item.egreso &&
                                                 item.egreso.s_cantidad == 0
                                                     ? 'bg-success'
                                                     : '',
                                             ]"
                                         >
                                             <td>{{ index + 1 }}</td>
-                                            <td>{{ item.codigo }}</td>
                                             <td>
                                                 {{ item.unidad_medida.nombre }}
                                             </td>
                                             <td>{{ item.producto.nombre }}</td>
-                                            <td>{{ item.fecha_ingreso_t }}</td>
+                                            <td>
+                                                {{
+                                                    item.ingreso.fecha_ingreso_t
+                                                }}
+                                            </td>
                                             <td v-if="form.almacen_id == 1">
                                                 <div
                                                     v-if="
@@ -362,6 +367,7 @@ onBeforeUnmount(() => {});
                                             <td class="bg2 text-center">
                                                 <template
                                                     v-if="
+                                                        item.egreso &&
                                                         item.egreso.editable ==
                                                             1 &&
                                                         item.egreso &&
@@ -371,6 +377,9 @@ onBeforeUnmount(() => {});
                                                         ) ||
                                                             auth.user.permisos.includes(
                                                                 'egresos.create'
+                                                            ) ||
+                                                            auth.user.permisos.includes(
+                                                                'egresos.edit'
                                                             ))
                                                     "
                                                 >
@@ -428,13 +437,16 @@ onBeforeUnmount(() => {});
                                                 {{ item.egreso?.total }}
                                             </td>
                                             <td class="bg3">
-                                                {{ item.egreso?.s_cantidad }}
+                                                {{
+                                                    item.egreso?.s_cantidad ??
+                                                    ""
+                                                }}
                                             </td>
                                             <td class="bg3">
                                                 {{ item.costo }}
                                             </td>
                                             <td class="bg3">
-                                                {{ item.egreso?.s_total }}
+                                                {{ item.egreso?.s_total ?? "" }}
                                             </td>
                                         </tr>
                                     </template>

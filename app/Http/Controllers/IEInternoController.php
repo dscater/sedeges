@@ -25,16 +25,16 @@ class IEInternoController extends Controller
     public function api(Almacen $almacen)
     {
         $user = Auth::user();
-        $ie_internos = IEInterno::with(["producto", "ingreso.unidad_medida", "ingreso.partida"])
-            ->join("ingresos", "ingresos.id", "=", "i_e_internos.ingreso_id");
+        $ie_internos = IEInterno::with(["producto", "ingreso_detalle.unidad_medida", "ingreso_detalle.partida"])
+            ->join("ingreso_detalles", "ingreso_detalles.id", "=", "i_e_internos.ingreso_detalle_id");
         $ie_internos->where("i_e_internos.almacen_id", $almacen->id);
 
         // if ($user->tipo == 'EXTERNO') {
-            // $ie_internos->where("ingresos.unidad_id", $user->unidad_id);
-            // $ie_internos->where("ingresos.user_id", $user->id);
+        // $ie_internos->where("ingreso_detalles.unidad_id", $user->unidad_id);
+        // $ie_internos->where("ingreso_detalles.user_id", $user->id);
         // }
 
-        $ie_internos = $ie_internos->orderBy("i_e_internos.created_at", "desc")->get();
+        $ie_internos = $ie_internos->orderBy("i_e_internos.created_at", "asc")->get();
         return response()->JSON(["data" => $ie_internos]);
     }
 
@@ -43,17 +43,12 @@ class IEInternoController extends Controller
     {
         $partida_id = $request->partida_id;
         $user = Auth::user();
-        $ie_internos = IEInterno::with(["producto", "ingreso.unidad_medida"])
+        $ie_internos = IEInterno::with(["producto", "ingreso_detalle.unidad_medida"])
             ->select("i_e_internos.*")
-            ->join("ingresos", "ingresos.id", "=", "i_e_internos.ingreso_id");
+            ->join("ingreso_detalles", "ingreso_detalles.id", "=", "i_e_internos.ingreso_detalle_id");
         $ie_internos->where("i_e_internos.almacen_id", $almacen->id);
 
-        // if ($user->tipo == 'EXTERNO') {
-            // $ie_internos->where("ingresos.unidad_id", $user->unidad_id);
-            // $ie_internos->where("ingresos.user_id", $user->id);
-        // }
-
-        $ie_internos->where("ingresos.partida_id", $partida_id);
+        $ie_internos->where("ingreso_detalles.partida_id", $partida_id);
         $ie_internos = $ie_internos->orderBy("i_e_internos.created_at", "desc")->get();
         return response()->JSON([
             "ie_internos" => $ie_internos,
@@ -72,10 +67,11 @@ class IEInternoController extends Controller
 
             DB::commit();
             return response()->JSON([
-                "ie_interno" => $ie_interno->load(["producto", "ingreso.unidad_medida"]),
+                "ie_interno" => $ie_interno->load(["producto", "ingreso", "ingreso_detalle.unidad_medida"]),
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
+            Log::debug($e);
             return response()->JSON([
                 "message" => "Ocurrió un error no se pudo registrar el ie_interno"
             ], 500);

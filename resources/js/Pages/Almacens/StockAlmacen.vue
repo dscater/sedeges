@@ -22,55 +22,40 @@ const { setLoading } = useApp();
 const columns = [
     {
         title: "CÓDIGO",
-        data: "codigo",
+        data: "id",
     },
     {
-        title: "PARTIDA",
-        data: "partida.nro_partida",
+        title: "DESTINO",
+        data: "almacen.nombre",
+        render: function (data, type, row) {
+            let info = `${row.almacen.nombre}`;
+            if (row.almacen.grupo == "CENTROS") {
+                info += `<br/><strong>${
+                    row.unidad ? row.unidad.nombre : ""
+                }</strong>`;
+            }
+            return info;
+        },
     },
     {
-        title: "DONACIÓN",
-        data: "donacion",
+        title: "PROVEEDOR",
+        data: "proveedor",
     },
     {
-        title: "PRODUCTO",
-        data: "producto.nombre",
+        title: "CON FONDOS",
+        data: "con_fondos",
     },
     {
-        title: "UNIDAD DE MEDIDA",
-        data: "unidad_medida.nombre",
+        title: "NRO. FACTURA",
+        data: "nro_factura",
     },
     {
-        title: "CANTIDAD",
-        data: "cantidad",
-    },
-    {
-        title: "COSTO",
-        data: "costo",
+        title: "DE PEDIDO INTERNO",
+        data: "pedido_interno",
     },
     {
         title: "TOTAL",
         data: "total",
-    },
-    {
-        title: "SALDO CANTIDAD",
-        data: null,
-        render: function (data, type, row) {
-            if (!row.egreso) {
-                return row.cantidad;
-            }
-            return row.egreso.s_cantidad;
-        },
-    },
-    {
-        title: "SALDO TOTAL",
-        data: null,
-        render: function (data, type, row) {
-            if (!row.egreso) {
-                return row.total;
-            }
-            return row.egreso.s_total;
-        },
     },
     {
         title: "FECHA DE INGRESO",
@@ -85,6 +70,7 @@ const columns = [
         data: null,
         render: function (data, type, row) {
             let buttons = ``;
+            buttons += `<button class="mx-1 rounded-0 btn btn-primary pdf" data-id="${row.id}"><i class="fa fa-print"></i></button>`;
 
             if (
                 props_page.auth?.user.permisos == "*" ||
@@ -99,7 +85,7 @@ const columns = [
             ) {
                 buttons += ` <button class="mx-0 rounded-0 btn btn-danger eliminar"
                  data-id="${row.id}"
-                 data-nombre="${row.codigo ?? "S/P"}"
+                 data-nombre="${row.id ?? "S/P"}"
                  data-url="${route(
                      "ingresos.destroy",
                      row.id
@@ -120,6 +106,12 @@ const agregarRegistro = () => {
 };
 
 const accionesRow = () => {
+    // pdf
+    $("#table-producto").on("click", "button.pdf", function (e) {
+        e.preventDefault();
+        let id = $(this).attr("data-id");
+        window.open(route("ingresos.pdf", id), "_blank");
+    });
     // editar
     $("#table-producto").on("click", "button.editar", function (e) {
         e.preventDefault();

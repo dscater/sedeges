@@ -121,6 +121,10 @@ const enviarFormulario = () => {
                 confirmButtonText: `Aceptar`,
             });
             limpiarIngreso();
+            const flashParam = usePage().props.flash;
+            window
+                .open(route("ingresos.pdf", flashParam.param ?? 0), "_blank")
+                .focus();
             emits("envio-formulario");
         },
         onError: (err) => {
@@ -192,14 +196,18 @@ const cargarProgramas = () => {
 };
 
 const calculaTotal = () => {
-    const costo = form.costo;
-    const cantidad = form.cantidad;
-    if (costo && cantidad) {
-        form.total = cantidad * costo;
-        form.total = parseFloat(form.total).toFixed(2);
-    } else {
-        form.total = 0;
-    }
+    let suma_total = 0;
+    form.ingreso_detalles.forEach((elem, index) => {
+        const costo = parseFloat(elem.costo ?? 0);
+        const cantidad = parseFloat(elem.cantidad ?? 0);
+        const total =
+            parseFloat(isNaN(costo) ? 0 : costo) *
+            parseFloat(isNaN(cantidad) ? 0 : cantidad);
+        form.ingreso_detalles[index].total = total;
+        suma_total += parseFloat(total);
+    });
+
+    form.total = suma_total;
 };
 
 const getInfoAlmacen = (id) => {
@@ -246,6 +254,25 @@ const cargarListas = () => {
     cargarProgramas();
 };
 
+const agregaFila = () => {
+    form.ingreso_detalles.push({
+        id: 0,
+        partida_id: "",
+        donacion: "",
+        producto_id: "",
+        unidad_medida_id: "",
+        cantidad: "",
+        costo: "",
+        total: 0,
+        egreso: null,
+    });
+};
+
+const quitarFila = (index) => {
+    form.ingreso_detalles.splice(index, 1);
+    calculaTotal();
+};
+
 onMounted(() => {});
 </script>
 
@@ -260,7 +287,7 @@ onMounted(() => {});
             display: dialog ? 'block' : 'none',
         }"
     >
-        <div class="modal-dialog modal-xl">
+        <div class="modal-dialog modal_ingreso">
             <div class="modal-content">
                 <div class="modal-header bg-primary text-white">
                     <h4 class="modal-title" v-html="tituloDialog"></h4>
@@ -273,377 +300,46 @@ onMounted(() => {});
                 <div class="modal-body">
                     <form @submit.prevent="enviarFormulario()">
                         <div class="row">
-                            <template v-if="props.p_almacen_id == 0">
-                                <div class="col-md-4">
-                                    <label>Seleccionar almacén*</label>
-                                    <el-select
-                                        class="w-100"
-                                        placeholder="- Seleccione -"
-                                        :class="{
-                                            'border border-red rounded':
-                                                form.errors?.almacen_id,
-                                        }"
-                                        v-model="form.almacen_id"
-                                        filterable
-                                        @change="getInfoAlmacen"
-                                    >
-                                        <el-option value=""
-                                            >- Seleccione -</el-option
-                                        >
-                                        <el-option
-                                            v-for="item in listAlmacens"
-                                            :value="item.id"
-                                            :label="item.nombre"
-                                        >
-                                            {{ item.nombre }}
-                                        </el-option>
-                                    </el-select>
-                                    <ul
-                                        v-if="form.errors?.almacen_id"
-                                        class="parsley-errors-list filled"
-                                    >
-                                        <li class="parsley-required">
-                                            {{ form.errors?.almacen_id }}
-                                        </li>
-                                    </ul>
-                                </div>
-                                <!-- unidad -->
-                                <div
-                                    class="col-md-4"
-                                    v-if="oAlmacen?.grupo == 'CENTROS'"
-                                >
-                                    <label>Seleccionar Unidad/Centro*</label>
-                                    <el-select
-                                        class="w-100"
-                                        placeholder="- Seleccione -"
-                                        :class="{
-                                            'border border-red rounded':
-                                                form.errors?.unidad_id,
-                                        }"
-                                        v-model="form.unidad_id"
-                                        filterable
-                                    >
-                                        <el-option value=""
-                                            >- Seleccione -</el-option
-                                        >
-                                        <el-option
-                                            v-for="item in listUnidads"
-                                            :value="item.id"
-                                            :label="item.nombre"
-                                        >
-                                            {{ item.nombre }}
-                                        </el-option>
-                                    </el-select>
-                                    <ul
-                                        v-if="form.errors?.unidad_id"
-                                        class="parsley-errors-list filled"
-                                    >
-                                        <li class="parsley-required">
-                                            {{ form.errors?.unidad_id }}
-                                        </li>
-                                    </ul>
-                                </div>
-                            </template>
-                            <template v-else>
-                                <div class="col-md-4">
-                                    <label>Almacén:</label>
-                                    <input
-                                        type="text"
-                                        class="form-control"
-                                        :value="oAlmacen?.nombre"
-                                        readonly
-                                    />
-                                    <ul
-                                        v-if="form.errors?.almacen_id"
-                                        class="parsley-errors-list filled"
-                                    >
-                                        <li class="parsley-required">
-                                            {{ form.errors?.almacen_id }}
-                                        </li>
-                                    </ul>
-                                </div>
-
-                                <!-- unidad -->
-                                <div
-                                    class="col-md-4"
-                                    v-if="
-                                        oAlmacen?.grupo == 'CENTROS' &&
-                                        (auth.user.tipo == 'INTERNO' ||
-                                            auth.user.id == 1)
-                                    "
-                                >
-                                    <label>Seleccionar Unidad/Centro*</label>
-                                    <el-select
-                                        class="w-100"
-                                        placeholder="- Seleccione -"
-                                        :class="{
-                                            'border border-red rounded':
-                                                form.errors?.unidad_id,
-                                        }"
-                                        v-model="form.unidad_id"
-                                        filterable
-                                    >
-                                        <el-option value=""
-                                            >- Seleccione -</el-option
-                                        >
-                                        <el-option
-                                            v-for="item in listUnidads"
-                                            :value="item.id"
-                                            :label="item.nombre"
-                                        >
-                                            {{ item.nombre }}
-                                        </el-option>
-                                    </el-select>
-                                    <ul
-                                        v-if="form.errors?.unidad_id"
-                                        class="parsley-errors-list filled"
-                                    >
-                                        <li class="parsley-required">
-                                            {{ form.errors?.unidad_id }}
-                                        </li>
-                                    </ul>
-                                </div>
-
-                                <template v-else>
-                                    <!-- unidad text -->
-                                    <div
-                                        class="col-md-4"
-                                        v-if="oAlmacen?.grupo == 'CENTROS'"
-                                    >
-                                        <label
-                                            >Seleccionar Unidad/Centro*</label
-                                        >
-                                        <input
-                                            type="text"
-                                            class="form-control"
-                                            :value="oUnidad?.nombre"
-                                            readonly
-                                        />
-                                        <ul
-                                            v-if="form.errors?.unidad_id"
-                                            class="parsley-errors-list filled"
-                                        >
-                                            <li class="parsley-required">
-                                                {{ form.errors?.unidad_id }}
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </template>
-                            </template>
-                            <div
-                                class="col-md-8"
-                                v-if="auth.user.tipo != 'EXTERNO'"
-                            >
-                                <label>Seleccionar partida*</label>
-                                <el-select
-                                    class="w-100"
-                                    placeholder="- Seleccione -"
-                                    :class="{
-                                        'border border-red rounded':
-                                            form.errors?.partida_id,
-                                    }"
-                                    v-model="form.partida_id"
-                                    filterable
-                                >
-                                    <el-option value=""
-                                        >- Seleccione -</el-option
-                                    >
-                                    <el-option
-                                        v-for="item in listPartidas"
-                                        :value="item.id"
-                                        :label="
-                                            item.nro_partida +
-                                            ' - ' +
-                                            item.nombre
-                                        "
-                                    >
-                                        {{ item.nro_partida }} -
-                                        {{ item.nombre }}
-                                    </el-option>
-                                </el-select>
-                                <ul
-                                    v-if="form.errors?.partida_id"
-                                    class="parsley-errors-list filled"
-                                >
-                                    <li class="parsley-required">
-                                        {{ form.errors?.partida_id }}
-                                    </li>
-                                </ul>
-                            </div>
-                            <div
-                                class="col-md-4"
-                                v-if="oAlmacen?.grupo != 'CENTROS'"
-                            >
-                                <label>Donación*</label>
-                                <select
-                                    class="form-control"
-                                    :class="{
-                                        'parsley-error': form.errors?.donacion,
-                                    }"
-                                    v-model="form.donacion"
-                                >
-                                    <option value="">- Seleccione -</option>
-                                    <option
-                                        v-for="item in ['NO', 'SI']"
-                                        :value="item"
-                                    >
-                                        {{ item }}
-                                    </option>
-                                </select>
-                                <ul
-                                    v-if="form.errors?.donacion"
-                                    class="parsley-errors-list filled"
-                                >
-                                    <li class="parsley-required">
-                                        {{ form.errors?.donacion }}
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="col-md-4">
-                                <label>Seleccionar producto * </label>
-                                <div class="input-group mb-3">
-                                    <div class="flex-1">
-                                        <el-select
-                                            class="w-100 rounded-0"
-                                            placeholder="- Seleccione -"
-                                            :class="{
-                                                'border border-red':
-                                                    form.errors?.producto_id,
-                                            }"
-                                            v-model="form.producto_id"
-                                            filterable
-                                        >
-                                            <el-option value=""
-                                                >- Seleccione -</el-option
-                                            >
-                                            <el-option
-                                                v-for="item in listProductos"
-                                                :value="item.id"
-                                                :label="item.nombre"
-                                            >
-                                                {{ item.nombre }}
-                                            </el-option>
-                                        </el-select>
-                                    </div>
-                                    <button
-                                        v-if="
-                                            auth?.user.permisos == '*' ||
-                                            auth?.user.permisos.includes(
-                                                'productos.create'
-                                            )
-                                        "
-                                        type="button"
-                                        class="btn btn-sm btn-outline-primary rounded-0"
-                                        @click="agregarProducto"
-                                    >
-                                        <i class="fa fa-plus"></i>
-                                    </button>
-                                </div>
-                                <ul
-                                    v-if="form.errors?.producto_id"
-                                    class="parsley-errors-list filled"
-                                >
-                                    <li class="parsley-required">
-                                        {{ form.errors?.producto_id }}
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="col-md-4">
-                                <label>Seleccionar unidad de medida*</label>
-                                <el-select
-                                    class="w-100"
-                                    placeholder="- Seleccione -"
-                                    :class="{
-                                        'border border-red rounded':
-                                            form.errors?.unidad_medida_id,
-                                    }"
-                                    v-model="form.unidad_medida_id"
-                                    filterable
-                                >
-                                    <el-option value=""
-                                        >- Seleccione -</el-option
-                                    >
-                                    <el-option
-                                        v-for="item in listUnidadMedidas"
-                                        :value="item.id"
-                                        :label="item.nombre"
-                                    >
-                                        {{ item.nombre }}
-                                    </el-option>
-                                </el-select>
-                                <ul
-                                    v-if="form.errors?.unidad_medida_id"
-                                    class="parsley-errors-list filled"
-                                >
-                                    <li class="parsley-required">
-                                        {{ form.errors?.unidad_medida_id }}
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="col-md-4">
-                                <label>Cantidad*</label>
+                            <div class="col-md-4 mb-2">
+                                <label>Proveedor*</label>
                                 <input
-                                    type="number"
-                                    step="1"
+                                    type="text"
                                     class="form-control"
                                     :class="{
-                                        'parsley-error': form.errors?.cantidad,
+                                        'parsley-error': form.errors?.proveedor,
                                     }"
-                                    v-model="form.cantidad"
-                                    @keyup="calculaTotal"
+                                    v-model="form.proveedor"
                                 />
                                 <ul
-                                    v-if="form.errors?.cantidad"
+                                    v-if="form.errors?.proveedor"
                                     class="parsley-errors-list filled"
                                 >
                                     <li class="parsley-required">
-                                        {{ form.errors?.cantidad }}
+                                        {{ form.errors?.proveedor }}
                                     </li>
                                 </ul>
                             </div>
-                            <div class="col-md-4">
-                                <label>Costo/Unidad*</label>
+                            <div class="col-md-4 mb-2">
+                                <label>Con fondos</label>
                                 <input
-                                    type="number"
-                                    step="1"
+                                    type="text"
                                     class="form-control"
                                     :class="{
-                                        'parsley-error': form.errors?.costo,
+                                        'parsley-error':
+                                            form.errors?.con_fondos,
                                     }"
-                                    v-model="form.costo"
-                                    @keyup="calculaTotal"
+                                    v-model="form.con_fondos"
                                 />
                                 <ul
-                                    v-if="form.errors?.costo"
+                                    v-if="form.errors?.con_fondos"
                                     class="parsley-errors-list filled"
                                 >
                                     <li class="parsley-required">
-                                        {{ form.errors?.costo }}
+                                        {{ form.errors?.con_fondos }}
                                     </li>
                                 </ul>
                             </div>
-                            <div class="col-md-4">
-                                <label>Total*</label>
-                                <input
-                                    type="number"
-                                    step="0.01"
-                                    class="form-control"
-                                    :class="{
-                                        'parsley-error': form.errors?.total,
-                                    }"
-                                    v-model="form.total"
-                                    readonly
-                                />
-                                <ul
-                                    v-if="form.errors?.total"
-                                    class="parsley-errors-list filled"
-                                >
-                                    <li class="parsley-required">
-                                        {{ form.errors?.total }}
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="col-md-4">
+                            <div class="col-md-4 mb-2">
                                 <label>Fecha de ingreso*</label>
                                 <input
                                     type="date"
@@ -662,6 +358,305 @@ onMounted(() => {});
                                         {{ form.errors?.fecha_ingreso }}
                                     </li>
                                 </ul>
+                            </div>
+                            <div class="col-md-4 mb-2">
+                                <label>Con destino*</label>
+                                <el-select
+                                    class="w-100"
+                                    placeholder="- Seleccione -"
+                                    :class="{
+                                        'border border-red rounded':
+                                            form.errors?.almacen_id,
+                                    }"
+                                    v-model="form.almacen_id"
+                                    filterable
+                                    @change="getInfoAlmacen"
+                                >
+                                    <el-option value=""
+                                        >- Seleccione -</el-option
+                                    >
+                                    <el-option
+                                        v-for="item in listAlmacens"
+                                        :value="item.id"
+                                        :label="item.nombre"
+                                    >
+                                        {{ item.nombre }}
+                                    </el-option>
+                                </el-select>
+                                <ul
+                                    v-if="form.errors?.almacen_id"
+                                    class="parsley-errors-list filled"
+                                >
+                                    <li class="parsley-required">
+                                        {{ form.errors?.almacen_id }}
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="col-md-4 mb-2">
+                                <label>Nro. Factura</label>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    :class="{
+                                        'parsley-error':
+                                            form.errors?.nro_factura,
+                                    }"
+                                    v-model="form.nro_factura"
+                                />
+                                <ul
+                                    v-if="form.errors?.nro_factura"
+                                    class="parsley-errors-list filled"
+                                >
+                                    <li class="parsley-required">
+                                        {{ form.errors?.nro_factura }}
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="col-md-4 mb-2">
+                                <label>De pedido interno</label>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    :class="{
+                                        'parsley-error':
+                                            form.errors?.pedido_interno,
+                                    }"
+                                    v-model="form.pedido_interno"
+                                />
+                                <ul
+                                    v-if="form.errors?.pedido_interno"
+                                    class="parsley-errors-list filled"
+                                >
+                                    <li class="parsley-required">
+                                        {{ form.errors?.pedido_interno }}
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="row mt-2 overflow-auto">
+                            <h4 clas="w-100 text-center">
+                                Productos
+                                <button
+                                    type="button"
+                                    class="btn btn-primary btn-sm"
+                                    @click.prevent="agregaFila"
+                                >
+                                    <i class="fa fa-plus"></i>
+                                </button>
+                            </h4>
+                            <div class="col-12">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th width="150px">Partida</th>
+                                            <th width="40px">Donación</th>
+                                            <th>Producto</th>
+                                            <th width="190px">Unidad Medida</th>
+                                            <th width="100px">Cantidad</th>
+                                            <th width="100px">Costo/Unidad</th>
+                                            <th
+                                                width="100px"
+                                                class="text-right"
+                                            >
+                                                Total
+                                            </th>
+                                            <th width="20px"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr
+                                            v-for="(
+                                                item, index
+                                            ) in form.ingreso_detalles"
+                                        >
+                                            <td>
+                                                <el-select
+                                                    class="w-100"
+                                                    placeholder="- Seleccione -"
+                                                    :class="{
+                                                        'border border-red rounded':
+                                                            form.errors
+                                                                ?.partida_id,
+                                                    }"
+                                                    v-model="item.partida_id"
+                                                    filterable
+                                                >
+                                                    <el-option value=""
+                                                        >- Seleccione
+                                                        -</el-option
+                                                    >
+                                                    <el-option
+                                                        v-for="item in listPartidas"
+                                                        :value="item.id"
+                                                        :label="
+                                                            item.nro_partida +
+                                                            ' - ' +
+                                                            item.nombre
+                                                        "
+                                                    >
+                                                        {{ item.nro_partida }} -
+                                                        {{ item.nombre }}
+                                                    </el-option>
+                                                </el-select>
+                                            </td>
+                                            <td>
+                                                <select
+                                                    class="form-control"
+                                                    :class="{
+                                                        'parsley-error':
+                                                            form.errors
+                                                                ?.donacion,
+                                                    }"
+                                                    v-model="item.donacion"
+                                                >
+                                                    <option value="">
+                                                        - Seleccione -
+                                                    </option>
+                                                    <option
+                                                        v-for="item in [
+                                                            'NO',
+                                                            'SI',
+                                                        ]"
+                                                        :value="item"
+                                                    >
+                                                        {{ item }}
+                                                    </option>
+                                                </select>
+                                            </td>
+                                            <td>
+                                                <el-select
+                                                    class="w-100 rounded-0"
+                                                    placeholder="- Seleccione -"
+                                                    :class="{
+                                                        'border border-red':
+                                                            form.errors
+                                                                ?.producto_id,
+                                                    }"
+                                                    v-model="item.producto_id"
+                                                    filterable
+                                                >
+                                                    <el-option value=""
+                                                        >- Seleccione
+                                                        -</el-option
+                                                    >
+                                                    <el-option
+                                                        v-for="item_prod in listProductos"
+                                                        :value="item_prod.id"
+                                                        :label="
+                                                            item_prod.nombre
+                                                        "
+                                                    >
+                                                        {{ item_prod.nombre }}
+                                                    </el-option>
+                                                </el-select>
+                                            </td>
+                                            <td>
+                                                <el-select
+                                                    class="w-100"
+                                                    placeholder="- Seleccione -"
+                                                    :class="{
+                                                        'border border-red rounded':
+                                                            form.errors
+                                                                ?.unidad_medida_id,
+                                                    }"
+                                                    v-model="
+                                                        item.unidad_medida_id
+                                                    "
+                                                    filterable
+                                                >
+                                                    <el-option value=""
+                                                        >- Seleccione
+                                                        -</el-option
+                                                    >
+                                                    <el-option
+                                                        v-for="item_unidad_medida in listUnidadMedidas"
+                                                        :value="
+                                                            item_unidad_medida.id
+                                                        "
+                                                        :label="
+                                                            item_unidad_medida.nombre
+                                                        "
+                                                    >
+                                                        {{
+                                                            item_unidad_medida.nombre
+                                                        }}
+                                                    </el-option>
+                                                </el-select>
+                                            </td>
+                                            <td>
+                                                <input
+                                                    type="number"
+                                                    step="1"
+                                                    min="1"
+                                                    class="form-control"
+                                                    :class="{
+                                                        'parsley-error':
+                                                            form.errors
+                                                                ?.cantidad,
+                                                    }"
+                                                    v-model="item.cantidad"
+                                                    @keyup="calculaTotal"
+                                                />
+                                            </td>
+                                            <td>
+                                                <input
+                                                    type="number"
+                                                    step="1"
+                                                    min="0"
+                                                    class="form-control"
+                                                    :class="{
+                                                        'parsley-error':
+                                                            form.errors?.costo,
+                                                    }"
+                                                    v-model="item.costo"
+                                                    @keyup="calculaTotal"
+                                                />
+                                            </td>
+                                            <td class="text-right">
+                                                {{ item.total }}
+                                            </td>
+                                            <td>
+                                                <button
+                                                    v-if="
+                                                        item.id == 0 && !egreso
+                                                    "
+                                                    type="button"
+                                                    class="btn btn-sm btn-danger"
+                                                    @click.prevent="
+                                                        quitarFila(index)
+                                                    "
+                                                >
+                                                    <i class="fa fa-times"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                    <tfoot>
+                                        <tr class="bg-dark">
+                                            <td
+                                                colspan="6"
+                                                class="text-white font-weight-bold"
+                                            >
+                                                TOTAL
+                                            </td>
+                                            <td
+                                                class="text-white text-right font-weight-bold"
+                                            >
+                                                {{ form.total }}
+                                            </td>
+                                            <td></td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                                <span
+                                    class="text-danger"
+                                    v-if="
+                                        form.errors &&
+                                        form.errors['ingreso_detalles']
+                                    "
+                                >
+                                    {{ form.errors.ingreso_detalles }}
+                                </span>
                             </div>
                         </div>
                     </form>
@@ -695,3 +690,13 @@ onMounted(() => {});
         @cerrar-dialog="open_dialog = false"
     ></Formulario>
 </template>
+
+<style>
+.modal_ingreso {
+    min-width: 96vw;
+}
+
+.modal_ingreso .modal-content {
+    width: 100%;
+}
+</style>
