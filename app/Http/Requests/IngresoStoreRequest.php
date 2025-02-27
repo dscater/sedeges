@@ -30,6 +30,8 @@ class IngresoStoreRequest extends FormRequest
             "pedido_interno" => "nullable|string",
             "ingreso_detalles" => ["required", "array", "min:1", new IngresoDetalleRule],
             "fecha_ingreso" => "required|date",
+            "fecha_nota" => "nullable|date",
+            "fecha_factura" => "nullable|date",
         ];
     }
 
@@ -46,6 +48,8 @@ class IngresoStoreRequest extends FormRequest
             "nro_factura.string" => "Debes ingresar un texto",
             "pedido_interno.string" => "Debes ingresar un texto",
             "fecha_ingreso.required" => "Este campo es obligatorio",
+            "fecha_nota.date" => "Debes ingresar una fecha valida",
+            "fecha_factura.date" => "Debes ingresar una fecha valida",
         ];
     }
 }

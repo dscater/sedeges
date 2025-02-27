@@ -146,6 +146,8 @@ class IngresoController extends Controller
                 "pedido_interno" => mb_strtoupper($request["pedido_interno"]),
                 "total" => $request["total"],
                 "fecha_ingreso" => $request["fecha_ingreso"],
+                "fecha_nota" => $request["fecha_nota"]?$request["fecha_nota"]:NULL,
+                "fecha_factura" => $request["fecha_factura"]?$request["fecha_factura"]:NULL,
                 "fecha_registro" => date('Y-m-d'),
                 "user_id" => Auth::user()->id,
             ];
@@ -236,6 +238,8 @@ class IngresoController extends Controller
                 "pedido_interno" => mb_strtoupper($request["pedido_interno"]),
                 "total" => $request["total"],
                 "fecha_ingreso" => $request["fecha_ingreso"],
+                "fecha_nota" => $request["fecha_nota"]?$request["fecha_nota"]:NULL,
+                "fecha_factura" => $request["fecha_factura"]?$request["fecha_factura"]:NULL,
                 "user_id" => Auth::user()->id,
             ];
 

@@ -88,14 +88,19 @@
         <tbody>
             <tr>
                 <td class="pl">PROVEEDOR: <span class="bold">{{ $ingreso->proveedor }}</span></td>
-                <td class="pl">CON FONDOS: <span class="bold">{{ $ingreso->con_fondos ?? '' }}</span></td>
+                <td class="pl">FECHA DE INGRESO: <span class="bold">{{ $ingreso->fecha_ingreso_t }}</span></td>
             </tr>
             <tr>
-                <td class="pl">FECHA DE INGRESO: <span class="bold">{{ $ingreso->fecha_ingreso_t }}</span></td>
-                <td class="pl">CON DESTINO: <span class="bold">{{ $ingreso->almacen->nombre }}</span></td>
+                <td class="pl">No. DE NOTA DE ENTREGA: <span class="bold">{{ $ingreso->con_fondos ?? '' }}</span></td>
+                <td class="pl">FECHA DE NOTA DE ENTREGA: <span class="bold">{{ $ingreso->fecha_nota_t ?? '' }}</span></td>
+
             </tr>
             <tr>
                 <td class="pl">No. FACTURA: <span class="bold">{{ $ingreso->nro_factura ?? '' }}</span></td>
+                <td class="pl">FECHA DE FACTURA: <span class="bold">{{ $ingreso->fecha_factura_t ?? '' }}</span></td>
+            </tr>
+            <tr>
+                <td class="pl">CON DESTINO: <span class="bold">{{ $ingreso->almacen->nombre }}</span></td>
                 <td class="pl">DE PEDIDO INTERNO: <span class="bold">{{ $ingreso->pedido_interno ?? '' }}</span>
                 </td>
             </tr>

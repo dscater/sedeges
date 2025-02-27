@@ -40,12 +40,20 @@ const columns = [
         data: "proveedor",
     },
     {
-        title: "CON FONDOS",
+        title: "NRO. NOTA DE ENTREGA",
         data: "con_fondos",
+    },
+    {
+        title: "FECHA NOTA ENTREGA",
+        data: "fecha_nota_t",
     },
     {
         title: "NRO. FACTURA",
         data: "nro_factura",
+    },
+    {
+        title: "FECHA FACTURA",
+        data: "fecha_factura_t",
     },
     {
         title: "DE PEDIDO INTERNO",

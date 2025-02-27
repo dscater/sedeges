@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost:3306
--- Tiempo de generación: 24-02-2025 a las 21:21:55
+-- Tiempo de generación: 27-02-2025 a las 23:40:37
 -- Versión del servidor: 8.0.30
 -- Versión de PHP: 8.2.22
 
@@ -298,7 +298,10 @@ INSERT INTO `historial_accions` (`id`, `user_id`, `accion`, `descripcion`, `dato
 (132, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN INGRESO', 'id: 35<br/>almacen_id: 2<br/>unidad_id: <br/>proveedor: PROVEEDOR 3<br/>con_fondos: FONDOS<br/>nro_factura: 300000<br/>pedido_interno: PEDIDO<br/>total: 410<br/>fecha_ingreso: 2025-02-24<br/>fecha_registro: 2025-02-24<br/>user_id: 1<br/>created_at: 2025-02-24 15:53:12<br/>updated_at: 2025-02-24 15:53:12<br/>', NULL, 'INGRESOS', '2025-02-24', '15:53:12', '2025-02-24 19:53:12', '2025-02-24 19:53:12'),
 (133, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN INGRESO', 'id: 36<br/>almacen_id: 4<br/>unidad_id: <br/>proveedor: PROVEEDOR 3<br/>con_fondos: <br/>nro_factura: <br/>pedido_interno: <br/>total: 30<br/>fecha_ingreso: 2025-02-24<br/>fecha_registro: 2025-02-24<br/>user_id: 1<br/>created_at: 2025-02-24 15:54:35<br/>updated_at: 2025-02-24 15:54:35<br/>', NULL, 'INGRESOS', '2025-02-24', '15:54:35', '2025-02-24 19:54:35', '2025-02-24 19:54:35'),
 (134, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN INGRESO', 'id: 37<br/>almacen_id: 4<br/>unidad_id: <br/>proveedor: PROVEEDOR 2<br/>con_fondos: FONDOS CENTROS 1<br/>nro_factura: 100001<br/>pedido_interno: <br/>total: 20<br/>fecha_ingreso: 2025-02-24<br/>fecha_registro: 2025-02-24<br/>user_id: 1<br/>created_at: 2025-02-24 16:22:42<br/>updated_at: 2025-02-24 16:22:42<br/>', NULL, 'INGRESOS', '2025-02-24', '16:22:42', '2025-02-24 20:22:42', '2025-02-24 20:22:42'),
-(135, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN INGRESO', 'id: 38<br/>almacen_id: 4<br/>unidad_id: <br/>proveedor: PROVEEDOR2<br/>con_fondos: <br/>nro_factura: <br/>pedido_interno: <br/>total: 40<br/>fecha_ingreso: 2025-02-24<br/>fecha_registro: 2025-02-24<br/>user_id: 1<br/>created_at: 2025-02-24 16:23:36<br/>updated_at: 2025-02-24 16:23:36<br/>', NULL, 'INGRESOS', '2025-02-24', '16:23:36', '2025-02-24 20:23:36', '2025-02-24 20:23:36');
+(135, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN INGRESO', 'id: 38<br/>almacen_id: 4<br/>unidad_id: <br/>proveedor: PROVEEDOR2<br/>con_fondos: <br/>nro_factura: <br/>pedido_interno: <br/>total: 40<br/>fecha_ingreso: 2025-02-24<br/>fecha_registro: 2025-02-24<br/>user_id: 1<br/>created_at: 2025-02-24 16:23:36<br/>updated_at: 2025-02-24 16:23:36<br/>', NULL, 'INGRESOS', '2025-02-24', '16:23:36', '2025-02-24 20:23:36', '2025-02-24 20:23:36'),
+(136, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN INGRESO', 'id: 39<br/>almacen_id: 3<br/>unidad_id: <br/>proveedor: PROVEEDOR 4<br/>con_fondos: 100000<br/>fecha_nota: <br/>nro_factura: 100009999<br/>fecha_factura: <br/>pedido_interno: ACTA DE RECEPCION<br/>total: 230.5<br/>fecha_ingreso: 2025-02-01<br/>fecha_registro: 2025-02-27<br/>user_id: 1<br/>created_at: 2025-02-27 23:32:57<br/>updated_at: 2025-02-27 23:32:57<br/>', NULL, 'INGRESOS', '2025-02-27', '23:32:57', '2025-02-28 03:32:57', '2025-02-28 03:32:57'),
+(137, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN INGRESO', 'id: 40<br/>almacen_id: 3<br/>unidad_id: <br/>proveedor: PROVEEDOR 6<br/>con_fondos: <br/>fecha_nota: <br/>nro_factura: <br/>fecha_factura: <br/>pedido_interno: <br/>total: 3180<br/>fecha_ingreso: 2025-02-27<br/>fecha_registro: 2025-02-27<br/>user_id: 1<br/>created_at: 2025-02-27 23:34:14<br/>updated_at: 2025-02-27 23:34:14<br/>', NULL, 'INGRESOS', '2025-02-27', '23:34:14', '2025-02-28 03:34:14', '2025-02-28 03:34:14'),
+(138, 1, 'CREACIÓN', 'EL USUARIO admin REGISTRO UN INGRESO', 'id: 41<br/>almacen_id: 4<br/>unidad_id: <br/>proveedor: PROVEEDOR 7<br/>con_fondos: 11122222<br/>fecha_nota: 2025-01-10<br/>nro_factura: 1119111111<br/>fecha_factura: 2025-02-02<br/>pedido_interno: RECEPCION Y CONFORMIDAD<br/>total: 70.5<br/>fecha_ingreso: 2025-02-27<br/>fecha_registro: 2025-02-27<br/>user_id: 1<br/>created_at: 2025-02-27 23:40:03<br/>updated_at: 2025-02-27 23:40:03<br/>', NULL, 'INGRESOS', '2025-02-27', '23:40:03', '2025-02-28 03:40:03', '2025-02-28 03:40:03');
 
 -- --------------------------------------------------------
 
@@ -310,10 +313,12 @@ CREATE TABLE `ingresos` (
   `id` bigint UNSIGNED NOT NULL,
   `almacen_id` bigint UNSIGNED NOT NULL,
   `unidad_id` bigint UNSIGNED DEFAULT NULL,
-  `proveedor` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `con_fondos` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `nro_factura` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `pedido_interno` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `proveedor` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `con_fondos` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `fecha_nota` date DEFAULT NULL,
+  `nro_factura` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `fecha_factura` date DEFAULT NULL,
+  `pedido_interno` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `total` decimal(24,2) NOT NULL,
   `fecha_ingreso` date NOT NULL,
   `fecha_registro` date DEFAULT NULL,
@@ -326,43 +331,46 @@ CREATE TABLE `ingresos` (
 -- Volcado de datos para la tabla `ingresos`
 --
 
-INSERT INTO `ingresos` (`id`, `almacen_id`, `unidad_id`, `proveedor`, `con_fondos`, `nro_factura`, `pedido_interno`, `total`, `fecha_ingreso`, `fecha_registro`, `user_id`, `created_at`, `updated_at`) VALUES
-(1, 1, NULL, 'PROVEEDOR 1', NULL, NULL, NULL, 55.50, '2024-12-05', '2024-12-05', 1, '2024-12-05 23:37:50', '2025-02-24 16:20:46'),
-(2, 1, 6, 'PROVEEDOR 1', NULL, NULL, NULL, 20.00, '2024-12-05', '2024-12-05', 2, '2024-12-05 23:38:33', '2024-12-11 19:27:06'),
-(3, 1, 6, 'PROVEEDOR 1', NULL, NULL, NULL, 8.00, '2024-12-05', '2024-12-05', 2, '2024-12-05 23:39:19', '2024-12-11 19:27:06'),
-(4, 1, 6, 'PROVEEDOR 1', NULL, NULL, NULL, 6.00, '2024-12-05', '2024-12-05', 2, '2024-12-05 23:39:58', '2024-12-11 19:27:06'),
-(5, 1, 6, 'PROVEEDOR 1', NULL, NULL, NULL, 80.00, '2024-12-05', '2024-12-05', 2, '2024-12-05 23:40:35', '2024-12-11 19:27:06'),
-(6, 1, 6, 'PROVEEDOR 1', NULL, NULL, NULL, 40.00, '2024-12-05', '2024-12-05', 2, '2024-12-05 23:41:05', '2024-12-11 19:27:06'),
-(7, 1, 6, 'PROVEEDOR 1', NULL, NULL, NULL, 38.00, '2024-12-05', '2024-12-05', 2, '2024-12-05 23:41:34', '2024-12-11 19:27:06'),
-(8, 1, 6, 'PROVEEDOR 1', NULL, NULL, NULL, 12.00, '2024-12-05', '2024-12-05', 2, '2024-12-05 23:46:02', '2024-12-11 19:27:06'),
-(9, 1, 6, 'PROVEEDOR 1', NULL, NULL, NULL, 6.80, '2024-12-05', '2024-12-05', 2, '2024-12-05 23:47:50', '2024-12-11 19:27:06'),
-(10, 1, 6, 'PROVEEDOR 1', NULL, NULL, NULL, 14.00, '2024-12-05', '2024-12-05', 6, '2024-12-05 23:57:55', '2024-12-11 19:28:36'),
-(11, 1, 6, 'PROVEEDOR 1', NULL, NULL, NULL, 12.00, '2024-12-05', '2024-12-05', 6, '2024-12-05 23:58:21', '2024-12-11 19:27:06'),
-(12, 1, 6, 'PROVEEDOR 1', NULL, NULL, NULL, 8.00, '2024-12-05', '2024-12-05', 6, '2024-12-05 23:58:46', '2024-12-11 19:28:36'),
-(13, 4, 4, 'PROVEEDOR 1', NULL, NULL, NULL, 18.00, '2024-12-11', '2024-12-11', 1, '2024-12-11 19:45:53', '2024-12-11 22:13:53'),
-(14, 2, NULL, 'PROVEEDOR 1', NULL, NULL, NULL, 200.00, '2024-12-11', '2024-12-11', 1, '2024-12-11 19:47:10', '2024-12-11 19:47:10'),
-(15, 1, NULL, 'PROVEEDOR 1', NULL, NULL, NULL, 20.00, '2025-01-15', '2025-01-15', 1, '2025-01-15 13:30:36', '2025-01-15 13:30:36'),
-(16, 1, NULL, 'PROVEEDOR 1', NULL, NULL, NULL, 20.00, '2025-01-15', '2025-01-15', 1, '2025-01-15 13:44:30', '2025-01-15 13:44:30'),
-(17, 1, NULL, 'PROVEEDOR 1', NULL, NULL, NULL, 40.00, '2025-01-15', '2025-01-15', 1, '2025-01-15 13:44:53', '2025-01-15 13:44:53'),
-(18, 1, NULL, 'PROVEEDOR 1', NULL, NULL, NULL, 30.00, '2025-01-15', '2025-01-15', 1, '2025-01-15 13:45:38', '2025-01-15 13:45:38'),
-(19, 2, 2, 'PROVEEDOR 1', NULL, NULL, NULL, 90.00, '2025-01-15', '2025-01-15', 3, '2025-01-15 14:01:27', '2025-01-15 14:01:27'),
-(20, 2, 2, 'PROVEEDOR 1', NULL, NULL, NULL, 60.00, '2025-01-15', '2025-01-15', 3, '2025-01-15 14:06:32', '2025-01-15 14:06:32'),
-(21, 3, 2, 'PROVEEDOR 1', NULL, NULL, NULL, 25.00, '2025-01-15', '2025-01-15', 3, '2025-01-15 14:14:10', '2025-01-15 14:34:28'),
-(22, 3, 2, 'PROVEEDOR 1', NULL, NULL, NULL, 20.00, '2025-01-15', '2025-01-15', 3, '2025-01-15 14:14:43', '2025-01-15 14:14:43'),
-(23, 4, 4, 'PROVEEDOR 1', NULL, NULL, NULL, 19.00, '2025-01-15', '2025-01-15', 1, '2025-01-15 14:17:11', '2025-01-15 14:17:11'),
-(24, 5, 7, 'PROVEEDOR 1', NULL, NULL, NULL, 3.00, '2025-01-15', '2025-01-15', 1, '2025-01-15 14:17:33', '2025-01-15 14:17:33'),
-(25, 7, 4, 'PROVEEDOR 1', NULL, NULL, NULL, 20.00, '2025-01-15', '2025-01-15', 1, '2025-01-15 14:22:01', '2025-01-15 14:22:01'),
-(26, 7, 7, 'PROVEEDOR 1', NULL, NULL, NULL, 70.00, '2025-01-15', '2025-01-15', 1, '2025-01-15 14:23:30', '2025-01-15 14:23:30'),
-(27, 5, 8, 'PROVEEDOR 1', NULL, NULL, NULL, 20.00, '2025-01-15', '2025-01-15', 1, '2025-01-15 14:25:27', '2025-01-15 14:25:27'),
-(28, 5, 4, 'PROVEEDOR 1', NULL, NULL, NULL, 40.00, '2025-01-15', '2025-01-15', 1, '2025-01-15 14:26:00', '2025-01-15 14:26:00'),
-(29, 7, 2, 'PROVEEDOR 1', NULL, NULL, NULL, 10.00, '2025-01-15', '2025-01-15', 1, '2025-01-15 14:26:22', '2025-01-15 14:26:22'),
-(30, 3, NULL, 'PROVEEDOR 1', NULL, NULL, NULL, 90.00, '2025-01-15', '2025-01-15', 1, '2025-01-15 14:31:16', '2025-01-15 14:31:16'),
-(31, 7, 1, 'PROVEEDOR 1', NULL, NULL, NULL, 80.00, '2025-01-15', '2025-01-15', 1, '2025-01-15 14:31:39', '2025-01-15 14:31:39'),
-(34, 1, NULL, 'PROVEEDOR 2', 'FONDOS', '3222222', 'PEDIDO INTERNO', 132.50, '2025-02-24', '2025-02-24', 1, '2025-02-24 16:22:34', '2025-02-24 16:23:24'),
-(35, 2, NULL, 'PROVEEDOR 3', 'FONDOS', '300000', 'PEDIDO', 410.00, '2025-02-24', '2025-02-24', 1, '2025-02-24 19:53:12', '2025-02-24 19:53:12'),
-(36, 4, NULL, 'PROVEEDOR 3', '', NULL, '', 30.00, '2025-02-24', '2025-02-24', 1, '2025-02-24 19:54:35', '2025-02-24 19:54:35'),
-(37, 4, NULL, 'PROVEEDOR 2', 'FONDOS CENTROS 1', '100001', '', 20.00, '2025-02-24', '2025-02-24', 1, '2025-02-24 20:22:42', '2025-02-24 20:22:42'),
-(38, 4, NULL, 'PROVEEDOR2', '', NULL, '', 40.00, '2025-02-24', '2025-02-24', 1, '2025-02-24 20:23:36', '2025-02-24 20:23:36');
+INSERT INTO `ingresos` (`id`, `almacen_id`, `unidad_id`, `proveedor`, `con_fondos`, `fecha_nota`, `nro_factura`, `fecha_factura`, `pedido_interno`, `total`, `fecha_ingreso`, `fecha_registro`, `user_id`, `created_at`, `updated_at`) VALUES
+(1, 1, NULL, 'PROVEEDOR 1', NULL, NULL, NULL, NULL, NULL, 55.50, '2024-12-05', '2024-12-05', 1, '2024-12-05 23:37:50', '2025-02-24 16:20:46'),
+(2, 1, 6, 'PROVEEDOR 1', NULL, NULL, NULL, NULL, NULL, 20.00, '2024-12-05', '2024-12-05', 2, '2024-12-05 23:38:33', '2024-12-11 19:27:06'),
+(3, 1, 6, 'PROVEEDOR 1', NULL, NULL, NULL, NULL, NULL, 8.00, '2024-12-05', '2024-12-05', 2, '2024-12-05 23:39:19', '2024-12-11 19:27:06'),
+(4, 1, 6, 'PROVEEDOR 1', NULL, NULL, NULL, NULL, NULL, 6.00, '2024-12-05', '2024-12-05', 2, '2024-12-05 23:39:58', '2024-12-11 19:27:06'),
+(5, 1, 6, 'PROVEEDOR 1', NULL, NULL, NULL, NULL, NULL, 80.00, '2024-12-05', '2024-12-05', 2, '2024-12-05 23:40:35', '2024-12-11 19:27:06'),
+(6, 1, 6, 'PROVEEDOR 1', NULL, NULL, NULL, NULL, NULL, 40.00, '2024-12-05', '2024-12-05', 2, '2024-12-05 23:41:05', '2024-12-11 19:27:06'),
+(7, 1, 6, 'PROVEEDOR 1', NULL, NULL, NULL, NULL, NULL, 38.00, '2024-12-05', '2024-12-05', 2, '2024-12-05 23:41:34', '2024-12-11 19:27:06'),
+(8, 1, 6, 'PROVEEDOR 1', NULL, NULL, NULL, NULL, NULL, 12.00, '2024-12-05', '2024-12-05', 2, '2024-12-05 23:46:02', '2024-12-11 19:27:06'),
+(9, 1, 6, 'PROVEEDOR 1', NULL, NULL, NULL, NULL, NULL, 6.80, '2024-12-05', '2024-12-05', 2, '2024-12-05 23:47:50', '2024-12-11 19:27:06'),
+(10, 1, 6, 'PROVEEDOR 1', NULL, NULL, NULL, NULL, NULL, 14.00, '2024-12-05', '2024-12-05', 6, '2024-12-05 23:57:55', '2024-12-11 19:28:36'),
+(11, 1, 6, 'PROVEEDOR 1', NULL, NULL, NULL, NULL, NULL, 12.00, '2024-12-05', '2024-12-05', 6, '2024-12-05 23:58:21', '2024-12-11 19:27:06'),
+(12, 1, 6, 'PROVEEDOR 1', NULL, NULL, NULL, NULL, NULL, 8.00, '2024-12-05', '2024-12-05', 6, '2024-12-05 23:58:46', '2024-12-11 19:28:36'),
+(13, 4, 4, 'PROVEEDOR 1', NULL, NULL, NULL, NULL, NULL, 18.00, '2024-12-11', '2024-12-11', 1, '2024-12-11 19:45:53', '2024-12-11 22:13:53'),
+(14, 2, NULL, 'PROVEEDOR 1', NULL, NULL, NULL, NULL, NULL, 200.00, '2024-12-11', '2024-12-11', 1, '2024-12-11 19:47:10', '2024-12-11 19:47:10'),
+(15, 1, NULL, 'PROVEEDOR 1', NULL, NULL, NULL, NULL, NULL, 20.00, '2025-01-15', '2025-01-15', 1, '2025-01-15 13:30:36', '2025-01-15 13:30:36'),
+(16, 1, NULL, 'PROVEEDOR 1', NULL, NULL, NULL, NULL, NULL, 20.00, '2025-01-15', '2025-01-15', 1, '2025-01-15 13:44:30', '2025-01-15 13:44:30'),
+(17, 1, NULL, 'PROVEEDOR 1', NULL, NULL, NULL, NULL, NULL, 40.00, '2025-01-15', '2025-01-15', 1, '2025-01-15 13:44:53', '2025-01-15 13:44:53'),
+(18, 1, NULL, 'PROVEEDOR 1', NULL, NULL, NULL, NULL, NULL, 30.00, '2025-01-15', '2025-01-15', 1, '2025-01-15 13:45:38', '2025-01-15 13:45:38'),
+(19, 2, 2, 'PROVEEDOR 1', NULL, NULL, NULL, NULL, NULL, 90.00, '2025-01-15', '2025-01-15', 3, '2025-01-15 14:01:27', '2025-01-15 14:01:27'),
+(20, 2, 2, 'PROVEEDOR 1', NULL, NULL, NULL, NULL, NULL, 60.00, '2025-01-15', '2025-01-15', 3, '2025-01-15 14:06:32', '2025-01-15 14:06:32'),
+(21, 3, 2, 'PROVEEDOR 1', NULL, NULL, NULL, NULL, NULL, 25.00, '2025-01-15', '2025-01-15', 3, '2025-01-15 14:14:10', '2025-01-15 14:34:28'),
+(22, 3, 2, 'PROVEEDOR 1', NULL, NULL, NULL, NULL, NULL, 20.00, '2025-01-15', '2025-01-15', 3, '2025-01-15 14:14:43', '2025-01-15 14:14:43'),
+(23, 4, 4, 'PROVEEDOR 1', NULL, NULL, NULL, NULL, NULL, 19.00, '2025-01-15', '2025-01-15', 1, '2025-01-15 14:17:11', '2025-01-15 14:17:11'),
+(24, 5, 7, 'PROVEEDOR 1', NULL, NULL, NULL, NULL, NULL, 3.00, '2025-01-15', '2025-01-15', 1, '2025-01-15 14:17:33', '2025-01-15 14:17:33'),
+(25, 7, 4, 'PROVEEDOR 1', NULL, NULL, NULL, NULL, NULL, 20.00, '2025-01-15', '2025-01-15', 1, '2025-01-15 14:22:01', '2025-01-15 14:22:01'),
+(26, 7, 7, 'PROVEEDOR 1', NULL, NULL, NULL, NULL, NULL, 70.00, '2025-01-15', '2025-01-15', 1, '2025-01-15 14:23:30', '2025-01-15 14:23:30'),
+(27, 5, 8, 'PROVEEDOR 1', NULL, NULL, NULL, NULL, NULL, 20.00, '2025-01-15', '2025-01-15', 1, '2025-01-15 14:25:27', '2025-01-15 14:25:27'),
+(28, 5, 4, 'PROVEEDOR 1', NULL, NULL, NULL, NULL, NULL, 40.00, '2025-01-15', '2025-01-15', 1, '2025-01-15 14:26:00', '2025-01-15 14:26:00'),
+(29, 7, 2, 'PROVEEDOR 1', NULL, NULL, NULL, NULL, NULL, 10.00, '2025-01-15', '2025-01-15', 1, '2025-01-15 14:26:22', '2025-01-15 14:26:22'),
+(30, 3, NULL, 'PROVEEDOR 1', NULL, NULL, NULL, NULL, NULL, 90.00, '2025-01-15', '2025-01-15', 1, '2025-01-15 14:31:16', '2025-01-15 14:31:16'),
+(31, 7, 1, 'PROVEEDOR 1', NULL, NULL, NULL, NULL, NULL, 80.00, '2025-01-15', '2025-01-15', 1, '2025-01-15 14:31:39', '2025-01-15 14:31:39'),
+(34, 1, NULL, 'PROVEEDOR 2', 'FONDOS', NULL, '3222222', NULL, 'PEDIDO INTERNO', 132.50, '2025-02-24', '2025-02-24', 1, '2025-02-24 16:22:34', '2025-02-24 16:23:24'),
+(35, 2, NULL, 'PROVEEDOR 3', 'FONDOS', NULL, '300000', NULL, 'PEDIDO', 410.00, '2025-02-24', '2025-02-24', 1, '2025-02-24 19:53:12', '2025-02-24 19:53:12'),
+(36, 4, NULL, 'PROVEEDOR 3', '', NULL, NULL, NULL, '', 30.00, '2025-02-24', '2025-02-24', 1, '2025-02-24 19:54:35', '2025-02-24 19:54:35'),
+(37, 4, NULL, 'PROVEEDOR 2', 'FONDOS CENTROS 1', NULL, '100001', NULL, '', 20.00, '2025-02-24', '2025-02-24', 1, '2025-02-24 20:22:42', '2025-02-24 20:22:42'),
+(38, 4, NULL, 'PROVEEDOR2', '', NULL, NULL, NULL, '', 40.00, '2025-02-24', '2025-02-24', 1, '2025-02-24 20:23:36', '2025-02-24 20:23:36'),
+(39, 3, NULL, 'PROVEEDOR 4', '100000', NULL, '100009999', NULL, 'ACTA DE RECEPCION', 230.50, '2025-02-01', '2025-02-27', 1, '2025-02-28 03:32:57', '2025-02-28 03:32:57'),
+(40, 3, NULL, 'PROVEEDOR 6', '', NULL, NULL, NULL, '', 3180.00, '2025-02-27', '2025-02-27', 1, '2025-02-28 03:34:14', '2025-02-28 03:34:14'),
+(41, 4, NULL, 'PROVEEDOR 7', '11122222', '2025-01-10', '1119111111', '2025-02-02', 'RECEPCION Y CONFORMIDAD', 70.50, '2025-02-27', '2025-02-27', 1, '2025-02-28 03:40:03', '2025-02-28 03:40:03');
 
 -- --------------------------------------------------------
 
@@ -376,7 +384,7 @@ CREATE TABLE `ingreso_detalles` (
   `almacen_id` bigint UNSIGNED NOT NULL,
   `unidad_id` bigint UNSIGNED DEFAULT NULL,
   `partida_id` bigint UNSIGNED DEFAULT NULL,
-  `donacion` varchar(60) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'NO',
+  `donacion` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'NO',
   `producto_id` bigint UNSIGNED NOT NULL,
   `unidad_medida_id` bigint UNSIGNED NOT NULL,
   `cantidad` int NOT NULL,
@@ -429,7 +437,12 @@ INSERT INTO `ingreso_detalles` (`id`, `ingreso_id`, `almacen_id`, `unidad_id`, `
 (36, 35, 2, NULL, 1, 'SI', 2, 2, 1, 30.00, 30.00, '2025-02-24 19:53:12', '2025-02-24 19:53:12'),
 (37, 36, 4, NULL, 1, 'SI', 3, 2, 1, 30.00, 30.00, '2025-02-24 19:54:35', '2025-02-24 19:54:35'),
 (38, 37, 4, NULL, 2, 'NO', 7, 2, 1, 20.00, 20.00, '2025-02-24 20:22:42', '2025-02-24 20:22:42'),
-(39, 38, 4, NULL, 6, 'NO', 12, 4, 20, 2.00, 40.00, '2025-02-24 20:23:36', '2025-02-24 20:23:36');
+(39, 38, 4, NULL, 6, 'NO', 12, 4, 20, 2.00, 40.00, '2025-02-24 20:23:36', '2025-02-24 20:23:36'),
+(40, 39, 3, NULL, 2, 'NO', 1, 2, 10, 20.00, 200.00, '2025-02-28 03:32:57', '2025-02-28 03:32:57'),
+(41, 39, 3, NULL, 4, 'SI', 2, 1, 1, 30.50, 30.50, '2025-02-28 03:32:57', '2025-02-28 03:32:57'),
+(42, 40, 3, NULL, 5, 'SI', 4, 2, 100, 30.00, 3000.00, '2025-02-28 03:34:14', '2025-02-28 03:34:14'),
+(43, 40, 3, NULL, 6, 'SI', 10, 6, 2, 90.00, 180.00, '2025-02-28 03:34:14', '2025-02-28 03:34:14'),
+(44, 41, 4, NULL, 6, 'SI', 12, 1, 1, 70.50, 70.50, '2025-02-28 03:40:03', '2025-02-28 03:40:03');
 
 -- --------------------------------------------------------
 
@@ -998,19 +1011,19 @@ ALTER TABLE `egresos`
 -- AUTO_INCREMENT de la tabla `historial_accions`
 --
 ALTER TABLE `historial_accions`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=136;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=139;
 
 --
 -- AUTO_INCREMENT de la tabla `ingresos`
 --
 ALTER TABLE `ingresos`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=42;
 
 --
 -- AUTO_INCREMENT de la tabla `ingreso_detalles`
 --
 ALTER TABLE `ingreso_detalles`
-  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=45;
 
 --
 -- AUTO_INCREMENT de la tabla `i_e_internos`

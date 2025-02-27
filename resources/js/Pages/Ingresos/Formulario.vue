@@ -320,7 +320,7 @@ onMounted(() => {});
                                 </ul>
                             </div>
                             <div class="col-md-4 mb-2">
-                                <label>Con fondos</label>
+                                <label>Nro. de nota de entrega</label>
                                 <input
                                     type="text"
                                     class="form-control"
@@ -336,6 +336,26 @@ onMounted(() => {});
                                 >
                                     <li class="parsley-required">
                                         {{ form.errors?.con_fondos }}
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="col-md-4 mb-2">
+                                <label>Fecha de nota de entrega</label>
+                                <input
+                                    type="date"
+                                    class="form-control"
+                                    :class="{
+                                        'parsley-error':
+                                            form.errors?.fecha_nota,
+                                    }"
+                                    v-model="form.fecha_nota"
+                                />
+                                <ul
+                                    v-if="form.errors?.fecha_nota"
+                                    class="parsley-errors-list filled"
+                                >
+                                    <li class="parsley-required">
+                                        {{ form.errors?.fecha_nota }}
                                     </li>
                                 </ul>
                             </div>
@@ -413,7 +433,27 @@ onMounted(() => {});
                                 </ul>
                             </div>
                             <div class="col-md-4 mb-2">
-                                <label>De pedido interno</label>
+                                <label>Fecha de factura</label>
+                                <input
+                                    type="date"
+                                    class="form-control"
+                                    :class="{
+                                        'parsley-error':
+                                            form.errors?.fecha_factura,
+                                    }"
+                                    v-model="form.fecha_factura"
+                                />
+                                <ul
+                                    v-if="form.errors?.fecha_factura"
+                                    class="parsley-errors-list filled"
+                                >
+                                    <li class="parsley-required">
+                                        {{ form.errors?.fecha_factura }}
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="col-md-4 mb-2">
+                                <label>Acta de recepción y/o conformidad</label>
                                 <input
                                     type="text"
                                     class="form-control"
@@ -618,7 +658,7 @@ onMounted(() => {});
                                             <td>
                                                 <button
                                                     v-if="
-                                                        item.id == 0 && !egreso
+                                                        item.id == 0 && !item.egreso
                                                     "
                                                     type="button"
                                                     class="btn btn-sm btn-danger"

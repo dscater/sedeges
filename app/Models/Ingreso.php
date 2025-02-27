@@ -15,7 +15,9 @@ class Ingreso extends Model
         "unidad_id",
         "proveedor",
         "con_fondos",
+        "fecha_nota",
         "nro_factura",
+        "fecha_factura",
         "pedido_interno",
         "total",
         "fecha_ingreso",
@@ -23,7 +25,7 @@ class Ingreso extends Model
         "user_id",
     ];
 
-    protected $appends = ["fecha_ingreso_t", "fecha_registro_t", "nro_cod"];
+    protected $appends = ["fecha_ingreso_t", "fecha_registro_t", "fecha_nota_t", "fecha_factura_t", "nro_cod"];
 
     public function getNroCodAttribute()
     {
@@ -42,6 +44,22 @@ class Ingreso extends Model
         }
 
         return $cod;
+    }
+
+    public function getFechaNotaTAttribute()
+    {
+        if ($this->fecha_nota) {
+            return date("d/m/Y", strtotime($this->fecha_nota));
+        }
+        return "";
+    }
+
+    public function getFechaFacturaTAttribute()
+    {
+        if ($this->fecha_factura) {
+            return date("d/m/Y", strtotime($this->fecha_factura));
+        }
+        return "";
     }
 
     public function getFechaIngresoTAttribute()

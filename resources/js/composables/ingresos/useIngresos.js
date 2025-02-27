@@ -8,7 +8,9 @@ const oIngreso = ref({
     unidad_id: "",
     proveedor: "",
     con_fondos: "",
+    fecha_nota: "",
     nro_factura: "",
+    fecha_factura: "",
     pedido_interno: "",
     total: 0,
     fecha_ingreso: "",
@@ -149,7 +151,9 @@ export const useIngresos = () => {
             oIngreso.value.unidad_id = item.unidad_id;
             oIngreso.value.proveedor = item.proveedor;
             oIngreso.value.con_fondos = item.con_fondos;
+            oIngreso.value.fecha_nota = item.fecha_nota;
             oIngreso.value.nro_factura = item.nro_factura;
+            oIngreso.value.fecha_factura = item.fecha_factura;
             oIngreso.value.pedido_interno = item.pedido_interno;
             oIngreso.value.total = item.total;
             oIngreso.value.fecha_ingreso = item.fecha_ingreso;
@@ -168,7 +172,9 @@ export const useIngresos = () => {
         oIngreso.value.unidad_id = "";
         oIngreso.value.proveedor = "";
         oIngreso.value.con_fondos = "";
+        oIngreso.value.fecha_nota = "";
         oIngreso.value.nro_factura = "";
+        oIngreso.value.fecha_factura = "";
         oIngreso.value.pedido_interno = "";
         oIngreso.value.total = 0;
         oIngreso.value.fecha_ingreso = "";
