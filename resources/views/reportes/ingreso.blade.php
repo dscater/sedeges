@@ -101,7 +101,7 @@
             </tr>
             <tr>
                 <td class="pl">CON DESTINO: <span class="bold">{{ $ingreso->almacen->nombre }}</span></td>
-                <td class="pl">DE PEDIDO INTERNO: <span class="bold">{{ $ingreso->pedido_interno ?? '' }}</span>
+                <td class="pl">ACTA DE RECEPCIÓN Y/O CONFORMIDAD: <span class="bold">{{ $ingreso->pedido_interno ?? '' }}</span>
                 </td>
             </tr>
         </tbody>
