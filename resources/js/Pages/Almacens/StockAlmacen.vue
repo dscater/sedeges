@@ -70,7 +70,13 @@ const columns = [
         data: null,
         render: function (data, type, row) {
             let buttons = ``;
-            buttons += `<button class="mx-1 rounded-0 btn btn-primary pdf" data-id="${row.id}"><i class="fa fa-print"></i></button>`;
+            if (row.d_no) {
+                buttons += `<button class="rounded-0 btn btn-primary mr-1 pdf" data-id="${row.id}"><i class="fa fa-print"></i></button>`;
+            }
+
+            if (row.d_si) {
+                buttons += `<button class="rounded-0 btn btn-success mr-1 pdf2" data-id="${row.id}"><i class="fa fa-print"></i></button>`;
+            }
 
             if (
                 props_page.auth?.user.permisos == "*" ||
@@ -111,6 +117,12 @@ const accionesRow = () => {
         e.preventDefault();
         let id = $(this).attr("data-id");
         window.open(route("ingresos.pdf", id), "_blank");
+    });
+    // pdf2
+    $("#table-producto").on("click", "button.pdf2", function (e) {
+        e.preventDefault();
+        let id = $(this).attr("data-id");
+        window.open(route("ingresos.pdf2", id), "_blank");
     });
     // editar
     $("#table-producto").on("click", "button.editar", function (e) {
