@@ -138,6 +138,7 @@ class IngresoController extends Controller
             // crear el ingreso
             // $array_codigo = Ingreso::getCodigoIngresoPartida($request["almacen_id"], $request["partida_id"], $gestion);
             $data_ingreso = [
+                "codigo" => $request["codigo"],
                 "almacen_id" => $request["almacen_id"],
                 "unidad_id" => Auth::user()->tipo == 'EXTERNO' ? Auth::user()->unidad_id : NULL,
                 "proveedor" => mb_strtoupper($request["proveedor"]),
@@ -146,8 +147,8 @@ class IngresoController extends Controller
                 "pedido_interno" => mb_strtoupper($request["pedido_interno"]),
                 "total" => $request["total"],
                 "fecha_ingreso" => $request["fecha_ingreso"],
-                "fecha_nota" => $request["fecha_nota"]?$request["fecha_nota"]:NULL,
-                "fecha_factura" => $request["fecha_factura"]?$request["fecha_factura"]:NULL,
+                "fecha_nota" => $request["fecha_nota"] ? $request["fecha_nota"] : NULL,
+                "fecha_factura" => $request["fecha_factura"] ? $request["fecha_factura"] : NULL,
                 "fecha_registro" => date('Y-m-d'),
                 "user_id" => Auth::user()->id,
             ];
@@ -223,6 +224,27 @@ class IngresoController extends Controller
         return $pdf->stream('ingreso.pdf');
     }
 
+    public function pdf2(Ingreso $ingreso)
+    {
+        $convertir = new NumeroALetras();
+        $array_monto = explode('.', $ingreso->total);
+        $literal = $convertir->convertir($array_monto[0]);
+        $literal .= " " . $array_monto[1];
+        $literal = mb_strtoupper($literal);
+        $literal = ucfirst($literal) . "/100." . " BOLIVIANOS";;
+        $pdf = PDF::loadView('reportes.ingreso2', compact('ingreso', 'literal'))->setPaper('letter', 'portrait');
+
+        // ENUMERAR LAS PÁGINAS USANDO CANVAS
+        $pdf->output();
+        $dom_pdf = $pdf->getDomPDF();
+        $canvas = $dom_pdf->get_canvas();
+        $alto = $canvas->get_height();
+        $ancho = $canvas->get_width();
+        $canvas->page_text($ancho - 90, $alto - 25, "Página {PAGE_NUM} de {PAGE_COUNT}", null, 9, array(0, 0, 0));
+
+        return $pdf->stream('ingreso.pdf');
+    }
+
     public function update(Ingreso $ingreso, IngresoUpdateRequest $request)
     {
         DB::beginTransaction();
@@ -230,6 +252,7 @@ class IngresoController extends Controller
             $gestion = date("Y", strtotime($request["fecha_ingreso"]));
             $array_codigo = Ingreso::getCodigoIngresoPartida($request["almacen_id"], $request["partida_id"], $gestion);
             $data_ingreso = [
+                "codigo" => $request["codigo"],
                 "almacen_id" => $request["almacen_id"],
                 "unidad_id" => Auth::user()->tipo == 'EXTERNO' ? Auth::user()->unidad_id : NULL,
                 "proveedor" => mb_strtoupper($request["proveedor"]),
@@ -238,8 +261,8 @@ class IngresoController extends Controller
                 "pedido_interno" => mb_strtoupper($request["pedido_interno"]),
                 "total" => $request["total"],
                 "fecha_ingreso" => $request["fecha_ingreso"],
-                "fecha_nota" => $request["fecha_nota"]?$request["fecha_nota"]:NULL,
-                "fecha_factura" => $request["fecha_factura"]?$request["fecha_factura"]:NULL,
+                "fecha_nota" => $request["fecha_nota"] ? $request["fecha_nota"] : NULL,
+                "fecha_factura" => $request["fecha_factura"] ? $request["fecha_factura"] : NULL,
                 "user_id" => Auth::user()->id,
             ];
 
@@ -289,10 +312,11 @@ class IngresoController extends Controller
             if ($request["_redirect_group"] && (bool)$request["_redirect_group"] == true) {
                 return redirect()->route('almacens.stockAlmacen', $ingreso->almacen_id)
                     ->with("bien", "Registro actualizado")
+                    ->with("param", $ingreso->id)
                     ->withInput(['g' => $ingreso->almacen->grupo]);
             }
 
-            return redirect()->route("ingresos.index")->with("bien", "Registro actualizado");
+            return redirect()->route("ingresos.index")->with("bien", "Registro actualizado")->with("param", $ingreso->id);
         } catch (\Exception $e) {
             DB::rollBack();
             // Log::debug($e->getMessage());

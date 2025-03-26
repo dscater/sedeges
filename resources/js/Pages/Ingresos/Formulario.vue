@@ -301,6 +301,25 @@ onMounted(() => {});
                     <form @submit.prevent="enviarFormulario()">
                         <div class="row">
                             <div class="col-md-4 mb-2">
+                                <label>Código*</label>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    :class="{
+                                        'parsley-error': form.errors?.codigo,
+                                    }"
+                                    v-model="form.codigo"
+                                />
+                                <ul
+                                    v-if="form.errors?.codigo"
+                                    class="parsley-errors-list filled"
+                                >
+                                    <li class="parsley-required">
+                                        {{ form.errors?.codigo }}
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="col-md-4 mb-2">
                                 <label>Proveedor*</label>
                                 <input
                                     type="text"

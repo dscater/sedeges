@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>BimestralDetalle</title>
+    <title>CuatrimestralDetalle</title>
     <style type="text/css">
         * {
             font-family: sans-serif;
@@ -11,7 +11,7 @@
 
         @page {
             margin-top: 1.5cm;
-            margin-bottom: 0.3cm;
+            margin-bottom: 1cm;
             margin-left: 0.3cm;
             margin-right: 0.3cm;
         }
@@ -275,164 +275,165 @@
                         $ingresos->where('partida_id', $partida->id);
                         $ingresos = $ingresos->get();
                     @endphp
-                    <tr>
-                        <td colspan="3" class="bg3 bold">PARTIDA N°{{ $partida->nro_partida }}</td>
-                        <td colspan="14"></td>
-                    </tr>
-                    @forelse ($ingresos as $ingreso)
-                        @php
-                            // SALDOS
-                            $saldo = 0;
-                            if ($fecha_ini && $fecha_fin) {
-                                $reg_ingresos = App\Models\IngresoDetalle::select('ingreso_detalles.*')
-                                    ->join('ingresos', 'ingresos.id', '=', 'ingreso_detalles.ingreso_id')
-                                    ->where('donacion', 'NO');
-                                $reg_ingresos->where('ingresos.almacen_id', $almacen->id);
-                                $reg_ingresos->where('fecha_registro', '<', $fecha_ini);
-                                $reg_ingresos->where('partida_id', $partida->id);
-                                $reg_ingresos->where('producto_id', $ingreso->producto_id);
-
-                                // EXTERNO
-                                $user = Auth::user();
-                                if ($user->tipo == 'EXTERNO') {
-                                    $ingresos->where('ingresos.unidad_id', $user->unidad_id);
-                                    $ingresos->where('ingresos.user_id', $user->id);
-                                }
-
-                                $reg_ingresos = $reg_ingresos->sum('ingreso_detalles.total');
-
-                                $reg_egresos = App\Models\IngresoDetalle::select('ingreso_detalles.*')
-                                    ->join('ingresos', 'ingresos.id', '=', 'ingreso_detalles.ingreso_id')
-                                    ->where('donacion', 'NO')
-                                    ->join('egresos', 'egresos.ingreso_id', '=', 'ingresos.id');
-                                $reg_egresos->where('egresos.almacen_id', $almacen->id);
-                                $reg_egresos->where('egresos.fecha_registro', '<', $fecha_ini);
-                                $reg_egresos->where('egresos.partida_id', $partida->id);
-                                $reg_egresos->where('egresos.producto_id', $ingreso->producto_id);
-                                // EXTERNO
-                                $user = Auth::user();
-                                if ($user->tipo == 'EXTERNO') {
-                                    $reg_egresos->where('ingresos.unidad_id', $user->unidad_id);
-                                    $reg_egresos->where('ingresos.user_id', $user->id);
-                                }
-                                $reg_egresos = $reg_egresos->sum('egresos.total');
-                                $saldo = $reg_ingresos - $reg_egresos;
+                    @php
+                        // VERIFICAR SALDOS ANTERIORES
+                        $saldo = 0;
+                        $reg_ingresos = [];
+                        if ($fecha_ini && $fecha_fin) {
+                            $reg_ingresos = App\Models\IngresoDetalle::select('ingreso_detalles.*')
+                                ->join('ingresos', 'ingresos.id', '=', 'ingreso_detalles.ingreso_id')
+                                ->where('donacion', 'NO');
+                            $reg_ingresos->where('ingresos.almacen_id', $almacen->id);
+                            $reg_ingresos->where('fecha_registro', '<', $fecha_ini);
+                            $reg_ingresos->where('partida_id', $partida->id);
+                            // EXTERNO
+                            $user = Auth::user();
+                            if ($user->tipo == 'EXTERNO') {
+                                $reg_ingresos->where('ingresos.unidad_id', $user->unidad_id);
+                                $reg_ingresos->where('ingresos.user_id', $user->id);
                             }
-                        @endphp
-
+                            $reg_ingresos = $reg_ingresos->get();
+                        }
+                    @endphp
+                    @if (count($ingresos) > 0 || count($reg_ingresos) > 0)
                         <tr>
-                            <td>{{ $cont++ }}</td>
-                            <td>{{ $ingreso->codigo }}</td>
-                            <td>{{ $ingreso->unidad_medida->nombre }}</td>
-                            <td>{{ $ingreso->producto->nombre }}</td>
-                            <td class="centreado bg4"></td>
-                            <td class="centreado bg4"></td>
-                            <td class="centreado bg4">{{ $saldo }}</td>
-                            <td>{{ $ingreso->fecha_ingreso_t }}</td>
-                            <td class="centreado bg1">{{ $ingreso->cantidad }}</td>
-                            <td class="centreado bg1">{{ $ingreso->costo }}</td>
-                            <td class="centreado bg1">{{ $ingreso->total }}</td>
-                            <td class="centreado bg2">{{ $ingreso->egreso ? $ingreso->egreso->cantidad : 0 }}</td>
-                            <td class="centreado bg2">{{ $ingreso->egreso ? $ingreso->egreso->costo : 0 }}</td>
-                            <td class="centreado bg2">{{ $ingreso->egreso ? $ingreso->egreso->total : 0 }}</td>
-                            <td class="centreado bg3">
-                                {{ $ingreso->egreso ? $ingreso->egreso->s_cantidad : $ingreso->cantidad }}</td>
-                            <td class="centreado bg3">{{ $ingreso->costo }}</td>
-                            <td class="centreado bg3">
-                                {{ $ingreso->egreso ? $ingreso->egreso->s_total : $ingreso->total }}</td>
+                            <td colspan="3" class="bg3 bold">PARTIDA N°{{ $partida->nro_partida }}</td>
+                            <td colspan="14"></td>
                         </tr>
-                        @php
-
-                            // total partridas
-                            $totalp1 += (float) $saldo;
-                            $totalp2 += (float) $ingreso->total;
-                            $totalp3 += $ingreso->egreso ? (float) $ingreso->egreso->total : 0;
-                            $totalp4 += $ingreso->egreso ? (float) $ingreso->egreso->s_total : $ingreso->cantidad;
-                            // Illuminate\Support\Facades\Log::debug('DD');
-
-                            // totalgeneral
-                            $total1 += (float) $saldo;
-                            $total2 += (float) $ingreso->total;
-                            $total3 += $ingreso->egreso ? (float) $ingreso->egreso->total : 0;
-                            $total4 += $ingreso->egreso ? (float) $ingreso->egreso->s_total : $ingreso->cantidad;
-                        @endphp
-                    @empty
-                        @php
-                            // VERIFICAR SALDOS ANTERIORES
-                            $saldo = 0;
-                            $reg_ingresos = [];
-                            if ($fecha_ini && $fecha_fin) {
-                                $reg_ingresos = App\Models\IngresoDetalle::select('ingreso_detalles.*')
-                                    ->join('ingresos', 'ingresos.id', '=', 'ingreso_detalles.ingreso_id')
-                                    ->where('donacion', 'NO');
-                                $reg_ingresos->where('ingresos.almacen_id', $almacen->id);
-                                $reg_ingresos->where('fecha_registro', '<', $fecha_ini);
-                                $reg_ingresos->where('partida_id', $partida->id);
-                                // EXTERNO
-                                $user = Auth::user();
-                                if ($user->tipo == 'EXTERNO') {
-                                    $reg_ingresos->where('ingresos.unidad_id', $user->unidad_id);
-                                    $reg_ingresos->where('ingresos.user_id', $user->id);
-                                }
-                                $reg_ingresos = $reg_ingresos->get();
-                            }
-                        @endphp
-                        @forelse ($reg_ingresos as $r_ingreso)
+                        @forelse ($ingresos as $ingreso)
                             @php
-                                $saldo = $r_ingreso->total;
-                                if ($r_ingreso->egreso) {
-                                    $saldo = (float) $r_ingreso->total - $r_ingreso->egreso->total;
+                                // SALDOS
+                                $saldo = 0;
+                                if ($fecha_ini && $fecha_fin) {
+                                    $sum_reg_ingresos = App\Models\IngresoDetalle::select('ingreso_detalles.*')
+                                        ->join('ingresos', 'ingresos.id', '=', 'ingreso_detalles.ingreso_id')
+                                        ->where('donacion', 'NO');
+                                    $sum_reg_ingresos->where('ingresos.almacen_id', $almacen->id);
+                                    $sum_reg_ingresos->where('fecha_registro', '<', $fecha_ini);
+                                    $sum_reg_ingresos->where('partida_id', $partida->id);
+                                    $sum_reg_ingresos->where('producto_id', $ingreso->producto_id);
+
+                                    // EXTERNO
+                                    $user = Auth::user();
+                                    if ($user->tipo == 'EXTERNO') {
+                                        $ingresos->where('ingresos.unidad_id', $user->unidad_id);
+                                        $ingresos->where('ingresos.user_id', $user->id);
+                                    }
+
+                                    $sum_reg_ingresos = $sum_reg_ingresos->sum('ingreso_detalles.total');
+
+                                    $reg_egresos = App\Models\IngresoDetalle::select('ingreso_detalles.*')
+                                        ->join('ingresos', 'ingresos.id', '=', 'ingreso_detalles.ingreso_id')
+                                        ->where('donacion', 'NO')
+                                        ->join('egresos', 'egresos.ingreso_id', '=', 'ingresos.id');
+                                    $reg_egresos->where('egresos.almacen_id', $almacen->id);
+                                    $reg_egresos->where('egresos.fecha_registro', '<', $fecha_ini);
+                                    $reg_egresos->where('egresos.partida_id', $partida->id);
+                                    $reg_egresos->where('egresos.producto_id', $ingreso->producto_id);
+                                    // EXTERNO
+                                    $user = Auth::user();
+                                    if ($user->tipo == 'EXTERNO') {
+                                        $reg_egresos->where('ingresos.unidad_id', $user->unidad_id);
+                                        $reg_egresos->where('ingresos.user_id', $user->id);
+                                    }
+                                    $reg_egresos = $reg_egresos->sum('egresos.total');
+                                    $saldo = $sum_reg_ingresos - $reg_egresos;
                                 }
                             @endphp
+
                             <tr>
                                 <td>{{ $cont++ }}</td>
-                                <td>{{ $r_ingreso->codigo }}</td>
-                                <td>{{ $r_ingreso->unidad_medida->nombre }}</td>
-                                <td>{{ $r_ingreso->producto->nombre }}</td>
+                                <td>{{ $ingreso->codigo }}</td>
+                                <td>{{ $ingreso->unidad_medida->nombre }}</td>
+                                <td>{{ $ingreso->producto->nombre }}</td>
                                 <td class="centreado bg4"></td>
                                 <td class="centreado bg4"></td>
                                 <td class="centreado bg4">{{ $saldo }}</td>
-                                <td class="centreado">-</td>
-                                <td class="centreado bg1">-</td>
-                                <td class="centreado bg1">-</td>
-                                <td class="centreado bg1">-</td>
-                                <td class="centreado bg2">-</td>
-                                <td class="centreado bg2">-</td>
-                                <td class="centreado bg2">-</td>
-                                <td class="centreado bg3">-</td>
-                                <td class="centreado bg3">-</td>
-                                <td class="centreado bg3">{{ $saldo }}</td>
+                                <td>{{ $ingreso->fecha_ingreso_t }}</td>
+                                <td class="centreado bg1">{{ $ingreso->cantidad }}</td>
+                                <td class="centreado bg1">{{ $ingreso->costo }}</td>
+                                <td class="centreado bg1">{{ $ingreso->total }}</td>
+                                <td class="centreado bg2">{{ $ingreso->egreso ? $ingreso->egreso->cantidad : 0 }}</td>
+                                <td class="centreado bg2">{{ $ingreso->egreso ? $ingreso->egreso->costo : 0 }}</td>
+                                <td class="centreado bg2">{{ $ingreso->egreso ? $ingreso->egreso->total : 0 }}</td>
+                                <td class="centreado bg3">
+                                    {{ $ingreso->egreso ? $ingreso->egreso->s_cantidad : $ingreso->cantidad }}</td>
+                                <td class="centreado bg3">{{ $ingreso->costo }}</td>
+                                <td class="centreado bg3">
+                                    {{ $ingreso->egreso ? $ingreso->egreso->s_total : $ingreso->total }}</td>
                             </tr>
-
                             @php
-                                // partida
-                                $totalp1 += (float) $saldo;
-                                $totalp4 += (float) $saldo;
 
-                                // general
+                                // total partridas
+                                $totalp1 += (float) $saldo;
+                                $totalp2 += (float) $ingreso->total;
+                                $totalp3 += $ingreso->egreso ? (float) $ingreso->egreso->total : 0;
+                                $totalp4 += $ingreso->egreso ? (float) $ingreso->egreso->s_total : $ingreso->total;
+                                // Illuminate\Support\Facades\Log::debug('DD');
+
+                                // totalgeneral
                                 $total1 += (float) $saldo;
-                                $total4 += (float) $saldo;
+                                $total2 += (float) $ingreso->total;
+                                $total3 += $ingreso->egreso ? (float) $ingreso->egreso->total : 0;
+                                $total4 += $ingreso->egreso ? (float) $ingreso->egreso->s_total : $ingreso->total;
                             @endphp
                         @empty
-                            <tr>
-                                <td colspan="17">NO SE ENCONTRARÓN REGISTROS</td>
-                            </tr>
+                            @forelse ($reg_ingresos as $r_ingreso)
+                                @php
+                                    $saldo = $r_ingreso->total;
+                                    if ($r_ingreso->egreso) {
+                                        $saldo = (float) $r_ingreso->total - $r_ingreso->egreso->total;
+                                    }
+                                @endphp
+                                <tr>
+                                    <td>{{ $cont++ }}</td>
+                                    <td>{{ $r_ingreso->codigo }}</td>
+                                    <td>{{ $r_ingreso->unidad_medida->nombre }}</td>
+                                    <td>{{ $r_ingreso->producto->nombre }}</td>
+                                    <td class="centreado bg4"></td>
+                                    <td class="centreado bg4"></td>
+                                    <td class="centreado bg4">{{ $saldo }}</td>
+                                    <td class="centreado">-</td>
+                                    <td class="centreado bg1">-</td>
+                                    <td class="centreado bg1">-</td>
+                                    <td class="centreado bg1">-</td>
+                                    <td class="centreado bg2">-</td>
+                                    <td class="centreado bg2">-</td>
+                                    <td class="centreado bg2">-</td>
+                                    <td class="centreado bg3">-</td>
+                                    <td class="centreado bg3">-</td>
+                                    <td class="centreado bg3">{{ $saldo }}</td>
+                                </tr>
+
+                                @php
+                                    // partida
+                                    $totalp1 += (float) $saldo;
+                                    $totalp4 += (float) $saldo;
+
+                                    // general
+                                    $total1 += (float) $saldo;
+                                    $total4 += (float) $saldo;
+                                @endphp
+                            @empty
+                                <tr>
+                                    <td colspan="17">NO SE ENCONTRARÓN REGISTROS</td>
+                                </tr>
+                            @endforelse
                         @endforelse
-                    @endforelse
 
-
-                    <tr class=bg3>
-                        <td colspan="4" class="derecha bold">TOTAL PARTIDA N° {{ $partida->nro_partida }}</td>
-                        <td class="bold centreado" colspan="2"></td>
-                        <td class="bold centreado">{{ number_format($totalp1, 2, '.', '') }}</td>
-                        <td></td>
-                        <td class="bold centreado" colspan="2"></td>
-                        <td class="bold centreado">{{ number_format($totalp2, 2, '.', '') }}</td>
-                        <td class="bold centreado" colspan="2"></td>
-                        <td class="bold centreado">{{ number_format($totalp3, 2, '.', '') }}</td>
-                        <td class="bold centreado" colspan="2"></td>
-                        <td class="bold centreado">{{ number_format($totalp4, 2, '.', '') }}</td>
-                    </tr>
+                        <tr class=bg3>
+                            <td colspan="4" class="derecha bold">TOTAL PARTIDA N° {{ $partida->nro_partida }}</td>
+                            <td class="bold centreado" colspan="2"></td>
+                            <td class="bold centreado">{{ number_format($totalp1, 2, '.', '') }}</td>
+                            <td></td>
+                            <td class="bold centreado" colspan="2"></td>
+                            <td class="bold centreado">{{ number_format($totalp2, 2, '.', '') }}</td>
+                            <td class="bold centreado" colspan="2"></td>
+                            <td class="bold centreado">{{ number_format($totalp3, 2, '.', '') }}</td>
+                            <td class="bold centreado" colspan="2"></td>
+                            <td class="bold centreado">{{ number_format($totalp4, 2, '.', '') }}</td>
+                        </tr>
+                    @endif
                 @endforeach
                 <tr>
                     <td colspan="4" class="derecha bold">TOTAL GENERAL</td>

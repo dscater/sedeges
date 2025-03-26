@@ -11,6 +11,7 @@ class Ingreso extends Model
     use HasFactory;
 
     protected $fillable = [
+        "codigo",
         "almacen_id",
         "unidad_id",
         "proveedor",
@@ -25,7 +26,68 @@ class Ingreso extends Model
         "user_id",
     ];
 
-    protected $appends = ["fecha_ingreso_t", "fecha_registro_t", "fecha_nota_t", "fecha_factura_t", "nro_cod"];
+    protected $appends = ["fecha_ingreso_t", "fecha_registro_t", "fecha_nota_t", "fecha_factura_t", "nro_cod", "hora", "dia_txt", "mes_txt", "d_no", "d_si"];
+
+    public function getDNoAttribute()
+    {
+        $ingreso_detalles = $this->ingreso_detalles()->where("donacion", "NO")->get();
+        if (count($ingreso_detalles) > 0) {
+            return true;
+        }
+        return false;
+    }
+
+    public function getDSiAttribute()
+    {
+        $ingreso_detalles = $this->ingreso_detalles()->where("donacion", "SI")->get();
+        if (count($ingreso_detalles) > 0) {
+            return true;
+        }
+        return false;
+    }
+
+    public function getMesTxtAttribute()
+    {
+        $mes = date("m", strtotime($this->fecha_ingreso));
+
+        $meses = [
+            "01" => "Enero",
+            "02" => "Febrero",
+            "03" => "Marzo",
+            "04" => "Abril",
+            "05" => "Mayo",
+            "06" => "Junio",
+            "07" => "Julio",
+            "08" => "Agosto",
+            "09" => "Septiembre",
+            "10" => "Octubre",
+            "11" => "Noviembre",
+            "12" => "Diciembre",
+        ];
+
+        return $meses[$mes];
+    }
+    public function getDiaTxtAttribute()
+    {
+        $w = date("w", strtotime($this->fecha_ingreso));
+
+        $dias = [
+            0 => "Domingo",
+            1 => "Lunes",
+            2 => "Martes",
+            3 => "Miércoles",
+            4 => "Jueves",
+            5 => "Viernes",
+            6 => "Sábado",
+        ];
+
+        return $dias[$w];
+    }
+
+    public function getHoraAttribute()
+    {
+        return date("H:i", strtotime($this->created_at));
+    }
 
     public function getNroCodAttribute()
     {

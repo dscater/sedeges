@@ -161,6 +161,7 @@ Route::middleware(['auth', 'permisoUsuario'])->prefix("admin")->group(function (
     Route::get("ingresos/paginado", [IngresoController::class, 'paginado'])->name("ingresos.paginado");
     Route::get("ingresos/listado", [IngresoController::class, 'listado'])->name("ingresos.listado");
     Route::get("ingresos/pdf/{ingreso}", [IngresoController::class, 'pdf'])->name("ingresos.pdf");
+    Route::get("ingresos/pdf2/{ingreso}", [IngresoController::class, 'pdf2'])->name("ingresos.pdf2");
     Route::resource("ingresos", IngresoController::class)->only(
         ["index", "store", "update", "show", "destroy"]
     );

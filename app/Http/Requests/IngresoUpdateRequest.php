@@ -23,6 +23,7 @@ class IngresoUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
+            "codigo" => "required|unique:ingresos,codigo," . $this->id,
             "almacen_id" => "required",
             "proveedor" => "required|string",
             "con_fondos" => "nullable|string",
@@ -36,6 +37,8 @@ class IngresoUpdateRequest extends FormRequest
     public function messages(): array
     {
         return [
+            "codigo.required" => "Este campo es obligatorio",
+            "codigo.unique" => "Este código ya fue registrado",
             "almacen_id.required" => "Este campo es obligatorio",
             "proveedor.required" => "Este campo es obligatorio",
             "proveedor.string" => "Debes ingresar un texto",

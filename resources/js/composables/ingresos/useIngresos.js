@@ -4,6 +4,7 @@ import { usePage } from "@inertiajs/vue3";
 
 const oIngreso = ref({
     id: 0,
+    codigo: "",
     almacen_id: "",
     unidad_id: "",
     proveedor: "",
@@ -147,6 +148,7 @@ export const useIngresos = () => {
     const setIngreso = (item = null) => {
         if (item) {
             oIngreso.value.id = item.id;
+            oIngreso.value.codigo = item.codigo;
             oIngreso.value.almacen_id = item.almacen_id;
             oIngreso.value.unidad_id = item.unidad_id;
             oIngreso.value.proveedor = item.proveedor;
@@ -168,6 +170,7 @@ export const useIngresos = () => {
 
     const limpiarIngreso = () => {
         oIngreso.value.id = 0;
+        oIngreso.value.codigo = "";
         oIngreso.value.almacen_id = "";
         oIngreso.value.unidad_id = "";
         oIngreso.value.proveedor = "";

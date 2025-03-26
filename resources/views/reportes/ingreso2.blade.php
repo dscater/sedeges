@@ -62,6 +62,33 @@
         .derecha {
             text-align: right;
         }
+
+        .parrafo_info {
+            font-size: 10pt;
+            line-height: 0.6cm;
+            text-align: justify;
+        }
+
+        .span_info {
+            border-bottom: dashed 1px black;
+            padding-left: 17px;
+            padding-right: 17px;
+            font-weight: bold;
+        }
+
+        .span_resaltado {
+            font-size: 12pt;
+        }
+
+        .linea {
+            width: 100%;
+            border-bottom: dashed 1px black;
+            margin-top: 0.6cm;
+        }
+
+        .span_txt {
+            font-size: 10pt;
+        }
     </style>
 </head>
 
@@ -75,7 +102,7 @@
                 </td>
                 <td rowspan="2" width="70%" class="centreado">
                     <span class="bold">GOBIERNO AUTÓNOMO DEPARTAMENTAL DE LA PAZ</span><br />
-                    CONTROL SOBRE INGRESOS DE MATERIALES AL ALMACÉN <br />{{ $ingreso->almacen->nombre }}
+                    ACTA DE RECEPCIÓN DE DONACIÓN EN ESPECIE <br />{{ $ingreso->almacen->nombre }}
                 </td>
                 <td class="pl">ASF-01</td>
             </tr>
@@ -85,56 +112,40 @@
             </tr>
         </tbody>
     </table>
-    <table border="1" class="info">
-        <tbody>
-            <tr>
-                <td class="pl">PROVEEDOR: <span class="bold">{{ $ingreso->proveedor }}</span></td>
-                <td class="pl">FECHA DE INGRESO: <span class="bold">{{ $ingreso->fecha_ingreso_t }}</span></td>
-            </tr>
-            <tr>
-                <td class="pl">No. DE NOTA DE ENTREGA: <span class="bold">{{ $ingreso->con_fondos ?? '' }}</span>
-                </td>
-                <td class="pl">FECHA DE NOTA DE ENTREGA: <span
-                        class="bold">{{ $ingreso->fecha_nota_t ?? '' }}</span></td>
-
-            </tr>
-            <tr>
-                <td class="pl">No. FACTURA: <span class="bold">{{ $ingreso->nro_factura ?? '' }}</span></td>
-                <td class="pl">FECHA DE FACTURA: <span class="bold">{{ $ingreso->fecha_factura_t ?? '' }}</span>
-                </td>
-            </tr>
-            <tr>
-                <td class="pl">CON DESTINO: <span class="bold">{{ $ingreso->almacen->nombre }}</span></td>
-                <td class="pl">ACTA DE RECEPCIÓN Y/O CONFORMIDAD: <span
-                        class="bold">{{ $ingreso->pedido_interno ?? '' }}</span>
-                </td>
-            </tr>
-        </tbody>
-    </table>
+    <p class="parrafo_info">En la ciudad de La Paz, el día
+        <span class="span_info">{{ $ingreso->dia_txt }}</span>; {{ date('d', strtotime($ingreso->fecha_ingreos)) }} del
+        mes <span class="span_info">{{ $ingreso->mes_txt }}</span> de <span
+            class="span_info">{{ date('Y', strtotime($ingreso->fecha_ingreso)) }}</span> años, en predios de <span
+            class="span_info">{{ $ingreso->almacen->nombre }}</span> el/la Administrador(a)<span
+            class="span_info">{{ $ingreso->user->full_name }}</span> en representación del <span
+            class="span_resaltado"><i>Servicio Departamental de Gestión Social (SEDEGES)</i></span>, procedió a la
+        recepción de <span class="span_info">{{ $ingreso->pedido_interno }}</span> en calidad de <span
+            class="bold">DONACIÓN</span> otorgada por <span class="span_info">{{ $ingreso->proveedor }}</span>
+    </p>
     <table class="info" border="1">
         <thead>
             <tr>
                 <th width="7%">Item</th>
+                <th>Descripción</th>
                 <th width="12%">Cantidad</th>
-                <th width="12%">Unidad</th>
-                <th>Detalle</th>
                 <th width="10%">Precio Unitario</th>
+                <th width="12%">Unidad</th>
                 <th width="10%">Precio Total</th>
             </tr>
         </thead>
         <tbody>
             @php
-                $ingreso_detalles = App\Models\IngresoDetalle::where('donacion', 'NO')
+                $ingreso_detalles = App\Models\IngresoDetalle::where('donacion', 'SI')
                     ->where('ingreso_id', $ingreso->id)
                     ->get();
             @endphp
             @foreach ($ingreso_detalles as $key => $item)
                 <tr>
                     <td class="centreado">{{ $key + 1 }}</td>
-                    <td class="centreado">{{ $item->cantidad }}</td>
-                    <td class="centreado">{{ $item->unidad_medida->nombre }}</td>
                     <td class="pl">{{ $item->producto->nombre }}</td>
+                    <td class="centreado">{{ $item->cantidad }}</td>
                     <td class="centreado derecha">{{ $item->costo }}</td>
+                    <td class="centreado">{{ $item->unidad_medida->nombre }}</td>
                     <td class="centreado derecha">{{ $item->total }}</td>
                 </tr>
             @endforeach
@@ -144,6 +155,11 @@
             </tr>
         </tbody>
     </table>
+    <br>
+    <span class="span_txt">OBSERVACIONES:</span>
+    <div class="linea"></div>
+    <div class="linea"></div>
+    <div class="linea"></div>
 </body>
 
 </html>
