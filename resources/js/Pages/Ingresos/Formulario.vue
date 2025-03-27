@@ -320,6 +320,32 @@ onMounted(() => {});
                                 </ul>
                             </div>
                             <div class="col-md-4 mb-2">
+                                <label>Donación*</label>
+                                <select
+                                    class="form-control"
+                                    :class="{
+                                        'parsley-error': form.errors?.donacion,
+                                    }"
+                                    v-model="form.donacion"
+                                >
+                                    <option value="">- Seleccione -</option>
+                                    <option
+                                        v-for="item in ['NO', 'SI']"
+                                        :value="item"
+                                    >
+                                        {{ item }}
+                                    </option>
+                                </select>
+                                <ul
+                                    v-if="form.errors?.donacion"
+                                    class="parsley-errors-list filled"
+                                >
+                                    <li class="parsley-required">
+                                        {{ form.errors?.donacion }}
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="col-md-4 mb-2">
                                 <label>Proveedor*</label>
                                 <input
                                     type="text"
@@ -491,6 +517,26 @@ onMounted(() => {});
                                     </li>
                                 </ul>
                             </div>
+                            <div class="col-md-4 mb-2">
+                                <label>Observaciones</label>
+                                <el-input
+                                    type="textarea"
+                                    :class="{
+                                        'parsley-error':
+                                            form.errors?.observaciones,
+                                    }"
+                                    v-model="form.observaciones"
+                                    autosize
+                                ></el-input>
+                                <ul
+                                    v-if="form.errors?.observaciones"
+                                    class="parsley-errors-list filled"
+                                >
+                                    <li class="parsley-required">
+                                        {{ form.errors?.observaciones }}
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
                         <div class="row mt-2 overflow-auto">
                             <h4 clas="w-100 text-center">
@@ -508,7 +554,6 @@ onMounted(() => {});
                                     <thead>
                                         <tr>
                                             <th width="150px">Partida</th>
-                                            <th width="40px">Donación</th>
                                             <th>Producto</th>
                                             <th width="190px">Unidad Medida</th>
                                             <th width="100px">Cantidad</th>
@@ -557,30 +602,6 @@ onMounted(() => {});
                                                         {{ item.nombre }}
                                                     </el-option>
                                                 </el-select>
-                                            </td>
-                                            <td>
-                                                <select
-                                                    class="form-control"
-                                                    :class="{
-                                                        'parsley-error':
-                                                            form.errors
-                                                                ?.donacion,
-                                                    }"
-                                                    v-model="item.donacion"
-                                                >
-                                                    <option value="">
-                                                        - Seleccione -
-                                                    </option>
-                                                    <option
-                                                        v-for="item in [
-                                                            'NO',
-                                                            'SI',
-                                                        ]"
-                                                        :value="item"
-                                                    >
-                                                        {{ item }}
-                                                    </option>
-                                                </select>
                                             </td>
                                             <td>
                                                 <el-select
@@ -677,7 +698,8 @@ onMounted(() => {});
                                             <td>
                                                 <button
                                                     v-if="
-                                                        item.id == 0 && !item.egreso
+                                                        item.id == 0 &&
+                                                        !item.egreso
                                                     "
                                                     type="button"
                                                     class="btn btn-sm btn-danger"
@@ -693,7 +715,7 @@ onMounted(() => {});
                                     <tfoot>
                                         <tr class="bg-dark">
                                             <td
-                                                colspan="6"
+                                                colspan="5"
                                                 class="text-white font-weight-bold"
                                             >
                                                 TOTAL

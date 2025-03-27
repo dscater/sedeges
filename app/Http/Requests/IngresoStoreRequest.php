@@ -25,12 +25,14 @@ class IngresoStoreRequest extends FormRequest
         return [
             "codigo" => "required|unique:ingresos,codigo",
             "almacen_id" => "required",
+            "donacion" => "required",
             "proveedor" => "required|string",
             "con_fondos" => "nullable|string",
             "nro_factura" => "nullable|string",
             "pedido_interno" => "nullable|string",
             "ingreso_detalles" => ["required", "array", "min:1", new IngresoDetalleRule],
             "fecha_ingreso" => "required|date",
+            "observaciones" => "nullable|string",
             "fecha_nota" => "nullable|date",
             "fecha_factura" => "nullable|date",
         ];
@@ -42,6 +44,7 @@ class IngresoStoreRequest extends FormRequest
             "codigo.required" => "Este campo es obligatorio",
             "codigo.unique" => "Este código ya fue registrado",
             "almacen_id.required" => "Este campo es obligatorio",
+            "donacion.required" => "Este campo es obligatorio",
             "proveedor.required" => "Este campo es obligatorio",
             "proveedor.string" => "Debes ingresar un texto",
             "ingreso_detalles.required" => "Debes ingresar al menos 1 producto",
@@ -51,6 +54,7 @@ class IngresoStoreRequest extends FormRequest
             "nro_factura.string" => "Debes ingresar un texto",
             "pedido_interno.string" => "Debes ingresar un texto",
             "fecha_ingreso.required" => "Este campo es obligatorio",
+            "observaciones.string" => "Debes ingresar un texto",
             "fecha_nota.date" => "Debes ingresar una fecha valida",
             "fecha_factura.date" => "Debes ingresar una fecha valida",
         ];

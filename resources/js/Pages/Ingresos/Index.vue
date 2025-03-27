@@ -36,6 +36,10 @@ const columns = [
         },
     },
     {
+        title: "DONACIÓN",
+        data: "donacion",
+    },
+    {
         title: "PROVEEDOR",
         data: "proveedor",
     },
@@ -76,13 +80,13 @@ const columns = [
         data: null,
         render: function (data, type, row) {
             let buttons = ``;
-            if(row.d_no){
+            // if(row.d_no){
                 buttons += `<button class="rounded-0 btn btn-primary mr-1 pdf" data-id="${row.id}"><i class="fa fa-print"></i></button>`;
-            }
+            // }
             
-            if(row.d_si){
-                buttons += `<button class="rounded-0 btn btn-success mr-1 pdf2" data-id="${row.id}"><i class="fa fa-print"></i></button>`;
-            }
+            // if(row.d_si){
+            //     buttons += `<button class="rounded-0 btn btn-success mr-1 pdf2" data-id="${row.id}"><i class="fa fa-print"></i></button>`;
+            // }
 
             if (
                 props_page.auth?.user.permisos == "*" ||

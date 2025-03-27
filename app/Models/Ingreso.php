@@ -12,6 +12,7 @@ class Ingreso extends Model
 
     protected $fillable = [
         "codigo",
+        "donacion",
         "almacen_id",
         "unidad_id",
         "proveedor",
@@ -22,6 +23,7 @@ class Ingreso extends Model
         "pedido_interno",
         "total",
         "fecha_ingreso",
+        "observaciones",
         "fecha_registro",
         "user_id",
     ];

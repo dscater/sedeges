@@ -5,6 +5,7 @@ import { usePage } from "@inertiajs/vue3";
 const oIngreso = ref({
     id: 0,
     codigo: "",
+    donacion: "",
     almacen_id: "",
     unidad_id: "",
     proveedor: "",
@@ -15,6 +16,7 @@ const oIngreso = ref({
     pedido_interno: "",
     total: 0,
     fecha_ingreso: "",
+    observaciones: "",
     fecha_registro: "",
     ingreso_detalles: [],
     _redirect_group: false,
@@ -149,6 +151,7 @@ export const useIngresos = () => {
         if (item) {
             oIngreso.value.id = item.id;
             oIngreso.value.codigo = item.codigo;
+            oIngreso.value.donacion = item.donacion;
             oIngreso.value.almacen_id = item.almacen_id;
             oIngreso.value.unidad_id = item.unidad_id;
             oIngreso.value.proveedor = item.proveedor;
@@ -159,6 +162,7 @@ export const useIngresos = () => {
             oIngreso.value.pedido_interno = item.pedido_interno;
             oIngreso.value.total = item.total;
             oIngreso.value.fecha_ingreso = item.fecha_ingreso;
+            oIngreso.value.observaciones = item.observaciones;
             oIngreso.value.fecha_registro = item.fecha_registro;
             oIngreso.value.ingreso_detalles = item.ingreso_detalles;
             oIngreso.value._method = "PUT";
@@ -171,6 +175,7 @@ export const useIngresos = () => {
     const limpiarIngreso = () => {
         oIngreso.value.id = 0;
         oIngreso.value.codigo = "";
+        oIngreso.value.donacion = "";
         oIngreso.value.almacen_id = "";
         oIngreso.value.unidad_id = "";
         oIngreso.value.proveedor = "";
@@ -181,6 +186,7 @@ export const useIngresos = () => {
         oIngreso.value.pedido_interno = "";
         oIngreso.value.total = 0;
         oIngreso.value.fecha_ingreso = "";
+        oIngreso.value.observaciones = "";
         oIngreso.value.fecha_registro = "";
         oIngreso.value.ingreso_detalles = [];
         oIngreso.value._redirect_group = false;

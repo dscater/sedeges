@@ -139,6 +139,7 @@ class IngresoController extends Controller
             // $array_codigo = Ingreso::getCodigoIngresoPartida($request["almacen_id"], $request["partida_id"], $gestion);
             $data_ingreso = [
                 "codigo" => $request["codigo"],
+                "donacion" => $request["donacion"],
                 "almacen_id" => $request["almacen_id"],
                 "unidad_id" => Auth::user()->tipo == 'EXTERNO' ? Auth::user()->unidad_id : NULL,
                 "proveedor" => mb_strtoupper($request["proveedor"]),
@@ -147,6 +148,7 @@ class IngresoController extends Controller
                 "pedido_interno" => mb_strtoupper($request["pedido_interno"]),
                 "total" => $request["total"],
                 "fecha_ingreso" => $request["fecha_ingreso"],
+                "observaciones" => mb_strtoupper($request["observaciones"]),
                 "fecha_nota" => $request["fecha_nota"] ? $request["fecha_nota"] : NULL,
                 "fecha_factura" => $request["fecha_factura"] ? $request["fecha_factura"] : NULL,
                 "fecha_registro" => date('Y-m-d'),
@@ -161,7 +163,7 @@ class IngresoController extends Controller
                     "almacen_id" => $nuevo_ingreso->almacen_id,
                     "unidad_id" => $nuevo_ingreso->unidad_id,
                     "partida_id" => $item["partida_id"],
-                    "donacion" => $item["donacion"],
+                    "donacion" => $nuevo_ingreso->donacion,
                     "producto_id" => $item["producto_id"],
                     "unidad_medida_id" => $item["unidad_medida_id"],
                     "cantidad" => $item["cantidad"],
@@ -253,6 +255,7 @@ class IngresoController extends Controller
             $array_codigo = Ingreso::getCodigoIngresoPartida($request["almacen_id"], $request["partida_id"], $gestion);
             $data_ingreso = [
                 "codigo" => $request["codigo"],
+                "donacion" => $request["donacion"],
                 "almacen_id" => $request["almacen_id"],
                 "unidad_id" => Auth::user()->tipo == 'EXTERNO' ? Auth::user()->unidad_id : NULL,
                 "proveedor" => mb_strtoupper($request["proveedor"]),
@@ -261,6 +264,7 @@ class IngresoController extends Controller
                 "pedido_interno" => mb_strtoupper($request["pedido_interno"]),
                 "total" => $request["total"],
                 "fecha_ingreso" => $request["fecha_ingreso"],
+                "observaciones" => mb_strtoupper($request["observaciones"]),
                 "fecha_nota" => $request["fecha_nota"] ? $request["fecha_nota"] : NULL,
                 "fecha_factura" => $request["fecha_factura"] ? $request["fecha_factura"] : NULL,
                 "user_id" => Auth::user()->id,
@@ -272,7 +276,7 @@ class IngresoController extends Controller
                     "almacen_id" => $ingreso->almacen_id,
                     "unidad_id" => $ingreso->unidad_id,
                     "partida_id" => $item["partida_id"],
-                    "donacion" => $item["donacion"],
+                    "donacion" => $request["donacion"],
                     "producto_id" => $item["producto_id"],
                     "unidad_medida_id" => $item["unidad_medida_id"],
                     "cantidad" => $item["cantidad"],
