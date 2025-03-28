@@ -89,6 +89,23 @@
         .span_txt {
             font-size: 10pt;
         }
+
+        .firmas {
+            margin-top: 70px;
+            font-size: 10pt;
+            width: 75%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .firmas td {
+            text-align: center;
+        }
+
+        .firmas tr:nth-child(even) td {
+            text-align: left;
+            padding-left: 60px;
+        }
     </style>
 </head>
 
@@ -121,7 +138,8 @@
             <tbody>
                 <tr>
                     <td class="pl">PROVEEDOR: <span class="bold">{{ $ingreso->proveedor }}</span></td>
-                    <td class="pl">FECHA DE INGRESO: <span class="bold">{{ $ingreso->fecha_ingreso_t }} {{ date("H:i a",strtotime($ingreso->hora_ingreso)) }}</span>
+                    <td class="pl">FECHA DE INGRESO: <span class="bold">{{ $ingreso->fecha_ingreso_t }}
+                            {{ date('H:i a', strtotime($ingreso->hora_ingreso)) }}</span>
                     </td>
                 </tr>
                 <tr>
@@ -147,7 +165,8 @@
             </tbody>
         </table>
     @else
-        <p class="parrafo_info">En la ciudad de La Paz, a horas <span class="span_info">{{ date("H:i a",strtotime($ingreso->hora_ingreso)) }}</span> el día
+        <p class="parrafo_info">En la ciudad de La Paz, a horas <span
+                class="span_info">{{ date('H:i a', strtotime($ingreso->hora_ingreso)) }}</span> el día
             <span class="span_info">{{ $ingreso->dia_txt }}</span>;
             {{ date('d', strtotime($ingreso->fecha_ingreos)) }} del
             mes <span class="span_info">{{ $ingreso->mes_txt }}</span> de <span
@@ -156,7 +175,8 @@
                 class="span_info">{{ $ingreso->user->full_name }}</span> en representación del <span
                 class="span_resaltado"><i>Servicio Departamental de Gestión Social (SEDEGES)</i></span>, procedió a la
             recepción de <span class="span_info">{{ $ingreso->pedido_interno }}</span> en calidad de <span
-                class="bold">DONACIÓN</span> otorgada por <span class="span_info">{{ $ingreso->proveedor }}</span>, para <span class="span_info">{{ $ingreso->para }}</span>
+                class="bold">DONACIÓN</span> otorgada por <span class="span_info">{{ $ingreso->proveedor }}</span>,
+            para <span class="span_info">{{ $ingreso->para }}</span>
         </p>
     @endif
     <table class="info" border="1">
@@ -191,8 +211,23 @@
         </tbody>
     </table>
     <br>
-    <span class="span_txt">OBSERVACIONES:</span>
-    <p class="linea">{{ $ingreso->observaciones }}</p>
+    @if ($ingreso->donacion == 'SI')
+        <span class="span_txt">OBSERVACIONES:</span>
+        <p class="linea">{{ $ingreso->observaciones }}</p>
+        <table class="firmas">
+            <tbody>
+                <tr>
+                    <td>RECIBE CONFORME</td>
+                    <td>ENTREGA CONFORME</td>
+                </tr>
+                <tr>
+                    {{-- <td>C.I. {{ $ingreso->user->id != 1 ? $ingreso->user->full_ci : '' }}</td> --}}
+                    <td>C.I.: {{ $ingreso->user->full_ci }}</td>
+                    <td>C.I.: </td>
+                </tr>
+            </tbody>
+        </table>
+    @endif
 </body>
 
 </html>
