@@ -23,7 +23,9 @@ class Ingreso extends Model
         "pedido_interno",
         "total",
         "fecha_ingreso",
+        "hora_ingreso",
         "observaciones",
+        "para",
         "fecha_registro",
         "user_id",
     ];

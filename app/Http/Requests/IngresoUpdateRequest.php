@@ -29,10 +29,14 @@ class IngresoUpdateRequest extends FormRequest
             "proveedor" => "required|string",
             "con_fondos" => "nullable|string",
             "nro_factura" => "nullable|string",
-            "pedido_interno" => "nullable|string",
+            "pedido_interno" => "required_if:donacion,SI|nullable|string",
             "ingreso_detalles" => ["required", "array", "min:1", new IngresoDetalleRule],
             "fecha_ingreso" => "required|date",
+            "hora_ingreso" => "required",
+            "para" => "required_if:donacion,SI|nullable|string",
             "observaciones" => "nullable|string",
+            "fecha_nota" => "nullable|date",
+            "fecha_factura" => "nullable|date",
         ];
     }
 
@@ -50,9 +54,15 @@ class IngresoUpdateRequest extends FormRequest
             "ingreso_detalles.min" => "Debes agregar al menos :min productos",
             "con_fondos.string" => "Debes ingresar un texto",
             "nro_factura.string" => "Debes ingresar un texto",
+            "pedido_interno.required_if" => "Debes completar este campo",
             "pedido_interno.string" => "Debes ingresar un texto",
             "fecha_ingreso.required" => "Este campo es obligatorio",
+            "hora_ingreso.required" => "Este campo es obligatorio",
+            "para.required_if" => "Este campo es obligatorio",
+            "para.string" => "Debes ingresar un texto",
             "observaciones.string" => "Debes ingresar un texto",
+            "fecha_nota.date" => "Debes ingresar una fecha valida",
+            "fecha_factura.date" => "Debes ingresar una fecha valida",
         ];
     }
 }

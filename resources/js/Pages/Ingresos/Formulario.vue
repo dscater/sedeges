@@ -236,6 +236,10 @@ const getInfoUnidad = (id) => {
     });
 };
 
+const resetErrores = () => {
+    form.clearErrors();
+};
+
 const accion_dialog = ref(0);
 const open_dialog = ref(false);
 
@@ -327,6 +331,7 @@ onMounted(() => {});
                                         'parsley-error': form.errors?.donacion,
                                     }"
                                     v-model="form.donacion"
+                                    @change="resetErrores()"
                                 >
                                     <option value="">- Seleccione -</option>
                                     <option
@@ -346,7 +351,14 @@ onMounted(() => {});
                                 </ul>
                             </div>
                             <div class="col-md-4 mb-2">
-                                <label>Proveedor*</label>
+                                <label>
+                                    <span v-if="form.donacion == 'SI'"
+                                        >Otorgado por*</span
+                                    >
+                                    <span v-if="form.donacion == 'NO'"
+                                        >Proveedor*</span
+                                    >
+                                </label>
                                 <input
                                     type="text"
                                     class="form-control"
@@ -425,6 +437,26 @@ onMounted(() => {});
                                 </ul>
                             </div>
                             <div class="col-md-4 mb-2">
+                                <label>Hora de ingreso*</label>
+                                <input
+                                    type="time"
+                                    class="form-control"
+                                    :class="{
+                                        'parsley-error':
+                                            form.errors?.hora_ingreso,
+                                    }"
+                                    v-model="form.hora_ingreso"
+                                />
+                                <ul
+                                    v-if="form.errors?.hora_ingreso"
+                                    class="parsley-errors-list filled"
+                                >
+                                    <li class="parsley-required">
+                                        {{ form.errors?.hora_ingreso }}
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="col-md-4 mb-2">
                                 <label>Con destino*</label>
                                 <el-select
                                     class="w-100"
@@ -477,7 +509,10 @@ onMounted(() => {});
                                     </li>
                                 </ul>
                             </div>
-                            <div class="col-md-4 mb-2">
+                            <div
+                                class="col-md-4 mb-2"
+                                v-if="form.donacion == 'NO'"
+                            >
                                 <label>Fecha de factura</label>
                                 <input
                                     type="date"
@@ -498,7 +533,14 @@ onMounted(() => {});
                                 </ul>
                             </div>
                             <div class="col-md-4 mb-2">
-                                <label>Acta de recepción y/o conformidad</label>
+                                <label>
+                                    <span v-if="form.donacion == 'SI'"
+                                        >Recepción de*</span
+                                    >
+                                    <span v-if="form.donacion == 'NO'"
+                                        >Acta de recepción y/o conformidad</span
+                                    >
+                                </label>
                                 <input
                                     type="text"
                                     class="form-control"
@@ -517,7 +559,32 @@ onMounted(() => {});
                                     </li>
                                 </ul>
                             </div>
-                            <div class="col-md-4 mb-2">
+                            <div
+                                class="col-md-4 mb-2"
+                                v-if="form.donacion == 'SI'"
+                            >
+                                <label>Para*</label>
+                                <el-input
+                                    type="textarea"
+                                    :class="{
+                                        'parsley-error': form.errors?.para,
+                                    }"
+                                    v-model="form.para"
+                                    autosize
+                                ></el-input>
+                                <ul
+                                    v-if="form.errors?.para"
+                                    class="parsley-errors-list filled"
+                                >
+                                    <li class="parsley-required">
+                                        {{ form.errors?.para }}
+                                    </li>
+                                </ul>
+                            </div>
+                            <div
+                                class="col-md-4 mb-2"
+                                v-if="form.donacion == 'SI'"
+                            >
                                 <label>Observaciones</label>
                                 <el-input
                                     type="textarea"

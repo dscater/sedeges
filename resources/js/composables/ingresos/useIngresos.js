@@ -17,7 +17,9 @@ const oIngreso = ref({
     total: 0,
     fecha_ingreso: "",
     observaciones: "",
-    fecha_registro: "",
+    hora_ingreso: "",
+    observaciones: "",
+    para: "",
     ingreso_detalles: [],
     _redirect_group: false,
     _method: "POST",
@@ -163,6 +165,9 @@ export const useIngresos = () => {
             oIngreso.value.total = item.total;
             oIngreso.value.fecha_ingreso = item.fecha_ingreso;
             oIngreso.value.observaciones = item.observaciones;
+            oIngreso.value.hora_ingreso = item.hora_ingreso;
+            oIngreso.value.observaciones = item.observaciones;
+            oIngreso.value.para = item.para;
             oIngreso.value.fecha_registro = item.fecha_registro;
             oIngreso.value.ingreso_detalles = item.ingreso_detalles;
             oIngreso.value._method = "PUT";
@@ -187,6 +192,9 @@ export const useIngresos = () => {
         oIngreso.value.total = 0;
         oIngreso.value.fecha_ingreso = "";
         oIngreso.value.observaciones = "";
+        oIngreso.value.hora_ingreso = "";
+        oIngreso.value.observaciones = "";
+        oIngreso.value.para = "";
         oIngreso.value.fecha_registro = "";
         oIngreso.value.ingreso_detalles = [];
         oIngreso.value._redirect_group = false;
