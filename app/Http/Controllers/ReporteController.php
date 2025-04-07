@@ -307,7 +307,7 @@ class ReporteController extends Controller
                         // INGRESOS RANGO FECHAS
                         $ingreso_detalles = IngresoDetalle::select("ingreso_detalles.*")
                             ->join("ingresos", "ingresos.id", "=", "ingreso_detalles.ingreso_id")
-                            ->where('donacion', 'SI');
+                            ->where('ingresos.donacion', 'SI');
                         $ingreso_detalles->where('ingresos.almacen_id', $almacen->id);
                         if ($fecha_ini && $fecha_fin) {
                             $ingreso_detalles->whereBetween('fecha_registro', [$fecha_ini, $fecha_fin]);
@@ -328,7 +328,7 @@ class ReporteController extends Controller
                         if ($fecha_ini && $fecha_fin) {
                             $reg_ingresos = IngresoDetalle::select("ingreso_detalles.*")
                                 ->join("ingresos", "ingresos.id", "=", "ingreso_detalles.ingreso_id")
-                                ->where('donacion', 'SI');
+                                ->where('ingresos.donacion', 'SI');
                             $reg_ingresos->where('ingresos.almacen_id', $almacen->id);
                             $reg_ingresos->where('fecha_registro', '<', $fecha_ini);
                             $reg_ingresos->where('partida_id', $partida->id);
@@ -356,7 +356,7 @@ class ReporteController extends Controller
                                     if ($fecha_ini && $fecha_fin) {
                                         $sum_reg_ingresos = IngresoDetalle::select("ingreso_detalles.*")
                                             ->join("ingresos", "ingresos.id", "=", "ingreso_detalles.ingreso_id")
-                                            ->where('donacion', 'SI');
+                                            ->where('ingresos.donacion', 'SI');
                                         $sum_reg_ingresos->where('ingresos.almacen_id', $almacen->id);
                                         $sum_reg_ingresos->where('fecha_registro', '<', $fecha_ini);
                                         $sum_reg_ingresos->where('partida_id', $partida->id);
@@ -372,7 +372,7 @@ class ReporteController extends Controller
 
                                         $reg_egresos = IngresoDetalle::select("ingreso_detalles.*")
                                             ->join("ingresos", "ingresos.id", "=", "ingreso_detalles.ingreso_id")
-                                            ->where('donacion', 'SI')->join(
+                                            ->where('ingresos.donacion', 'SI')->join(
                                                 'egresos',
                                                 'egresos.ingreso_detalle_id',
                                                 '=',
@@ -531,7 +531,7 @@ class ReporteController extends Controller
                     $cont = 1;
                     foreach ($partidas as $partida) {
                         $ingresos = IngresoDetalle::select("ingreso_detalles.*")
-                            ->join("ingresos", "ingresos.id", "=", "ingreso_detalles.ingreso_id")->where('donacion', 'SI');
+                            ->join("ingresos", "ingresos.id", "=", "ingreso_detalles.ingreso_id")->where('ingresos.donacion', 'SI');
                         $ingresos->where('ingresos.almacen_id', $almacen->id);
                         if ($fecha_ini && $fecha_fin) {
                             $ingresos->whereBetween('fecha_registro', [$fecha_ini, $fecha_fin]);
@@ -547,7 +547,7 @@ class ReporteController extends Controller
                         $ingresos = $ingresos->sum('ingreso_detalles.total');
 
                         $egresos = IngresoDetalle::select("ingreso_detalles.*")
-                            ->join("ingresos", "ingresos.id", "=", "ingreso_detalles.ingreso_id")->where('donacion', 'SI')->join(
+                            ->join("ingresos", "ingresos.id", "=", "ingreso_detalles.ingreso_id")->where('ingresos.donacion', 'SI')->join(
                                 'egresos',
                                 'egresos.ingreso_detalle_id',
                                 '=',
@@ -774,7 +774,7 @@ class ReporteController extends Controller
                         $totalp4 = 0;
 
                         $ingresos = IngresoDetalle::select("ingreso_detalles.*")
-                            ->join("ingresos", "ingresos.id", "=", "ingreso_detalles.ingreso_id")->where('donacion', 'NO');
+                            ->join("ingresos", "ingresos.id", "=", "ingreso_detalles.ingreso_id")->where('ingresos.donacion', 'NO');
                         $ingresos->where('ingresos.almacen_id', $almacen->id);
                         if ($fecha_ini && $fecha_fin) {
                             $ingresos->whereBetween('fecha_registro', [$fecha_ini, $fecha_fin]);
@@ -795,7 +795,7 @@ class ReporteController extends Controller
                         $reg_ingresos = [];
                         if ($fecha_ini && $fecha_fin) {
                             $reg_ingresos = IngresoDetalle::select("ingreso_detalles.*")
-                                ->join("ingresos", "ingresos.id", "=", "ingreso_detalles.ingreso_id")->where('donacion', 'NO');
+                                ->join("ingresos", "ingresos.id", "=", "ingreso_detalles.ingreso_id")->where('ingresos.donacion', 'NO');
                             $reg_ingresos->where('ingresos.almacen_id', $almacen->id);
                             $reg_ingresos->where('fecha_registro', '<', $fecha_ini);
                             $reg_ingresos->where('partida_id', $partida->id);
@@ -814,7 +814,7 @@ class ReporteController extends Controller
                                     $saldo = 0;
                                     if ($fecha_ini && $fecha_fin) {
                                         $sum_reg_ingresos = IngresoDetalle::select("ingreso_detalles.*")
-                                            ->join("ingresos", "ingresos.id", "=", "ingreso_detalles.ingreso_id")->where('donacion', 'NO');
+                                            ->join("ingresos", "ingresos.id", "=", "ingreso_detalles.ingreso_id")->where('ingresos.donacion', 'NO');
                                         $sum_reg_ingresos->where('ingresos.almacen_id', $almacen->id);
                                         $sum_reg_ingresos->where('fecha_registro', '<', $fecha_ini);
                                         $sum_reg_ingresos->where('partida_id', $partida->id);
@@ -828,7 +828,7 @@ class ReporteController extends Controller
                                         $sum_reg_ingresos = $sum_reg_ingresos->sum('ingreso_detalles.total');
 
                                         $reg_egresos = IngresoDetalle::select("ingreso_detalles.*")
-                                            ->join("ingresos", "ingresos.id", "=", "ingreso_detalles.ingreso_id")->where('donacion', 'NO')->join(
+                                            ->join("ingresos", "ingresos.id", "=", "ingreso_detalles.ingreso_id")->where('ingresos.donacion', 'NO')->join(
                                                 'egresos',
                                                 'egresos.ingreso_id',
                                                 '=',
@@ -989,7 +989,7 @@ class ReporteController extends Controller
                     $cont = 1;
                     foreach ($partidas as $partida) {
                         $ingresos = IngresoDetalle::select("ingreso_detalles.*")
-                            ->join("ingresos", "ingresos.id", "=", "ingreso_detalles.ingreso_id")->where('donacion', 'NO');
+                            ->join("ingresos", "ingresos.id", "=", "ingreso_detalles.ingreso_id")->where('ingresos.donacion', 'NO');
                         $ingresos->where('ingresos.almacen_id', $almacen->id);
                         if ($fecha_ini && $fecha_fin) {
                             $ingresos->whereBetween('fecha_registro', [$fecha_ini, $fecha_fin]);
@@ -1004,7 +1004,7 @@ class ReporteController extends Controller
                         $ingresos = $ingresos->sum('ingreso_detalles.total');
 
                         $egresos = IngresoDetalle::select("ingreso_detalles.*")
-                            ->join("ingresos", "ingresos.id", "=", "ingreso_detalles.ingreso_id")->where('donacion', 'NO')->join(
+                            ->join("ingresos", "ingresos.id", "=", "ingreso_detalles.ingreso_id")->where('ingresos.donacion', 'NO')->join(
                                 'egresos',
                                 'egresos.ingreso_id',
                                 '=',

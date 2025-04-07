@@ -215,7 +215,7 @@
                     @php
                         $ingresos = App\Models\IngresoDetalle::select('ingreso_detalles.*')
                             ->join('ingresos', 'ingresos.id', '=', 'ingreso_detalles.ingreso_id')
-                            ->where('donacion', 'SI');
+                            ->where('ingresos.donacion', 'SI');
                         $ingresos->where('ingresos.almacen_id', $almacen->id);
                         if ($fecha_ini && $fecha_fin) {
                             $ingresos->whereBetween('fecha_registro', [$fecha_ini, $fecha_fin]);
@@ -230,7 +230,7 @@
 
                         $ingresos = $ingresos->sum('ingreso_detalles.total');
 
-                        $egresos = App\Models\IngresoDetalle::where('donacion', 'SI')
+                        $egresos = App\Models\IngresoDetalle::where('ingresos.donacion', 'SI')
                             ->join('egresos', 'egresos.ingreso_detalle_id', '=', 'ingreso_detalles.id')
                             ->join('ingresos', 'ingresos.id', '=', 'ingreso_detalles.ingreso_id');
                         $egresos->where('egresos.almacen_id', $almacen->id);

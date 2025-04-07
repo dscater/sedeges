@@ -259,7 +259,7 @@
                         // INGRESOS RANGO FECHAS
                         $ingresos = App\Models\IngresoDetalle::select('ingreso_detalles.*')
                             ->join('ingresos', 'ingresos.id', '=', 'ingreso_detalles.ingreso_id')
-                            ->where('donacion', 'NO');
+                            ->where('ingresos.donacion', 'NO');
                         $ingresos->where('ingresos.almacen_id', $almacen->id);
                         if ($fecha_ini && $fecha_fin) {
                             $ingresos->whereBetween('fecha_registro', [$fecha_ini, $fecha_fin]);
@@ -282,7 +282,7 @@
                         if ($fecha_ini && $fecha_fin) {
                             $reg_ingresos = App\Models\IngresoDetalle::select('ingreso_detalles.*')
                                 ->join('ingresos', 'ingresos.id', '=', 'ingreso_detalles.ingreso_id')
-                                ->where('donacion', 'NO');
+                                ->where('ingresos.donacion', 'NO');
                             $reg_ingresos->where('ingresos.almacen_id', $almacen->id);
                             $reg_ingresos->where('fecha_registro', '<', $fecha_ini);
                             $reg_ingresos->where('partida_id', $partida->id);
@@ -307,7 +307,7 @@
                                 if ($fecha_ini && $fecha_fin) {
                                     $sum_reg_ingresos = App\Models\IngresoDetalle::select('ingreso_detalles.*')
                                         ->join('ingresos', 'ingresos.id', '=', 'ingreso_detalles.ingreso_id')
-                                        ->where('donacion', 'NO');
+                                        ->where('ingresos.donacion', 'NO');
                                     $sum_reg_ingresos->where('ingresos.almacen_id', $almacen->id);
                                     $sum_reg_ingresos->where('fecha_registro', '<', $fecha_ini);
                                     $sum_reg_ingresos->where('partida_id', $partida->id);
@@ -324,7 +324,7 @@
 
                                     $reg_egresos = App\Models\IngresoDetalle::select('ingreso_detalles.*')
                                         ->join('ingresos', 'ingresos.id', '=', 'ingreso_detalles.ingreso_id')
-                                        ->where('donacion', 'NO')
+                                        ->where('ingresos.donacion', 'NO')
                                         ->join('egresos', 'egresos.ingreso_id', '=', 'ingresos.id');
                                     $reg_egresos->where('egresos.almacen_id', $almacen->id);
                                     $reg_egresos->where('egresos.fecha_registro', '<', $fecha_ini);
