@@ -1301,9 +1301,9 @@ class ReporteController extends Controller
     {
         $self = (new static);
 
-        $texto_fecha = "AL " . date("d") . ' DE' . $self->array_meses[date("m")] . ' DE ' . date("Y");
+        $texto_fecha = "AL " . date("d") . ' DE ' . $self->array_meses[date("m")] . ' DE ' . date("Y");
         if ($fecha_ini && $fecha_fin) {
-            $texto_fecha = "DEL " . date("d", strtotime($fecha_ini)) . ' DE' . $self->array_meses[date("m", strtotime($fecha_ini))] . ' AL ' . date("d", strtotime($fecha_fin)) . ' DE' . $self->array_meses[date("m", strtotime($fecha_fin))] . ' DE ' . date("Y", strtotime($fecha_fin));
+            $texto_fecha = "DEL " . date("d", strtotime($fecha_ini)) . ' DE ' . $self->array_meses[date("m", strtotime($fecha_ini))] . ' AL ' . date("d", strtotime($fecha_fin)) . ' DE ' . $self->array_meses[date("m", strtotime($fecha_fin))] . ' DE ' . date("Y", strtotime($fecha_fin));
         }
 
         return $texto_fecha;
@@ -1455,123 +1455,191 @@ class ReporteController extends Controller
                     $totalp3 = 0;
                     $totalp4 = 0;
 
-                    $sheet->setCellValue('A' . $fila, 'PARTIDA N° ' . $partida->nro_partida);
-                    $sheet->getStyle('A' . $fila . ':C' . $fila)->applyFromArray($this->bg1);
-                    $sheet->mergeCells("A" . $fila . ":C" . $fila);  //COMBINAR CELDAS
-                    $sheet->getStyle('A' . $fila . ':C' . $fila)->applyFromArray($this->bodyTabla);
-                    // INGRESOS RANGO FECHAS
-                    $ie_internos = IEInterno::select('i_e_internos.*')->join(
-                        'ingreso_detalles',
-                        'ingreso_detalles.id',
-                        '=',
-                        'i_e_internos.ingreso_detalle_id',
-                    )
-                        ->join('ingresos', 'ingresos.id', '=', 'ingreso_detalles.ingreso_id');
-                    $ie_internos->where('i_e_internos.almacen_id', $almacen->id);
-                    if ($fecha_ini && $fecha_fin) {
-                        $ie_internos->whereBetween('i_e_internos.fecha_registro', [$fecha_ini, $fecha_fin]);
-                    }
-
-                    // EXTERNO
-                    $user = Auth::user();
-                    if ($user->tipo == 'EXTERNO') {
-                        $ie_internos->where('ingresos.unidad_id', $user->unidad_id);
-                        $ie_internos->where('ingresos.user_id', $user->id);
-                    }
-
-                    $ie_internos->where('partida_id', $partida->id);
-                    $ie_internos = $ie_internos->get();
-
-                    $fila++;
-                    if (count($ie_internos) > 0) {
-                        foreach ($ie_internos as $ie_interno) {
-                            // SALDOS
-                            $saldo = 0;
-                            if ($fecha_ini && $fecha_fin) {
-                                $reg_ingresos = IEInterno::select('i_e_internos.*')->join(
-                                    'ingreso_detalles',
-                                    'ingreso_detalles.id',
-                                    '=',
-                                    'i_e_internos.ingreso_detalle_id',
-                                )
-                                    ->join('ingresos', 'ingresos.id', '=', 'ingreso_detalles.ingreso_id');
-                                $reg_ingresos->where('i_e_internos.almacen_id', $almacen->id);
-                                $reg_ingresos->where('i_e_internos.fecha_registro', '<', $fecha_ini);
-                                $reg_ingresos->where('partida_id', $partida->id);
-                                $reg_ingresos->where('i_e_internos.producto_id', $ie_interno->producto_id);
-                                // EXTERNO
-                                $user = Auth::user();
-                                if ($user->tipo == 'EXTERNO') {
-                                    $reg_ingresos->where('ingresos.unidad_id', $user->unidad_id);
-                                    $reg_ingresos->where('ingresos.user_id', $user->id);
-                                }
-                                $reg_ingresos = $reg_ingresos->sum('itotal');
-
-                                $reg_egresos = IEInterno::select('i_e_internos.*')->join(
-                                    'ingreso_detalles',
-                                    'ingreso_detalles.id',
-                                    '=',
-                                    'i_e_internos.ingreso_detalle_id',
-                                )
-                                    ->join('ingresos', 'ingresos.id', '=', 'ingreso_detalles.ingreso_id');
-                                $reg_egresos->where('i_e_internos.almacen_id', $almacen->id);
-                                $reg_egresos->where('i_e_internos.fecha_egreso', '<', $fecha_ini);
-                                $reg_egresos->where('partida_id', $partida->id);
-                                $reg_egresos->where('i_e_internos.producto_id', $ie_interno->producto_id);
-                                // EXTERNO
-                                $user = Auth::user();
-                                if ($user->tipo == 'EXTERNO') {
-                                    $reg_egresos->where('ingresos.unidad_id', $user->unidad_id);
-                                    $reg_egresos->where('ingresos.user_id', $user->id);
-                                }
-                                $reg_egresos = $reg_egresos->sum('etotal');
-                                $saldo = $reg_ingresos - $reg_egresos;
-                            }
-
-                            $sheet->setCellValue('A' . $fila, $cont++);
-                            $sheet->setCellValue('B' . $fila, $ie_interno->ingreso->id);
-                            $sheet->setCellValue('C' . $fila, $ie_interno->ingreso_detalle->unidad_medida->nombre);
-                            $sheet->setCellValue('D' . $fila, $ie_interno->producto->nombre);
-                            $sheet->setCellValue('G' . $fila, $saldo);
-                            $sheet->setCellValue('H' . $fila, $ie_interno->fecha_registro_t);
-                            $sheet->setCellValue('I' . $fila, $ie_interno->icantidad);
-                            $sheet->setCellValue('J' . $fila, $ie_interno->icosto);
-                            $sheet->setCellValue('K' . $fila, $ie_interno->itotal);
-                            $sheet->setCellValue('L' . $fila, $ie_interno->ecantidad);
-                            $sheet->setCellValue('M' . $fila, $ie_interno->icosto);
-                            $sheet->setCellValue('N' . $fila, $ie_interno->etotal);
-                            $sheet->setCellValue('O' . $fila, $ie_interno->s_cantidad);
-                            $sheet->setCellValue('P' . $fila, $ie_interno->icosto);
-                            $sheet->setCellValue('Q' . $fila,  $ie_interno->s_total);
-                            $sheet->getStyle('A' . $fila . ':Q' . $fila)->applyFromArray($this->bodyTabla);
-                            $sheet->getStyle('F' . $fila . ':Q' . $fila)->applyFromArray($this->celdaCenter);
-
-                            // total partridas
-                            $totalp1 += (float) $saldo;
-                            $totalp2 += (float) $ie_interno->itotal;
-                            $totalp3 += (float) $ie_interno->total;
-                            $totalp4 += (float) $ie_interno->s_total;
-                            // Log::debug('DD');
-
-                            // totalgeneral
-                            $total1 += (float) $saldo;
-                            $total2 += (float) $ie_interno->itotal;
-                            $total3 += (float) $ie_interno->total;
-                            $total4 += (float) $ie_interno->s_total;
-
-                            $fila++;
+                    if ($almacen->id == 1) {
+                        //ALMACEN CENTRAL
+                        $ingresos = IngresoDetalle::select("ingreso_detalles.*")
+                            ->join("ingresos", "ingresos.id", "=", "ingreso_detalles.ingreso_id");
+                        $ingresos->where('ingresos.almacen_id', $almacen->id);
+                        if ($fecha_ini && $fecha_fin) {
+                            $ingresos->whereBetween('fecha_registro', [$fecha_ini, $fecha_fin]);
                         }
-                    } else {
+
+                        // EXTERNO
+                        $user = Auth::user();
+                        if ($user->tipo == 'EXTERNO') {
+                            $ingresos->where('ingresos.unidad_id', $user->unidad_id);
+                            $ingresos->where('ingresos.user_id', $user->id);
+                        }
+
+                        $ingresos->where('partida_id', $partida->id);
+                        $ingresos = $ingresos->get();
+
                         // VERIFICAR SALDOS ANTERIORES
                         $saldo = 0;
                         $reg_ingresos = [];
                         if ($fecha_ini && $fecha_fin) {
-                            $reg_ingresos = IEInterno::select('i_e_internos.*')->join(
+                            $reg_ingresos = IngresoDetalle::select("ingreso_detalles.*")
+                                ->join("ingresos", "ingresos.id", "=", "ingreso_detalles.ingreso_id");
+                            $reg_ingresos->where('ingresos.almacen_id', $almacen->id);
+                            $reg_ingresos->where('fecha_registro', '<', $fecha_ini);
+                            $reg_ingresos->where('partida_id', $partida->id);
+                            $reg_ingresos = $reg_ingresos->get();
+                        }
+
+                        if (count($ingresos) > 0 || count($reg_ingresos) > 0) {
+                            $sheet->setCellValue('A' . $fila, 'PARTIDA N° ' . $partida->nro_partida);
+                            $sheet->getStyle('A' . $fila . ':C' . $fila)->applyFromArray($this->bg1);
+                            $sheet->mergeCells("A" . $fila . ":C" . $fila);  //COMBINAR CELDAS
+                            $sheet->getStyle('A' . $fila . ':C' . $fila)->applyFromArray($this->bodyTabla);
+                            $fila++;
+                            if (count($ingresos) > 0) {
+                                foreach ($ingresos as $ingreso) {
+                                    // SALDOS
+                                    $saldo = 0;
+                                    if ($fecha_ini && $fecha_fin) {
+                                        $sum_reg_ingresos = IngresoDetalle::select("ingreso_detalles.*")
+                                            ->join("ingresos", "ingresos.id", "=", "ingreso_detalles.ingreso_id");
+                                        $sum_reg_ingresos->where('ingresos.almacen_id', $almacen->id);
+                                        $sum_reg_ingresos->where('fecha_registro', '<', $fecha_ini);
+                                        $sum_reg_ingresos->where('partida_id', $partida->id);
+                                        $sum_reg_ingresos->where('producto_id', $ingreso->producto_id);
+                                        // EXTERNO
+                                        $user = Auth::user();
+                                        if ($user->tipo == 'EXTERNO') {
+                                            $sum_reg_ingresos->where('ingresos.unidad_id', $user->unidad_id);
+                                            $sum_reg_ingresos->where('ingresos.user_id', $user->id);
+                                        }
+                                        $sum_reg_ingresos = $sum_reg_ingresos->sum('ingreso_detalles.total');
+
+                                        $reg_egresos = IngresoDetalle::select("ingreso_detalles.*")
+                                            ->join("ingresos", "ingresos.id", "=", "ingreso_detalles.ingreso_id")->join(
+                                                'egresos',
+                                                'egresos.ingreso_id',
+                                                '=',
+                                                'ingresos.id',
+                                            );
+                                        $reg_egresos->where('egresos.almacen_id', $almacen->id);
+                                        $reg_egresos->where('egresos.fecha_registro', '<', $fecha_ini);
+                                        $reg_egresos->where('egresos.partida_id', $partida->id);
+                                        $reg_egresos->where('egresos.producto_id', $ingreso->producto_id);
+                                        // EXTERNO
+                                        $user = Auth::user();
+                                        if ($user->tipo == 'EXTERNO') {
+                                            $reg_egresos->where('ingresos.unidad_id', $user->unidad_id);
+                                            $reg_egresos->where('ingresos.user_id', $user->id);
+                                        }
+                                        $reg_egresos = $reg_egresos->sum('egresos.total');
+                                        $saldo = $sum_reg_ingresos - $reg_egresos;
+                                    }
+
+                                    $sheet->setCellValue('A' . $fila, $cont++);
+                                    $sheet->setCellValue('B' . $fila, $ingreso->ingreso_id);
+                                    $sheet->setCellValue('C' . $fila, $ingreso->unidad_medida->nombre);
+                                    $sheet->setCellValue('D' . $fila, $ingreso->producto->nombre);
+                                    $sheet->setCellValue('G' . $fila, $saldo);
+                                    $sheet->setCellValue('H' . $fila, $ingreso->fecha_ingreso_t);
+                                    $sheet->setCellValue('I' . $fila, $ingreso->cantidad);
+                                    $sheet->setCellValue('J' . $fila, $ingreso->costo);
+                                    $sheet->setCellValue('K' . $fila, $ingreso->total);
+                                    $sheet->setCellValue('L' . $fila, $ingreso->egreso ? $ingreso->egreso->cantidad : 0);
+                                    $sheet->setCellValue('M' . $fila, $ingreso->egreso ? $ingreso->egreso->costo : 0);
+                                    $sheet->setCellValue('N' . $fila, $ingreso->egreso ? $ingreso->egreso->total : 0);
+                                    $sheet->setCellValue('O' . $fila, $ingreso->egreso ? $ingreso->egreso->s_cantidad : $ingreso->cantidad);
+                                    $sheet->setCellValue('P' . $fila, $ingreso->costo);
+                                    $sheet->setCellValue('Q' . $fila,  $ingreso->egreso ? $ingreso->egreso->s_total : $ingreso->total);
+                                    $sheet->getStyle('A' . $fila . ':Q' . $fila)->applyFromArray($this->bodyTabla);
+                                    $sheet->getStyle('F' . $fila . ':Q' . $fila)->applyFromArray($this->celdaCenter);
+
+
+                                    // total partridas
+                                    $totalp1 += (float) $saldo;
+                                    $totalp2 += (float) $ingreso->total;
+                                    $totalp3 += $ingreso->egreso ? (float) $ingreso->egreso->total : 0;
+                                    $totalp4 += $ingreso->egreso ? (float) $ingreso->egreso->s_total : $ingreso->total;
+                                    // Log::debug('DD');
+
+                                    // totalgeneral
+                                    $total1 += (float) $saldo;
+                                    $total2 += (float) $ingreso->total;
+                                    $total3 += $ingreso->egreso ? (float) $ingreso->egreso->total : 0;
+                                    $total4 += $ingreso->egreso ? (float) $ingreso->egreso->s_total : $ingreso->total;
+
+                                    $fila++;
+                                }
+                            }
+
+                            if (count($reg_ingresos) > 0) {
+                                foreach ($reg_ingresos as $r_ingreso) {
+                                    $saldo = $r_ingreso->total;
+                                    if ($r_ingreso->egreso) {
+                                        $saldo = (float) $r_ingreso->total - $r_ingreso->egreso->total;
+                                    }
+
+                                    $sheet->setCellValue('A' . $fila, $cont++);
+                                    $sheet->setCellValue('B' . $fila, $r_ingreso->ingreso_id);
+                                    $sheet->setCellValue('C' . $fila, $r_ingreso->unidad_medida->nombre);
+                                    $sheet->setCellValue('D' . $fila, $r_ingreso->producto->nombre);
+                                    $sheet->setCellValue('G' . $fila, $saldo);
+                                    // $sheet->setCellValue('J' . $fila, $r_ingreso->costo);
+                                    $sheet->setCellValue('Q' . $fila, $saldo);
+                                    $sheet->getStyle('A' . $fila . ':Q' . $fila)->applyFromArray($this->bodyTabla);
+                                    $sheet->getStyle('F' . $fila . ':Q' . $fila)->applyFromArray($this->celdaCenter);
+                                    $fila++;
+                                    // partida
+                                    $totalp1 += (float) $saldo;
+                                    $totalp4 += (float) $saldo;
+
+                                    // general
+                                    $total1 += (float) $saldo;
+                                    $total4 += (float) $saldo;
+                                }
+                            }
+                            $sheet->setCellValue('A' . $fila, 'TOTAL PARTIDA N° ' . $partida->nro_partida);
+                            $sheet->mergeCells("A" . $fila . ":D" . $fila);  //COMBINAR CELDAS
+                            $sheet->setCellValue('G' . $fila, number_format($totalp1, 2, ".", ""));
+                            $sheet->setCellValue('K' . $fila, number_format($totalp2, 2, ".", ""));
+                            $sheet->setCellValue('N' . $fila, number_format($totalp3, 2, ".", ""));
+                            $sheet->setCellValue('Q' . $fila, number_format($totalp4, 2, ".", ""));
+                            $sheet->getStyle('A' . $fila . ':Q' . $fila)->applyFromArray($this->footerTabla);
+                            $fila++;
+                        }
+                    } else {
+                        //ALMACENES
+                        // INGRESOS RANGO FECHAS
+                        $ie_internos = IEInterno::select('i_e_internos.*')
+                            ->join(
                                 'ingreso_detalles',
                                 'ingreso_detalles.id',
                                 '=',
                                 'i_e_internos.ingreso_detalle_id',
                             )
+                            ->join('ingresos', 'ingresos.id', '=', 'ingreso_detalles.ingreso_id');
+                        $ie_internos->where('i_e_internos.almacen_id', $almacen->id);
+                        if ($fecha_ini && $fecha_fin) {
+                            $ie_internos->whereBetween('i_e_internos.fecha_registro', [$fecha_ini, $fecha_fin]);
+                        }
+
+                        // EXTERNO
+                        $user = Auth::user();
+                        if ($user->tipo == 'EXTERNO') {
+                            $ie_internos->where('ingresos.unidad_id', $user->unidad_id);
+                            $ie_internos->where('ingresos.user_id', $user->id);
+                        }
+
+                        $ie_internos->where('partida_id', $partida->id);
+                        $ie_internos = $ie_internos->get();
+
+                        // VERIFICAR SALDOS ANTERIORES
+                        $saldo = 0;
+                        $reg_ingresos = [];
+                        if ($fecha_ini && $fecha_fin) {
+                            $reg_ingresos = IEInterno::select('i_e_internos.*')
+                                ->join(
+                                    'ingreso_detalles',
+                                    'ingreso_detalles.id',
+                                    '=',
+                                    'i_e_internos.ingreso_detalle_id',
+                                )
                                 ->join('ingresos', 'ingresos.id', '=', 'ingreso_detalles.ingreso_id');
                             $reg_ingresos->where('i_e_internos.almacen_id', $almacen->id);
                             $reg_ingresos->where('i_e_internos.fecha_registro', '<', $fecha_ini);
@@ -1586,40 +1654,129 @@ class ReporteController extends Controller
 
                             $reg_ingresos = $reg_ingresos->get();
                         }
+                        if (count($ie_internos) > 0 || count($reg_ingresos) > 0) {
+                            $sheet->setCellValue('A' . $fila, 'PARTIDA N° ' . $partida->nro_partida);
+                            $sheet->getStyle('A' . $fila . ':C' . $fila)->applyFromArray($this->bg1);
+                            $sheet->mergeCells("A" . $fila . ":C" . $fila);  //COMBINAR CELDAS
+                            $sheet->getStyle('A' . $fila . ':C' . $fila)->applyFromArray($this->bodyTabla);
+                            $fila++;
+                            if (count($ie_internos) > 0) {
+                                foreach ($ie_internos as $ie_interno) {
+                                    // SALDOS
+                                    $saldo = 0;
+                                    if ($fecha_ini && $fecha_fin) {
+                                        $sum_reg_ingresos = IEInterno::select('i_e_internos.*')
+                                            ->join(
+                                                'ingreso_detalles',
+                                                'ingreso_detalles.id',
+                                                '=',
+                                                'i_e_internos.ingreso_detalle_id',
+                                            )
+                                            ->join('ingresos', 'ingresos.id', '=', 'ingreso_detalles.ingreso_id');
+                                        $sum_reg_ingresos->where('i_e_internos.almacen_id', $almacen->id);
+                                        $sum_reg_ingresos->where('i_e_internos.fecha_registro', '<', $fecha_ini);
+                                        $sum_reg_ingresos->where('partida_id', $partida->id);
+                                        $sum_reg_ingresos->where('i_e_internos.producto_id', $ie_interno->producto_id);
+                                        // EXTERNO
+                                        $user = Auth::user();
+                                        if ($user->tipo == 'EXTERNO') {
+                                            $sum_reg_ingresos->where('ingresos.unidad_id', $user->unidad_id);
+                                            $sum_reg_ingresos->where('ingresos.user_id', $user->id);
+                                        }
+                                        $sum_reg_ingresos = $sum_reg_ingresos->sum('itotal');
 
-                        foreach ($reg_ingresos as $r_ingreso) {
-                            $saldo = $r_ingreso->itotal;
-                            if ($r_ingreso->ecantidad && $r_ingreso->etotal) {
-                                $saldo = (float) $r_ingreso->itotal - $r_ingreso->etotal;
+                                        $reg_egresos = IEInterno::select('i_e_internos.*')
+                                            ->join(
+                                                'ingreso_detalles',
+                                                'ingreso_detalles.id',
+                                                '=',
+                                                'i_e_internos.ingreso_detalle_id',
+                                            )
+                                            ->join('ingresos', 'ingresos.id', '=', 'ingreso_detalles.ingreso_id');
+                                        $reg_egresos->where('i_e_internos.almacen_id', $almacen->id);
+                                        $reg_egresos->where('i_e_internos.fecha_egreso', '<', $fecha_ini);
+                                        $reg_egresos->where('partida_id', $partida->id);
+                                        $reg_egresos->where('i_e_internos.producto_id', $ie_interno->producto_id);
+                                        // EXTERNO
+                                        $user = Auth::user();
+                                        if ($user->tipo == 'EXTERNO') {
+                                            $reg_egresos->where('ingresos.unidad_id', $user->unidad_id);
+                                            $reg_egresos->where('ingresos.user_id', $user->id);
+                                        }
+                                        $reg_egresos = $reg_egresos->sum('etotal');
+                                        $saldo = $sum_reg_ingresos - $reg_egresos;
+                                    }
+
+                                    $sheet->setCellValue('A' . $fila, $cont++);
+                                    $sheet->setCellValue('B' . $fila, $ie_interno->ingreso->id);
+                                    $sheet->setCellValue('C' . $fila, $ie_interno->ingreso_detalle->unidad_medida->nombre);
+                                    $sheet->setCellValue('D' . $fila, $ie_interno->producto->nombre);
+                                    $sheet->setCellValue('G' . $fila, $saldo);
+                                    $sheet->setCellValue('H' . $fila, $ie_interno->fecha_registro_t);
+                                    $sheet->setCellValue('I' . $fila, $ie_interno->icantidad);
+                                    $sheet->setCellValue('J' . $fila, $ie_interno->icosto);
+                                    $sheet->setCellValue('K' . $fila, $ie_interno->itotal);
+                                    $sheet->setCellValue('L' . $fila, $ie_interno->ecantidad);
+                                    $sheet->setCellValue('M' . $fila, $ie_interno->icosto);
+                                    $sheet->setCellValue('N' . $fila, $ie_interno->etotal);
+                                    $sheet->setCellValue('O' . $fila, $ie_interno->s_cantidad);
+                                    $sheet->setCellValue('P' . $fila, $ie_interno->icosto);
+                                    $sheet->setCellValue('Q' . $fila,  $ie_interno->s_total);
+                                    $sheet->getStyle('A' . $fila . ':Q' . $fila)->applyFromArray($this->bodyTabla);
+                                    $sheet->getStyle('F' . $fila . ':Q' . $fila)->applyFromArray($this->celdaCenter);
+
+                                    // total partridas
+                                    $totalp1 += (float) $saldo;
+                                    $totalp2 += (float) $ie_interno->itotal;
+                                    $totalp3 += (float) $ie_interno->total;
+                                    $totalp4 += (float) $ie_interno->s_total;
+                                    // Log::debug('DD');
+
+                                    // totalgeneral
+                                    $total1 += (float) $saldo;
+                                    $total2 += (float) $ie_interno->itotal;
+                                    $total3 += (float) $ie_interno->total;
+                                    $total4 += (float) $ie_interno->s_total;
+
+                                    $fila++;
+                                }
                             }
 
-                            $sheet->setCellValue('A' . $fila, $cont++);
-                            $sheet->setCellValue('B' . $fila, $r_ingreso->ingreso->id);
-                            $sheet->setCellValue('C' . $fila, $r_ingreso->ingreso_detalle->unidad_medida->nombre);
-                            $sheet->setCellValue('D' . $fila, $r_ingreso->producto->nombre);
-                            $sheet->setCellValue('G' . $fila, $saldo);
-                            // $sheet->setCellValue('J' . $fila, $r_ingreso->costo);
-                            $sheet->setCellValue('Q' . $fila, $saldo);
-                            $sheet->getStyle('A' . $fila . ':Q' . $fila)->applyFromArray($this->bodyTabla);
-                            $sheet->getStyle('F' . $fila . ':Q' . $fila)->applyFromArray($this->celdaCenter);
-                            $fila++;
-                            // partida
-                            $totalp1 += (float) $saldo;
-                            $totalp4 += (float) $saldo;
+                            if (count($reg_ingresos) > 0) {
+                                foreach ($reg_ingresos as $r_ingreso) {
+                                    $saldo = $r_ingreso->itotal;
+                                    if ($r_ingreso->ecantidad && $r_ingreso->etotal) {
+                                        $saldo = (float) $r_ingreso->itotal - $r_ingreso->etotal;
+                                    }
 
-                            // general
-                            $total1 += (float) $saldo;
-                            $total4 += (float) $saldo;
+                                    $sheet->setCellValue('A' . $fila, $cont++);
+                                    $sheet->setCellValue('B' . $fila, $r_ingreso->ingreso->id);
+                                    $sheet->setCellValue('C' . $fila, $r_ingreso->ingreso_detalle->unidad_medida->nombre);
+                                    $sheet->setCellValue('D' . $fila, $r_ingreso->producto->nombre);
+                                    $sheet->setCellValue('G' . $fila, $saldo);
+                                    // $sheet->setCellValue('J' . $fila, $r_ingreso->costo);
+                                    $sheet->setCellValue('Q' . $fila, $saldo);
+                                    $sheet->getStyle('A' . $fila . ':Q' . $fila)->applyFromArray($this->bodyTabla);
+                                    $sheet->getStyle('F' . $fila . ':Q' . $fila)->applyFromArray($this->celdaCenter);
+                                    $fila++;
+                                    // partida
+                                    $totalp1 += (float) $saldo;
+                                    $totalp4 += (float) $saldo;
+
+                                    // general
+                                    $total1 += (float) $saldo;
+                                    $total4 += (float) $saldo;
+                                }
+                            }
+                            $sheet->setCellValue('A' . $fila, 'TOTAL PARTIDA N° ' . $partida->nro_partida);
+                            $sheet->mergeCells("A" . $fila . ":D" . $fila);  //COMBINAR CELDAS
+                            $sheet->setCellValue('G' . $fila, number_format($totalp1, 2, ".", ""));
+                            $sheet->setCellValue('K' . $fila, number_format($totalp2, 2, ".", ""));
+                            $sheet->setCellValue('N' . $fila, number_format($totalp3, 2, ".", ""));
+                            $sheet->setCellValue('Q' . $fila, number_format($totalp4, 2, ".", ""));
+                            $sheet->getStyle('A' . $fila . ':Q' . $fila)->applyFromArray($this->footerTabla);
                         }
                     }
-                    $sheet->setCellValue('A' . $fila, 'TOTAL PARTIDA N° ' . $partida->nro_partida);
-                    $sheet->mergeCells("A" . $fila . ":D" . $fila);  //COMBINAR CELDAS
-                    $sheet->setCellValue('G' . $fila, number_format($totalp1, 2, ".", ""));
-                    $sheet->setCellValue('K' . $fila, number_format($totalp2, 2, ".", ""));
-                    $sheet->setCellValue('N' . $fila, number_format($totalp3, 2, ".", ""));
-                    $sheet->setCellValue('Q' . $fila, number_format($totalp4, 2, ".", ""));
-                    $sheet->getStyle('A' . $fila . ':Q' . $fila)->applyFromArray($this->footerTabla);
-                    $fila++;
                 }
                 $sheet->setCellValue('A' . $fila, 'TOTAL GENERAL');
                 $sheet->mergeCells("A" . $fila . ":D" . $fila);  //COMBINAR CELDAS
