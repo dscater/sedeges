@@ -345,6 +345,7 @@ class IngresoController extends Controller
                 ]);
             }
             $datos_original = HistorialAccion::getDetalleRegistro($ingreso, "ingresos");
+            $ingreso->ingreso_detalles()->delete();
             $ingreso->delete();
             HistorialAccion::create([
                 'user_id' => Auth::user()->id,
